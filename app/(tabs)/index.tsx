@@ -7,7 +7,12 @@ import {
   View,
 } from "react-native";
 
+import { useRouter } from 'expo-router';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "../../constants/color";
+
 export default function HomeScreen() {
+  const router = useRouter()
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
@@ -15,13 +20,13 @@ export default function HomeScreen() {
   if (!fontLoaded) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0cc0df" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
         <Text style={styles.titleLogoFont} allowFontScaling={true}>
           mfit.
@@ -37,17 +42,17 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.GS_Button}>
+        <TouchableOpacity style={styles.GS_Button} onPress={() => router.push('/onboarding')}>
           <Text style={styles.GSAppFont}>Get Started</Text>
         </TouchableOpacity>
 
-        <Text style={styles.or}>or</Text>
+        <Text style={styles.or }>or</Text>
 
-        <TouchableOpacity style={styles.GS_Button}>
+        <TouchableOpacity style={styles.GS_Button} onPress={() => router.push('/sign-in')}>
           <Text style={styles.GSAppFont}>Sign In</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -55,7 +60,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: Colors.white,
   },
   loadingContainer: {
     flex: 1,
@@ -65,10 +70,10 @@ const styles = StyleSheet.create({
   topBar: {
     flex: 1,
     flexDirection: "row",
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 20,
     paddingTop: 20,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   middleBar: {
     flex: 1,
@@ -79,15 +84,14 @@ const styles = StyleSheet.create({
     paddingTop: 25,
   },
   titleLogoFont: {
-    fontWeight: "bold",
     fontSize: 30,
-    color: "#0cc0df",
+    color: Colors.primary,
     fontFamily: "Poppins_700Bold",
   },
   GSAppFont: {
     fontWeight: "bold",
-    fontSize: 24,
-    color: "white",
+    fontSize: 15,
+    color: Colors.white,
     fontFamily: "Poppins_700Bold",
   },
 
@@ -98,13 +102,15 @@ const styles = StyleSheet.create({
   catchPhraseFont: {
     fontWeight: "bold",
     fontSize: 24,
-    color: "#0cc0df",
+    color: Colors.primary,
     fontFamily: "Poppins_700Bold",
   },
   GS_Button: {
-    backgroundColor: "#0cc0df",
-    borderColor: "#0cc0df",
-    borderWidth: 15,
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+    borderWidth: 4,
+    padding: 20,
+    paddingHorizontal: 40,
     borderRadius: 30,
   },
   or: {
