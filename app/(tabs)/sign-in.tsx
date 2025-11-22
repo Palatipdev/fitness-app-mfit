@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/color";
 
 export default function SignIn() {
-  const router = useRouter()
+  const router = useRouter();
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
@@ -41,25 +41,43 @@ export default function SignIn() {
       </View>
 
       <View style={styles.middleBar}>
-
-          <TextInput
-            style={styles.inputBox}
-            placeholder="Username or Email"
-            onChangeText={(userName) => setUserName(userName)}
-          />
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Username or Email"
+          onChangeText={setUserName}
+          value = {userName}
+        />
 
         <TextInput
           style={styles.inputBox}
           placeholder="Password"
-          onChangeText={(passWord) => setPassWord(passWord)}
+          onChangeText={setPassWord}
+          value = {passWord}
           secureTextEntry={true}
         />
-        <TouchableOpacity style = {styles.continueButton}>
-          <Text style= {[styles.appFont, {fontSize: 20}, {color: Colors.white}]}>Continue</Text>
+        <TouchableOpacity style={styles.continueButton}>
+          <Text
+            style={[styles.appFont, { fontSize: 20 }, { color: Colors.white }]}
+          >
+            Continue
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.bottomBar}></View>
+      <View style={styles.bottomBar}>
+        <Text>Or sign in with</Text>
+        <View style={styles.otherSignInOptions}>
+          <TouchableOpacity>
+            <Text>Google</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Facebook</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Apple</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -101,12 +119,12 @@ const styles = StyleSheet.create({
   },
   middleBar: {
     flex: 1,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     gap: 20,
   },
 
-  inputBox:{
+  inputBox: {
     backgroundColor: Colors.gray,
     borderColor: Colors.gray,
     borderWidth: 3,
@@ -114,7 +132,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 55,
     borderRadius: 30,
     fontFamily: "Poppins_700Bold",
-    
   },
 
   bottomBar: {
@@ -122,12 +139,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  continueButton:{
+  continueButton: {
     backgroundColor: Colors.primary,
     borderColor: Colors.primary,
     borderWidth: 10,
     padding: 10,
     paddingHorizontal: 100,
     borderRadius: 30,
+  },
+  otherSignInOptions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "60%",
+    paddingTop: 15,
   },
 });
