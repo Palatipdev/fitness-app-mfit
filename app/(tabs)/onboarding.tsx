@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/color";
 
 export default function OnBoarding() {
@@ -20,6 +19,20 @@ export default function OnBoarding() {
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
+
+
+  //setting height and weight
+  const [userHeight, setHeight] = useState("");
+  const [userWeight, setWeight] = useState("");
+
+
+  //clicking button
+  const [selectedGoal, setSelectedGoal] = useState("");
+  const [selectedGender, setSelectedGender] = useState("");
+  const [selectedDays , setSelectedDays] = useState("");
+  const [selectedSession, setSelectedSession] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
+
     if (!fontLoaded) {
       return (
         <View style={styles.loadingContainer}>
@@ -27,19 +40,8 @@ export default function OnBoarding() {
         </View>
       );
     }
-
-  //setting height and weight
-  const [userHeight, setHeight] = useState("");
-  const [userWeight, setWeight] = useState("");
-  const weightNum = parseInt(userWeight);
-  const heightNum = parseInt(userHeight);
-
-  //clicking button
-  const [selectedGoal, setSelectedGoal] = useState("");
-  const [selectedGender, setSelectedGender] = useState("");
-
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.topBar}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <AntDesign name="arrow-left" size={24} color={Colors.primary} />
@@ -54,7 +56,7 @@ export default function OnBoarding() {
             style={selectedGoal === "wl" ? styles.pressed : styles.unPressed}
             onPress={() => setSelectedGoal("wl")}
           >
-            <Text> Weight Lost</Text>
+            <Text style = {styles.font}> Weight Lost</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={
@@ -62,13 +64,13 @@ export default function OnBoarding() {
             }
             onPress={() => setSelectedGoal("maintain")}
           >
-            <Text> Maintain</Text>
+            <Text style = {styles.font}> Maintain</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={selectedGoal === "gain" ? styles.pressed : styles.unPressed}
             onPress={() => setSelectedGoal("gain")}
           >
-            <Text> Gain Weight</Text>
+            <Text style = {styles.font}> Gain Weight</Text>
           </TouchableOpacity>
         </View>
 
@@ -78,15 +80,21 @@ export default function OnBoarding() {
             <TextInput
               style={styles.inputBox}
               placeholder="Weight (lbs)"
-              keyboardType="numeric"
-              onChangeText={setWeight}
+              keyboardType="default"
+              onChangeText={(text) =>{
+                const numbersOnly = text.replace(/[^0-9]/g,'');
+                setWeight(numbersOnly)
+              }}
               value={userWeight}
             />
             <TextInput
               style={styles.inputBox}
               placeholder="Height (cm)"
-              keyboardType="numeric"
-              onChangeText={setHeight}
+              keyboardType="default"
+              onChangeText={(text) =>{
+                const numbersOnly = text.replace(/[^0-9]/g,'');
+                setHeight(numbersOnly)
+              }}
               value={userHeight}
             />
           </View>
@@ -94,26 +102,105 @@ export default function OnBoarding() {
             <TouchableOpacity
               style={[
                 selectedGender === "male" ? styles.pressed : styles.unPressed,
-                { width: 75 },
+                { width: 85 },
                 { marginRight: 10 },
               ]}
               onPress={() => setSelectedGender("male")}
             >
-              <Text>Male</Text>
+              <Text style = {styles.font} >Male</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 selectedGender === "female" ? styles.pressed : styles.unPressed,
-                { width: 75 },
+                { width: 85 },
               ]}
               onPress={() => setSelectedGender("female")}
             >
-              <Text>Female</Text>
+              <Text style = {styles.font} >Female</Text>
             </TouchableOpacity>
           </View>
         </View>
+        <Text style={[styles.appFont , {paddingTop: 10}]}>How many days CAN you workout per week?</Text>
+        <View style={styles.answerButtons}>
+          <TouchableOpacity
+            style={selectedDays === "2" ? styles.pressed : styles.unPressed}
+            onPress={() => setSelectedDays("2")}
+          >
+            <Text style = {styles.font}> 2 or less</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              selectedDays === "3-4" ? styles.pressed : styles.unPressed
+            }
+            onPress={() => setSelectedDays("3-4")}
+          >
+            <Text style = {styles.font}> 3 - 4</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={selectedDays === "4" ? styles.pressed : styles.unPressed}
+            onPress={() => setSelectedDays("4")}
+          >
+            <Text style = {styles.font}> 4+</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={[styles.appFont ]}>How long are your usual workout session? (minutes) </Text>
+        <View style={styles.answerButtons}>
+          <TouchableOpacity
+            style={selectedSession === "30" ? styles.pressed : styles.unPressed}
+            onPress={() => setSelectedSession("30")}
+          >
+            <Text style = {styles.font}> 30 or less </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              selectedSession === "30-60" ? styles.pressed : styles.unPressed
+            }
+            onPress={() => setSelectedSession("30-60")}
+          >
+            <Text style = {styles.font}> 30 - 60</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={selectedSession === "60+" ? styles.pressed : styles.unPressed}
+            onPress={() => setSelectedSession("60+")}
+          >
+            <Text style = {styles.font}> 60+</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={[styles.appFont ]}>What is your experience with the gym?</Text>
+        <View style={styles.answerButtons}>
+          <TouchableOpacity
+            style={selectedLevel === "beginner" ? styles.pressed : styles.unPressed}
+            onPress={() => setSelectedLevel("beginner")}
+          >
+            <Text style = {styles.font}> Beginner</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              selectedLevel === "Intermediate" ? styles.pressed : styles.unPressed
+            }
+            onPress={() => setSelectedLevel("Intermediate")}
+          >
+            <Text style = {styles.font}>Intermediate</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={selectedLevel === "Advanced" ? styles.pressed : styles.unPressed}
+            onPress={() => setSelectedLevel("Advanced")}
+          >
+            <Text style = {styles.font}> Advanced</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </SafeAreaView>
+
+      <View style = {styles.bottomBar}>
+            <TouchableOpacity style = {[styles.pressed, {width: 130}]} onPress={() => router.push('/resultPreview')}>
+              <View style = {styles.continue}>
+              <Text style = {[styles.font , {color: Colors.white}, {fontSize: 15}, {marginTop: 2}]}>Continue</Text>
+              <AntDesign name="arrow-right" size={15} color= {Colors.white}/>
+              </View>
+            </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
@@ -147,11 +234,17 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_700Bold",
   },
 
+  font:{
+    fontFamily: "Poppins_700Bold",
+    fontSize: 12
+  },
+
   questionaire: {
     flex: 1,
     width: "100%",
     paddingTop: 20,
     paddingHorizontal: 20,
+    gap: 15,
   },
   answerButtons: {
     width: "100%",
@@ -166,6 +259,10 @@ const styles = StyleSheet.create({
   },
   heightAndWeightLeft: {
     flex: 1,
+    width: '40%',
+    justifyContent: 'space-between',
+    paddingRight:30,
+    gap: 15,
   },
   heightAndWeightRight: {
     flexDirection: "row",
@@ -173,7 +270,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingRight: 20,
   },
-  inputBox: {},
+  inputBox: {
+    fontFamily: "Poppins_700Bold",
+    borderBottomColor: Colors.gray,
+    borderBottomWidth: 1,
+
+  },
   unPressed: {
     borderWidth: 4,
     borderRadius: 30,
@@ -182,7 +284,6 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 120,
     alignItems: "center",
-    fontFamily: "Poppins_700Bold",
   },
   pressed: {
     backgroundColor: Colors.primary,
@@ -192,6 +293,16 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 120,
     alignItems: "center",
-    fontFamily: "Poppins_700Bold",
+  },
+  bottomBar:{
+    alignItems: 'flex-end',
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  continue:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 6
   },
 });

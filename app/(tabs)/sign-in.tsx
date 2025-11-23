@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/color";
 
 export default function SignIn() {
@@ -31,7 +30,7 @@ export default function SignIn() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.topBar}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <AntDesign name="arrow-left" size={24} color={Colors.primary} />
@@ -78,7 +77,7 @@ export default function SignIn() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -129,14 +128,17 @@ const styles = StyleSheet.create({
     borderColor: Colors.gray,
     borderWidth: 3,
     padding: 15,
-    paddingHorizontal: 55,
+    paddingHorizontal: 10,
     borderRadius: 30,
     fontFamily: "Poppins_700Bold",
+    textAlign: 'left',
+    width: 250,
   },
 
   bottomBar: {
     flex: 1,
     alignItems: "center",
+    marginTop: 50,
   },
 
   continueButton: {
@@ -146,11 +148,12 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 100,
     borderRadius: 30,
+    marginTop: 20,
   },
   otherSignInOptions: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "60%",
-    paddingTop: 15,
+    marginTop: 20,
   },
 });

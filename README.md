@@ -65,7 +65,7 @@ MFIT-FITNESS-APP/
 ## 📊 Progress Tracking
 
 **Current Phase:** Week 1 - Authentication & Onboarding
-**Screens Completed:** 3/5
+**Screens Completed:** 3/x
 **Daily Commits:** ✅ (Tracking on GitHub)
 
 ## 🎓 Learning Journey
@@ -78,7 +78,7 @@ This is my first production mobile app, Building in public to:
 ## 📝 Development Log
 
 - **Day 1 (Nov 23):** Welcome, Sign In, and Onboarding screens completed. Navigation working.
-- **Day 2 (Nov 24):** [To be updated]
+- **Day 2 (Nov 24):** Onboarding screens polished, Result preview screen created (WIP), project structure setup
 
 ## 🔗 Links
 

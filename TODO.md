@@ -15,7 +15,7 @@
 - [x] Welcome screen
 - [x] Sign In screen  
 - [x] Onboarding survey (in progress)
-- [ ] Complete onboarding (all 5 questions)
+- [x] Complete onboarding (all 5 questions)
 - [ ] Sign Up screen
 - [ ] Results preview screen
 
@@ -32,6 +32,10 @@
 - [ ] Workout display screen
 - [ ] Exercise detail view
 
+
+## PLANS 
+## Prompting
+ - [ ]  Using user's goal to give them a workout template preview
 ## Immediate Next Steps (Today/Tomorrow)
 - [ ] Finish onboarding survey (5 questions total)
 - [ ] Add "Next" button that only shows when answer selected

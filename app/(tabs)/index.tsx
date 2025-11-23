@@ -8,7 +8,6 @@ import {
 } from "react-native";
 
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../constants/color";
 
 export default function HomeScreen() {
@@ -26,7 +25,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.topBar}>
         <Text style={styles.titleLogoFont} allowFontScaling={true}>
           mfit.
@@ -52,7 +51,7 @@ export default function HomeScreen() {
           <Text style={styles.GSAppFont}>Sign In</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -112,6 +111,8 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingHorizontal: 40,
     borderRadius: 30,
+    width: 190,
+    alignItems: 'center',
   },
   or: {
     paddingTop: 10,

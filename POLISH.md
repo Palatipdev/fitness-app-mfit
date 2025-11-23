@@ -6,13 +6,11 @@ Welcome Screen
 - [ ] Better font sizing for different screens
 
 ## Sign In / Sign Up Screens
-- [ ] User icon in username field
-- [ ] Lock icon in password field
 - [x] "Or sign in with" divider line
 - [ ] Google login button
 - [ ] Facebook login button  
 - [ ] Apple login button
-- [ ] Better spacing between elements
+- [x] Better spacing between elements
 - [ ] Error shake animation
 - [ ] Loading spinner on submit
 
@@ -20,6 +18,9 @@ Welcome Screen
 - [ ] Confetti when complete
 - [ ] Smooth slide transitions
 - [ ] Picker wheel for height/weight
+- [ ] Choosing between lbs and kg for Weight
+- [ ] Choosing between cm and inchs for height
+- [ ] fix text input format
 
 ## Code Cleanup
 - [ ] Create `usePoppinsFont` hook
