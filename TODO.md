@@ -6,8 +6,15 @@
 - [x] Create empty folders: `hooks/`, `utils/`, `services/`, `types/`
 - [x] Add `.gitkeep` to empty folders
 - [x] Fix README title (remove extra period)
-- [ ] Add GitHub repo description and topics
-- [ ] Commit all changes
+- [x] Add GitHub repo description and topics
+- [x] Commit all changes
+
+
+## Immediate Next Steps
+- [ ] Import Poppins_400Regular into FloatingLabelInput
+- [ ] Polish Sign Up screen spacing/alignment
+- [ ] Test complete flow: Welcome → Sign In → Onboarding → Results → Sign Up
+- [ ] Decide: Start Week 2 (Firebase) or polish existing screens?
 
 # Current Sprint Tasks
 
@@ -17,7 +24,7 @@
 - [x] Onboarding survey (in progress)
 - [x] Complete onboarding (all 5 questions)
 - [ ] Sign Up screen
-- [ ] Results preview screen
+- [x] Results preview screen
 
 ## Week 2 (Nov 25-Dec 1) - User Profiles & Firebase
 - [ ] Firebase project setup
@@ -36,9 +43,7 @@
 ## PLANS 
 ## Prompting
  - [ ]  Using user's goal to give them a workout template preview
-## Immediate Next Steps (Today/Tomorrow)
-- [ ] Finish onboarding survey (5 questions total)
-- [ ] Add "Next" button that only shows when answer selected
-- [ ] Navigate between questions
-- [ ] Store all answers in state
-- [ ] Create results preview screen
+ - [ ] Adding age picker wheel input field
+
+
+

@@ -1,3 +1,4 @@
+import FloatingLabelInput from "@/components/floating-label-input";
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
@@ -7,9 +8,8 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { Colors } from "../../constants/color";
 
@@ -40,18 +40,18 @@ export default function SignIn() {
       </View>
 
       <View style={styles.middleBar}>
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Username or Email"
+        <FloatingLabelInput
+          label='Email'
+          value={userName}
           onChangeText={setUserName}
-          value = {userName}
+          keyboardType="default"
         />
 
-        <TextInput
-          style={styles.inputBox}
-          placeholder="Password"
+        <FloatingLabelInput
+          label="Password"
+          autoCapitalize='none'
           onChangeText={setPassWord}
-          value = {passWord}
+          value={passWord}
           secureTextEntry={true}
         />
         <TouchableOpacity style={styles.continueButton}>
@@ -64,7 +64,7 @@ export default function SignIn() {
       </View>
 
       <View style={styles.bottomBar}>
-        <Text>Or sign in with</Text>
+        <Text>Or Sign In with</Text>
         <View style={styles.otherSignInOptions}>
           <TouchableOpacity>
             <Text>Google</Text>
@@ -76,7 +76,15 @@ export default function SignIn() {
             <Text>Apple</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.getStarted}>
+          <Text>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => router.push('/onboarding')}>
+            <Text style={{ color: Colors.primary }} >Get Started!</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
+
     </View>
   );
 }
@@ -155,5 +163,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "60%",
     marginTop: 20,
+  },
+  getStarted: {
+    flexDirection: 'row',
   },
 });

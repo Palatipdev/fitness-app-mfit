@@ -1,5 +1,6 @@
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from "expo-router";
 import { Colors } from "../../constants/color";
 
@@ -12,8 +13,8 @@ import {
   View,
 } from "react-native";
 
-export default function Prompting() {
-    const router = useRouter()
+export default function resultPreview() {
+  const router = useRouter()
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
@@ -34,75 +35,75 @@ export default function Prompting() {
           <Text style={styles.appFont}>Back</Text>
         </Pressable>
       </View>
-      <View style = {styles.middleBar}>
-        <Text style = {[styles.appFont, {fontSize: 20}]}> We've created a custom workout plan based on your goals!</Text>
+      <View style={styles.middleBar}>
+        <Text style={[styles.appFont, { fontSize: 20 }]}> We've created a custom workout plan based on your goals!</Text>
 
-              <View style={styles.previewContainer}>
-        <View style={styles.planPreview}>
-          {/* Summary badges */}
-          <View style={styles.summaryRow}>
-            <Text style={styles.badge}>🎯 Muscle Gain</Text>
-            <Text style={styles.badge}>💪 Beginner</Text>
+        <View style={styles.previewContainer}>
+          <View style={styles.planPreview}>
+            {/* Summary badges */}
+            <View style={styles.summaryRow}>
+              <Text style={styles.badge}>Muscle Gain</Text>
+              <Text style={styles.badge}>Beginner</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.badge}>4 Days/Week</Text>
+              <Text style={styles.badge}>60 Minutes</Text>
+            </View>
+
+            {/* Workout preview */}
+            <Text style={styles.sectionTitle}>Your Training Split:</Text>
+            <Text style={styles.planText}>
+              <Text style={styles.dayTitle}>Monday - Upper Push{'\n'}</Text>
+              • Bench Press: 4×8-10{'\n'}
+              • Overhead Press: 3×10-12{'\n'}
+              • Incline Dumbbell Press: 3×10-12{'\n'}
+              • Tricep Dips: 3×12-15{'\n'}
+
+              <Text style={styles.dayTitle}>Tuesday - Rest</Text>
+              {'\n'}
+              <Text style={styles.dayTitle}>Wednesday - Lower Body{'\n'}</Text>
+              • Squats: 4×8-10{'\n'}
+              • Romanian Deadlifts: 3×10-12{'\n'}
+              • Leg Press: 3×12-15{'\n'}
+              • Leg Curls: 3×12-15{'\n'}
+              {'\n'}
+
+            </Text>
+            {/* Fade gradient */}
+            <LinearGradient
+              colors={['transparent', 'rgba(255,255,255,0.9)', 'white']}
+              locations={[0, 0.5, 1]}
+              style={styles.fadeOverlay1}
+            />
+            {/* Nutrition preview */}
+            <Text style={styles.sectionTitle}>Your Nutrition Plan:</Text>
+            <Text style={styles.planText}>
+              Daily Calories: 2,800{'\n'}
+              Protein: 160g {'\n'}
+              Carbs: 350g{'\n'}
+              Fats: 80g{'\n'}
+              {'\n'}
+              Sample Meal Plan:{'\n'}
+              Breakfast: Oatmeal with protein...
+            </Text>
           </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.badge}>📅 4 Days/Week</Text>
-            <Text style={styles.badge}>⏱️ 60 Minutes</Text>
-          </View>
 
-          {/* Workout preview */}
-          <Text style={styles.sectionTitle}>Your Training Split:</Text>
-          <Text style={styles.planText}>
-            <Text style={styles.dayTitle}>Monday - Upper Push</Text>
-            • Bench Press: 4×8-10{'\n'}
-            • Overhead Press: 3×10-12
-            • Incline Dumbbell Press: 3×10-12
-            • Tricep Dips: 3×12-15
-            
-            <Text style={styles.dayTitle}>Tuesday - Rest</Text>
-            {'\n'}
-            <Text style={styles.dayTitle}>Wednesday - Lower Body{'\n'}</Text>
-            • Squats: 4×8-10{'\n'}
-            • Romanian Deadlifts: 3×10-12{'\n'}
-            • Leg Press: 3×12-15{'\n'}
-            • Leg Curls: 3×12-15{'\n'}
-            {'\n'}
-            <Text style={styles.dayTitle}>Thursday - Rest{'\n'}</Text>
-            {'\n'}
-            <Text style={styles.dayTitle}>Friday - Upper Pull{'\n'}</Text>
-            • Pull-ups: 4×6-8{'\n'}
-            • Barbell Rows: 3×10-12{'\n'}
-            • Lat Pulldowns: 3×12-15
-          </Text>
-
-          {/* Nutrition preview */}
-          <Text style={styles.sectionTitle}>Your Nutrition Plan:</Text>
-          <Text style={styles.planText}>
-            Daily Calories: 2,800{'\n'}
-            Protein: 180g (2g/kg){'\n'}
-            Carbs: 350g{'\n'}
-            Fats: 80g{'\n'}
-            {'\n'}
-            Sample Meal Plan:{'\n'}
-            Breakfast: Oatmeal with protein...
-          </Text>
+          {/* Fade gradient */}
+          <LinearGradient
+            colors={['transparent', 'rgba(255,255,255,0.9)', 'white']}
+            locations={[0, 0.5, 1]}
+            style={styles.fadeOverlay2}
+          />
         </View>
-
-        {/* Fade gradient */}
-        <LinearGradient
-          colors={['transparent', 'rgba(255,255,255,0.9)', 'white']}
-          locations={[0, 0.5, 1]}
-          style={styles.fadeOverlay}
-        />
-      </View>
       </View>
 
-      <View style = {styles.bottomBar}>
-        <Text style = {[styles.appFont, {fontSize: 20}]}></Text>
-            <TouchableOpacity style = {styles.button} onPress={() => router.push('/(tabs)/sign-up')}>
-              <View style = {styles.continue}>
-                <Text style = {[styles.font , {color: Colors.white}, {fontSize: 15}, {marginTop: 2}]}>Create an account to see!</Text>
-              </View>
-            </TouchableOpacity>
+      <View style={styles.bottomBar}>
+        <Text style={[styles.appFont, { fontSize: 20 }]}></Text>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/sign-up')}>
+          <View style={styles.continue}>
+            <Text style={[styles.font, { color: Colors.white }, { fontSize: 15 }, { marginTop: 2 }]}>Create an account to see!</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -119,48 +120,100 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 15,
-    backgroundColor: 'red',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-    backButton: {
+  backButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 5,
   },
-    appFont: {
+  appFont: {
     color: Colors.primary,
     fontFamily: "Poppins_700Bold",
   },
-  middleBar:{
-    backgroundColor: 'blue',
+  middleBar: {
     flex: 1,
     paddingHorizontal: 30,
     paddingTop: 50,
   },
-
-  bottomBar:{
-    backgroundColor: 'pink',
-    flex: 1,
+  previewContainer: {
     alignItems: 'center',
-    paddingTop: 175,
+    flex: 1,
+    paddingTop: 15,
+  },
+  planPreview: {
+    borderWidth: 2,
+    padding: 25,
+    borderRadius: 20,
+    backgroundColor: Colors.gray,
+
+  },
+  summaryRow: {
+
+    marginBottom: 10,
+    flexDirection: 'row',
+    gap: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.black,
+  },
+
+  badge: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 15,
+  },
+  sectionTitle: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 16,
+    marginTop: 10,
+    color: Colors.primary,
+  },
+  dayTitle: {
+    fontFamily: "Poppins_700Bold",
+  },
+
+  bottomBar: {
+    alignItems: 'center',
+    height: '20%',
+    paddingTop: 30,
     gap: 10,
   },
-    continue:{
+  continue: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
 
   },
-    font:{
-    fontFamily: "Poppins_700Bold",
-    fontSize: 12
+  planText: {
+    fontSize: 13,
+    lineHeight: 24,
+    color: '#666',
   },
-    button: {
+  font: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 10,
+  },
+  fadeOverlay1: {
+    position: 'absolute',
+    bottom: 250,
+    left: 0,
+    right: 0,
+    height: 400,
+    pointerEvents: 'none',
+  },
+    fadeOverlay2: {
+    position: 'absolute',
+    bottom: -50,
+    left: 0,
+    right: 0,
+    height: 300,
+    pointerEvents: 'none',
+    },
+  button: {
     backgroundColor: Colors.primary,
     borderColor: Colors.primary,
     borderWidth: 4,

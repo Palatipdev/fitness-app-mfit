@@ -14,6 +14,7 @@ a fitness app, that includes nutritional plan, calories tracking, personalized w
 - [x] Welcome screen
 - [x] Sign In screen
 - [x] Onboarding survey
+- [x] Result preview screen
 - [ ] Sign Up screen
 - [ ] Firebase authentication
 
@@ -79,6 +80,12 @@ This is my first production mobile app, Building in public to:
 
 - **Day 1 (Nov 23):** Welcome, Sign In, and Onboarding screens completed. Navigation working.
 - **Day 2 (Nov 24):** Onboarding screens polished, Result preview screen created (WIP), project structure setup
+- **Day 3 (Nov 24):** 
+- Completed results preview screen with LinearGradient fade effect. 
+- Created reusable FloatingLabelInput component for label transitions
+- Implemented floating labels on Sign In and Sign Up screens,
+- Added navigationglow: Sign In -> Onboarding and Sign up -> Sign In
+
 
 ## 🔗 Links
 
