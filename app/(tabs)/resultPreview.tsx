@@ -41,10 +41,7 @@ export default function resultPreview() {
         <View style={styles.previewContainer}>
           <View style={styles.planPreview}>
             {/* Summary badges */}
-            <View style={styles.summaryRow}>
-              <Text style={styles.badge}>Muscle Gain</Text>
-              <Text style={styles.badge}>Beginner</Text>
-            </View>
+
             <View style={styles.summaryRow}>
               <Text style={styles.badge}>4 Days/Week</Text>
               <Text style={styles.badge}>60 Minutes</Text>
@@ -60,12 +57,6 @@ export default function resultPreview() {
               • Tricep Dips: 3×12-15{'\n'}
 
               <Text style={styles.dayTitle}>Tuesday - Rest</Text>
-              {'\n'}
-              <Text style={styles.dayTitle}>Wednesday - Lower Body{'\n'}</Text>
-              • Squats: 4×8-10{'\n'}
-              • Romanian Deadlifts: 3×10-12{'\n'}
-              • Leg Press: 3×12-15{'\n'}
-              • Leg Curls: 3×12-15{'\n'}
               {'\n'}
 
             </Text>
@@ -139,7 +130,8 @@ const styles = StyleSheet.create({
   middleBar: {
     flex: 1,
     paddingHorizontal: 30,
-    paddingTop: 50,
+    paddingTop: 15,
+    
   },
   previewContainer: {
     alignItems: 'center',
@@ -202,15 +194,15 @@ const styles = StyleSheet.create({
     bottom: 250,
     left: 0,
     right: 0,
-    height: 400,
+    height: 300,
     pointerEvents: 'none',
   },
     fadeOverlay2: {
     position: 'absolute',
-    bottom: -50,
+    bottom: -70,
     left: 0,
     right: 0,
-    height: 300,
+    height: 200,
     pointerEvents: 'none',
     },
   button: {

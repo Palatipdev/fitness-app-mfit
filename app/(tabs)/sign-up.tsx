@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         paddingHorizontal: 20,
         paddingTop: 20,
-        paddingBottom: 15,
+        paddingBottom: 10,
     },
     backButton: {
         flexDirection: "row",
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins_700Bold",
     },
     header: {
-        fontSize: 30,
+        fontSize: 24,
         color: Colors.primary,
         fontFamily: "Poppins_700Bold",
         paddingHorizontal: 30,
@@ -136,13 +136,13 @@ const styles = StyleSheet.create({
     inputBox: {
         backgroundColor: Colors.gray,
         borderColor: Colors.gray,
-        borderWidth: 3,
-        padding: 15,
+        borderWidth: 10,
+        padding: 20,
         paddingHorizontal: 10,
         borderRadius: 30,
         fontFamily: "Poppins_700Bold",
         textAlign: 'left',
-        width: 250,
+        width: 300,
     },
 
     continueButton: {
@@ -153,21 +153,24 @@ const styles = StyleSheet.create({
         paddingHorizontal: 80,
         borderRadius: 30,
         marginTop: 20,
+
     },
     bottomBar: {
         flex: 1,
         alignItems: "center",
-        marginTop: 50,
+        marginTop: 300,
     },
 
     otherSignInOptions: {
         flexDirection: "row",
         justifyContent: "space-between",
         width: "60%",
-        marginTop: 20,
+        marginTop: 10,
     },
     backToSignIn: {
         flexDirection: 'row',
+        marginTop: 20,
+        gap: 5,
     },
 
 

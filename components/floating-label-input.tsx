@@ -1,7 +1,6 @@
 import { Colors } from '@/constants/color';
 import React, { useState } from 'react';
 import { Animated, StyleSheet, TextInput, View } from 'react-native';
-import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 
 
 interface FloatingLabelInputProps {
@@ -33,16 +32,18 @@ export default function FloatingLabelInput({
     }).start();
   }, [isFocused, value]);
 
-  const labelStyle = {
-    position: 'absolute' as const,
-    left: 20,
-    top: isFocused || value ? -10 : 18,  
-    fontSize: isFocused || value ? 12 : 16,  
-    color: isFocused || value ? Colors.primary : '#999',  
-    backgroundColor: isFocused || value ? Colors.white : Colors.gray, 
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-  };
+const labelStyle = {
+  position: 'absolute' as const,
+  left: 20,
+  top: isFocused || value ? -12 : 15,  
+  fontSize: isFocused || value ? 12 : 16,  
+  color: isFocused || value ? Colors.primary : '#999',  
+  backgroundColor: (isFocused || value) ? Colors.white : Colors.gray, 
+  paddingHorizontal: 5,
+  paddingVertical: 2,
+  zIndex: 1,
+  fontFamily: 'Poppins_700Bold', 
+};
 
   return (
     <View style={styles.container}>
@@ -70,9 +71,11 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
     position: 'relative',
+    width: '70%',
   },
   input: {
     height: 56,
+    width: '100%',
     borderWidth: 2,
     borderColor: '#E0E0E0',
     borderRadius: 30,

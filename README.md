@@ -80,11 +80,14 @@ This is my first production mobile app, Building in public to:
 
 - **Day 1 (Nov 23):** Welcome, Sign In, and Onboarding screens completed. Navigation working.
 - **Day 2 (Nov 24):** Onboarding screens polished, Result preview screen created (WIP), project structure setup
-- **Day 3 (Nov 24):** 
+- **Day 3 (Nov 25):** 
 - Completed results preview screen with LinearGradient fade effect. 
 - Created reusable FloatingLabelInput component for label transitions
 - Implemented floating labels on Sign In and Sign Up screens,
 - Added navigationglow: Sign In -> Onboarding and Sign up -> Sign In
+- **Day 4 (Nov 26):**
+- Fixed FloatingLabelInput rendering on mobile using zIndex
+- Fixed spacing and polishing of all screens on mobile
 
 
 ## 🔗 Links

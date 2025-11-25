@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   bottomBar: {
     flex: 1,
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 70,
   },
 
   continueButton: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 100,
     borderRadius: 30,
-    marginTop: 20,
+    marginTop: 5,
   },
   otherSignInOptions: {
     flexDirection: "row",
@@ -166,5 +166,7 @@ const styles = StyleSheet.create({
   },
   getStarted: {
     flexDirection: 'row',
+    marginTop: 20,
+    gap: 5,
   },
 });
