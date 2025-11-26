@@ -9,13 +9,6 @@
 - [x] Add GitHub repo description and topics
 - [x] Commit all changes
 
-
-## Immediate Next Steps
-- [ ] Import Poppins_400Regular into FloatingLabelInput
-- [ ] Polish Sign Up screen spacing/alignment
-- [ ] Test complete flow: Welcome → Sign In → Onboarding → Results → Sign Up
-- [ ] Decide: Start Week 2 (Firebase) or polish existing screens?
-
 # Current Sprint Tasks
 
 ## Week 1 (Nov 18-24) - Auth & Onboarding
@@ -23,7 +16,7 @@
 - [x] Sign In screen  
 - [x] Onboarding survey (in progress)
 - [x] Complete onboarding (all 5 questions)
-- [ ] Sign Up screen
+- [x] Sign Up screen
 - [x] Results preview screen
 
 ## Week 2 (Nov 25-Dec 1) - User Profiles & Firebase
@@ -43,7 +36,10 @@
 ## PLANS 
 ## Prompting
  - [ ]  Using user's goal to give them a workout template preview
- - [ ] Adding age picker wheel input field
 
-
-
+## Immediate Next Steps (Today/Tomorrow)
+- [X] Finish onboarding survey (5 questions total)
+- [ ] Add "Next" button that only shows when answer selected
+- [X] Navigate between questions
+- [ ] Store all answers in state
+- [X] Create results preview screen
