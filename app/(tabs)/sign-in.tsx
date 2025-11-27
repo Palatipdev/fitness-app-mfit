@@ -5,12 +5,18 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from "react-native";
+
+//auth
+import { auth } from '@/firebase/config';
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 import { Colors } from "../../constants/color";
 
 export default function SignIn() {
@@ -19,8 +25,53 @@ export default function SignIn() {
     Poppins_700Bold,
   });
 
-  const [userName, setUserName] = useState("");
   const [passWord, setPassWord] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+
+
+
+  const handleSignIn = async() => {
+    if (!email) {
+      Alert.alert("Please enter your email");
+      return;
+    }
+    if (!passWord) {
+      Alert.alert("Please enter your password");
+      return;
+    }
+        if (!email || !passWord ) {
+          Alert.alert("Please enter all the field.");
+          return;
+        
+    }
+  
+  setLoading(true);
+  try{  
+    const userCredential = await signInWithEmailAndPassword(auth, email,passWord);
+    console.log ("Successfully signed in!" , userCredential.user.uid)
+    Alert.alert("Success!", "Signed in successfully");
+
+    // Navigate to home page when created
+  }
+
+catch (error: any) {
+      console.error("Sign in error:", error);
+      
+      if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
+        Alert.alert("Error", "Invalid email or password");
+      } else if (error.code === "auth/user-not-found") {
+        Alert.alert("Error", "No account found with this email");
+      } else {
+        Alert.alert("Error", "Sign in failed: " + error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
+
   if (!fontLoaded) {
     return (
       <View style={styles.loadingContainer}>
@@ -42,8 +93,8 @@ export default function SignIn() {
       <View style={styles.middleBar}>
         <FloatingLabelInput
           label='Email'
-          value={userName}
-          onChangeText={setUserName}
+          value={email}
+          onChangeText={setEmail}
           keyboardType="default"
         />
 
@@ -54,11 +105,13 @@ export default function SignIn() {
           value={passWord}
           secureTextEntry={true}
         />
-        <TouchableOpacity style={styles.continueButton}>
+        <TouchableOpacity style={styles.continueButton}
+        onPress = {handleSignIn}
+        disabled = {loading}>
           <Text
             style={[styles.appFont, { fontSize: 20 }, { color: Colors.white }]}
           >
-            Continue
+            {loading ? 'Signing in...' : 'Continue'}
           </Text>
         </TouchableOpacity>
       </View>

@@ -13,14 +13,20 @@ Welcome Screen
 - [x] Better spacing between elements
 - [ ] Error shake animation
 - [ ] Loading spinner on submit
+- [ ] Some animation or text after successfully signed in
 
 ## Onboarding
-- [ ] Confetti when complete
 - [ ] Smooth slide transitions
 - [ ] Picker wheel for height/weight
 - [ ] Choosing between lbs and kg for Weight
 - [ ] Choosing between cm and inchs for height
-- [ ] fix text input format
+- [X] fix text input format
+
+## Result Preview
+- [ ] Confetti when opened
+- [ ] sliding transtion and bouncing effect on the header
+
+
 
 ## Code Cleanup
 - [ ] Create `usePoppinsFont` hook
