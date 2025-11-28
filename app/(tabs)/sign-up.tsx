@@ -1,7 +1,7 @@
 import FloatingLabelInput from "@/components/floating-label-input";
-import { auth, db } from '@/firebase/config';
+import { auth, db } from "@/firebase/config";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Colors } from "../../constants/color";
@@ -24,6 +24,7 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const onboardingData = useLocalSearchParams();
 
   // handleSignUp function
   const handleSignUp = async () => {
@@ -62,11 +63,21 @@ export default function SignUp() {
       );
       const userId = userCredential.user.uid;
 
-      // store username in firestore
+      // store username in firestore , add onboarding data
       await setDoc(doc(db, "users", userId), {
         username: userName,
         email: email,
         createdAt: new Date().toISOString(),
+        onboarding: {
+          goal: onboardingData.goal,
+          height: parseInt(onboardingData.height as string),
+          weight: parseInt(onboardingData.weight as string),
+          gender: onboardingData.gender,
+          age: parseInt(onboardingData.age as string),
+          workoutDays: onboardingData.workoutDays,
+          sessionLength: onboardingData.sessionLength,
+          completedAt: new Date().toISOString()
+        },
       });
 
       console.log("User created with username:", userName);
@@ -135,8 +146,7 @@ export default function SignUp() {
           <Text
             style={[styles.appFont, { fontSize: 16 }, { color: Colors.white }]}
           >
-            {loading ? 'Creating Account...': 'Sign up'}
-
+            {loading ? "Creating Account..." : "Sign up"}
           </Text>
         </TouchableOpacity>
       </View>

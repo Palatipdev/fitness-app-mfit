@@ -4,6 +4,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from "expo-router";
 import { Colors } from "../../constants/color";
 
+// setting param
+import { useLocalSearchParams } from "expo-router";
+
 import {
   ActivityIndicator,
   Pressable,
@@ -14,6 +17,7 @@ import {
 } from "react-native";
 
 export default function ResultPreview() {
+  const params = useLocalSearchParams();
   const router = useRouter()
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
@@ -90,7 +94,7 @@ export default function ResultPreview() {
 
       <View style={styles.bottomBar}>
         <Text style={[styles.appFont, { fontSize: 20 }]}></Text>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/sign-up')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/sign-up', params: params})}>
           <View style={styles.continue}>
             <Text style={[styles.font, { color: Colors.white }, { fontSize: 15 }, { marginTop: 2 }]}>Create an account to see!</Text>
           </View>
