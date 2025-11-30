@@ -83,7 +83,7 @@ export default function SignUp() {
       console.log("User created with username:", userName);
 
       // Success sign up.
-      // Navigate to home page ( to be created )
+      router.push('/(tabs)/homepage')
     } catch (error: any) {
       console.error("Sign up error:", error);
 
