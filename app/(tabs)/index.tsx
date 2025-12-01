@@ -7,7 +7,10 @@ import {
   View,
 } from "react-native";
 
+import { auth } from "@/firebase/config";
 import { useRouter } from 'expo-router';
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
 import { Colors } from "../../constants/color";
 
 export default function HomeScreen() {
@@ -15,7 +18,14 @@ export default function HomeScreen() {
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
-
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user){
+        router.replace('/homepage')
+      }
+    });
+    return unsubscribe;
+  }, []);
   if (!fontLoaded) {
     return (
       <View style={styles.loadingContainer}>

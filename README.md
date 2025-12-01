@@ -90,13 +90,14 @@ This is my first production mobile app, Building in public to:
 - Fixed spacing and polishing of all screens on mobile
 - **Day 6 (Nov 27):**
 - Firebase authenticator implementation on Sign-in (using email and password validation) and Sign-up (username stored in firebase) screen.
-- There was a major bug that I encountered. "Component auth has not been registered yet". Even with simple web SDK config, so I tried using lazy loading method, which broke the export. The fix was to download a more stable & older version of firebase (10.13.2) and used simple web SDK config, approx time to fix 3 hours.
-- **Day 7 (Nov 30):**
+- There was a major bug that I encountered. "Component auth has not been registered yet". Even with simple web SDK config, so I tried using lazy loading method, which broke the export. The fix was to download a more stable & older version of firebase (10.13.2) and used simple web SDK config, approx time to fix  3 hours.
+- **Day 8 (Nov 30):**
   - Created homepage with scrollable content and fixed navbar
   - Added calorie tracker section with progress bar placeholder
   - Added workout routine template display (Monday-Sunday split)
   - Implemented Instagram-style fixed bottom navigation
-
+- **Day 9 (Dec 1):**
+  - Added protected route to prevent unauthorised access
 
 
 

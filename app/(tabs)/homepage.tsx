@@ -1,6 +1,9 @@
 import { Colors } from "@/constants/color";
+import { auth } from "@/firebase/config";
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import { useRouter } from "expo-router";
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function Homepage() {
@@ -8,6 +11,15 @@ export default function Homepage() {
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user){
+        router.replace('/')
+      }
+    });
+    return unsubscribe;
+  }, []);
+
 
   if (!fontLoaded) {
     return (
@@ -155,6 +167,11 @@ const styles = StyleSheet.create({
   workoutArea: {
     paddingVertical: 10,
     paddingHorizontal: 10,
+  },
+  workoutHeader:{
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.black,
   },
 
   navBar: {

@@ -53,7 +53,7 @@ export default function SignIn() {
     Alert.alert("Success!", "Signed in successfully");
 
     // Navigate to home page when created
-    router.push('/(tabs)/homepage')
+    router.replace('/homepage')
   }
 
 catch (error: any) {
