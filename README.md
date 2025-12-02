@@ -15,8 +15,8 @@ a fitness app, that includes nutritional plan, calories tracking, personalized w
 - [x] Sign In screen
 - [x] Onboarding survey
 - [x] Result preview screen
-- [ ] Sign Up screen
-- [ ] Firebase authentication
+- [x] Sign Up screen
+- [x] Firebase authentication
 
 ### Phase 2: Core Features (Week 3-10)
 - [ ] Personalized workout generation
@@ -98,8 +98,12 @@ This is my first production mobile app, Building in public to:
   - Implemented Instagram-style fixed bottom navigation
 - **Day 9 (Dec 1):**
   - Added protected route to prevent unauthorised access
-
-
+- **Day 10 (Dec 2):**
+  - Added exercise database of 89 exercises each exercise includes:
+    - Primary, Secondary, and Tertiary Muscle Groups.
+    - Type of equipment (Machine,Barbell,Dumbbell,Bodyweight)
+    - Strength or Hypertrophy focused
+    - Compound or Isolation focused
 
 ## 🔗 Links
 

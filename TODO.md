@@ -4,6 +4,7 @@
 - [] macros counter and progress bar skeleton (homepage)
 - [] add some temporary style to workout areas
 - [] add icon in nav bar
+
 ## Week 1 (Nov 18-24) - Auth & Onboarding
 - [x] Welcome screen
 - [x] Sign In screen  
@@ -20,7 +21,7 @@
 - [ ] Protected routes (only logged-in users access app)
 - [x] Create a homepage to redirect user to, after the signup/signin.
 ## Week 3 (Dec 2-8) - Workout Generation
-- [ ] Workout data structure design
+- [x] Workout data structure design
 - [ ] Basic workout generator algorithm
 - [ ] Workout display screen
 - [ ] Exercise detail view
