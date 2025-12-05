@@ -1,0 +1,731 @@
+[
+ {
+   "name": "Bench Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Inclined Bench Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "Tricep",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Declined Bench Press",
+   "primaryMuscle": "Chest-Bottom",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Machine Chest Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Inclined Machine Chest Press (Plate loaded)",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "Tricep",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Declined Machine Chest Press",
+   "primaryMuscle": "Chest-Bottom",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Declined Machine Chest Press (Plate loaded)",
+   "primaryMuscle": "Chest-Bottom",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Inclined Machine Chest Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "Tricep",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Machine Chest Fly (Pec Deck)",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "Tricep",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Inclined Dumbbell Chest Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Dumbbell Chest press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Inclined Dumbbell Fly",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "Tricep",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Dumbbell Chest Fly",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "Tricep",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Smith Machine Chest Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Barbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Cable High-to-Low Fly",
+   "primaryMuscle": "Chest-Bottom",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "Tricep",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Cable Low-to-High Fly",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Cable Fly",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Push-ups",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Bodyweight",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Wide-grip Push-ups",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Bodyweight",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Dips",
+   "primaryMuscle": "Chest/Tricep",
+   "secondaryMuscle": "Shoulder",
+   "tertiaryMuscle": "",
+   "type": "Gym",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Landmine Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Resistance Band Flyes/Press",
+   "primaryMuscle": "Chest",
+   "secondaryMuscle": "Tricep",
+   "tertiaryMuscle": "Shoulder",
+   "type": "Band",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Deadlifts",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Hamstring",
+   "tertiaryMuscle": "Glutes",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Lat Pulldown",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Seated Cable Row",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Machine Row (Lat)",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Machine Row (Upper Back)",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Lat Pullover",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Triceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Dumbbell Lat Pullover",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Chest",
+   "tertiaryMuscle": "Triceps",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Barbell Row",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "Hamstring/Glutes",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Machine Bendover Row",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Pull-Ups",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Gym",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Tbar Row",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Single-Arm Dumbbell Row",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Hyperextension",
+   "primaryMuscle": "Back/Lower Back",
+   "secondaryMuscle": "Glutes",
+   "tertiaryMuscle": "Hamstring",
+   "type": "Gym",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Assisted Pull-Ups",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Smith Machine Barbell Row",
+   "primaryMuscle": "Back",
+   "secondaryMuscle": "Biceps",
+   "tertiaryMuscle": "Hamstring/Glutes",
+   "type": "Machine",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Dumbbell Shoulder Press",
+   "primaryMuscle": "Shoulder",
+   "secondaryMuscle": "Triceps",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Machine Shoulder Press",
+   "primaryMuscle": "Shoulder",
+   "secondaryMuscle": "Triceps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Standing Overhead Press",
+   "primaryMuscle": "Shoulder",
+   "secondaryMuscle": "Triceps",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Smith Machine Shoulder Press",
+   "primaryMuscle": "Shoulder",
+   "secondaryMuscle": "Triceps",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Cable Front Raises ",
+   "primaryMuscle": "Shoulder-Front",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Dumbbell Front Raises",
+   "primaryMuscle": "Shoulder-Front",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Pike Pushup",
+   "primaryMuscle": "Shoulder",
+   "secondaryMuscle": "Triceps",
+   "tertiaryMuscle": "Chest",
+   "type": "Bodyweight",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Upright Row",
+   "primaryMuscle": "Shoulder",
+   "secondaryMuscle": "Back",
+   "tertiaryMuscle": "Biceps",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Cable Lateral Raises ( Each side)",
+   "primaryMuscle": "Shoulder-Lateral",
+   "secondaryMuscle": "Traps",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Dumbbell Lateral Raises ",
+   "primaryMuscle": "Shoulder-Lateral",
+   "secondaryMuscle": "Traps",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Rear Delt Dumbbell Fly",
+   "primaryMuscle": "Shoulder-Rear",
+   "secondaryMuscle": "Back",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Reverse Pec Deck (Rear Delt)",
+   "primaryMuscle": "Shoulder-Rear",
+   "secondaryMuscle": "Back",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Face pulls",
+   "primaryMuscle": "Shoulder-Rear",
+   "secondaryMuscle": "Back",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Barbell Curl",
+   "primaryMuscle": "Biceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Dumbbell Curl",
+   "primaryMuscle": "Biceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Hammer Curl",
+   "primaryMuscle": "Biceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Preacher Curl",
+   "primaryMuscle": "Biceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Cable Curl",
+   "primaryMuscle": "Biceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Machine Dumbbell Curl",
+   "primaryMuscle": "Biceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Machine Hammer Curl",
+   "primaryMuscle": "Biceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Tricep Pushdown Cable",
+   "primaryMuscle": "Triceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Overhead Tricep Extension",
+   "primaryMuscle": "Triceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Overhead Tricep Extension (Cable)",
+   "primaryMuscle": "Triceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Skull Crushers",
+   "primaryMuscle": "Triceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Closed Grip Bench",
+   "primaryMuscle": "Triceps",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Cable Crunch",
+   "primaryMuscle": "Abdominal",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Hanging Leg Raises",
+   "primaryMuscle": "Abdominal",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Gym",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Barbell Squats",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Hack Squats",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Leg Press ",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Leg Extension (Quad)",
+   "primaryMuscle": "Quads",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Hamstring Curls",
+   "primaryMuscle": "Hamstrings",
+   "secondaryMuscle": "Glutes",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Dumbbell Goblet Squats",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Romanian Deadlifts",
+   "primaryMuscle": "Hamstrings",
+   "secondaryMuscle": "Glutes",
+   "tertiaryMuscle": "Back",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Bodyweight Squats",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Bodyweight",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Jump Squats",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Bodyweight",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Dumbbell Bulgarian Split Squats",
+   "primaryMuscle": "Quads",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Dumbbell Romanian Deadlifts",
+   "primaryMuscle": "Hamstrings",
+   "secondaryMuscle": "Glutes",
+   "tertiaryMuscle": "Back",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Calf Raises",
+   "primaryMuscle": "Calfs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Hip Adductor (Inner)",
+   "primaryMuscle": "Inner Thigh",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Hip Abductor (Outer)",
+   "primaryMuscle": "Outer Thigh",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Barbell Lunges",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Dumbbell Lunges",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Lunges",
+   "primaryMuscle": "Legs",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Bodyweight",
+   "strengthHypertrophy": "Strength",
+   "compoundIsolation": "Compound"
+ }
+]

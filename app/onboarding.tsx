@@ -13,8 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Colors } from "../../constants/color";
-
+import { Colors } from "../constants/color";
 export default function OnBoarding() {
   const router = useRouter();
   const [fontLoaded] = useFonts({

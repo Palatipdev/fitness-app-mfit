@@ -11,8 +11,7 @@ import { auth } from "@/firebase/config";
 import { useRouter } from 'expo-router';
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
-import { Colors } from "../../constants/color";
-
+import { Colors } from "../constants/color";
 export default function HomeScreen() {
   const router = useRouter()
   const [fontLoaded] = useFonts({

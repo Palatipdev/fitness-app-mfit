@@ -2,11 +2,9 @@ import FloatingLabelInput from "@/components/floating-label-input";
 import { auth, db } from "@/firebase/config";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
-import { Colors } from "../../constants/color";
-
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   Alert,
   Pressable,
@@ -15,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Colors } from "../constants/color";
 
 export default function SignUp() {
   const router = useRouter();

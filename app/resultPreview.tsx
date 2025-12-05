@@ -2,8 +2,7 @@ import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from "expo-router";
-import { Colors } from "../../constants/color";
-
+import { Colors } from "../constants/color";
 // setting param
 import { useLocalSearchParams } from "expo-router";
 

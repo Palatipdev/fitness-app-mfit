@@ -17,7 +17,7 @@ import {
 import { auth } from '@/firebase/config';
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-import { Colors } from "../../constants/color";
+import { Colors } from "../constants/color";
 
 export default function SignIn() {
   const router = useRouter();
