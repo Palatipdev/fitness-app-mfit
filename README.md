@@ -105,6 +105,15 @@ This is my first production mobile app, Building in public to:
     - Strength or Hypertrophy focused
     - Compound or Isolation focused
 
+- **Day 11 (Dec 3):**
+- Added pseudocode for workout generation algorithm:
+  - 2 days per week:
+    - Less than 30 mins
+  
+- **Day 12 (Dec 5)**
+- Finished all version of 2 days per week psuedocode
+- Made Day 11's pseudocode better and clearer
+
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)
