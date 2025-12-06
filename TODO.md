@@ -18,11 +18,11 @@
 - [x] Email/password authentication
 - [x] User profile creation
 - [x] Store onboarding data in Firestore
-- [ ] Protected routes (only logged-in users access app)
+- [x] Protected routes (only logged-in users access app)
 - [x] Create a homepage to redirect user to, after the signup/signin.
 ## Week 3 (Dec 2-8) - Workout Generation
 - [x] Workout data structure design
-- [ ] Basic workout generator algorithm
+- [x] Basic workout generator algorithm
 - [ ] Workout display screen
 - [ ] Exercise detail view
 

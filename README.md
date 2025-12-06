@@ -113,7 +113,26 @@ This is my first production mobile app, Building in public to:
 - **Day 12 (Dec 5)**
 - Finished all version of 2 days per week psuedocode
 - Made Day 11's pseudocode better and clearer
+- Converted and stored 89 exercises from google sheets to firebase database
 
+- **Day 13 (Dec 6) Session 1**
+- Workout Generator for 2Days FB done
+  - Fetch exercise from Firebase
+  - Generate Day A and Day B workouts for 2 Days FB routine
+  - Avoid equipment duplicates within the days
+  - Avoid exercise duplictes across days
+  - Created workout helper functions (checkTypeDupe1/2/3, checkRepeatedExercise)
+  
+- **Day 13 (Dec 6) Session 2**
+- Built template-driven workout generator architecture
+- Built UPPER_LOWER_TEMPLATES for all 3 durations (30/45/60+ min)
+- Implemented core generator infrastructure:
+  - fetchExercise() - Firebase integration
+  - getOnboardingData() - user preference retrieval
+  - generatorDay() - single day workout generation with week-dependent logic
+  - generateWorkout() - main function for full workout plans
+- Upper/Lower split working for all durations (30/45/60+ min)
+  
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)

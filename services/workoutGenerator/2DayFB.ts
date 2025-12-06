@@ -1,8 +1,4 @@
-// TODO: Import Firestore functions (collection, getDocs)
-import { collection, getDocs } from "firebase/firestore";
-// TODO: Import db from firebase config
-import { db } from "../../firebase/config";
-// TODO: Write async function to fetch exercises from Firebase
+import { fetchExercise } from "./generator";
 
 import {
   checkRepeatedExercise,
@@ -10,20 +6,7 @@ import {
   checkTypeDupe2,
   checkTypeDupe3,
 } from "@/utils/workoutHelper";
-async function fetchExercise() {
-  console.log("Starting fetching process");
 
-  const exerciseRef = collection(db, "exercises");
-  const allExercises = await getDocs(exerciseRef);
-  // gives a snapshot like a box
-  // an object that CONTAINS the exercises
-
-  //Since its an object this is the syntax
-  //take each exercises document, map the data into the array exercises
-  const exercises = allExercises.docs.map((exercise) => exercise.data());
-  //return the exercises array
-  return exercises;
-}
 
 // TODO: Write function to generate 30-min workout
 export async function generate30() {
@@ -110,7 +93,6 @@ export async function generate30() {
   };
 }
 
-// TODO: Write function to generate 45-60 min workout
 export async function generate45(weekType: "A" | "B") {
   const exercises = await fetchExercise();
   let usedType = [];
@@ -223,7 +205,6 @@ export async function generate45(weekType: "A" | "B") {
   };
 }
 
-// TODO: Write function to generate 60+ min workout
 export async function generate60(weekType: "A" | "B") {
   const exercises = await fetchExercise();
   let legIsolationA = weekType === "A" ? "Quads" : "Hamstrings";
@@ -354,4 +335,3 @@ export async function generate60(weekType: "A" | "B") {
     };
   
 }
-console.log(generate60('A'))

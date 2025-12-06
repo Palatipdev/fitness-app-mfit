@@ -35,6 +35,7 @@ Welcome Screen
 - [ ] Create constants for common spacing values
 - [ ] Move inline styles to StyleSheet
 - [ ] Fix import paths (../../constants to @/constants)
+- [ ] Replace 2DayFB with a proper template and create a generator function for all variants
 
 ## General
 - [ ] Consistent spacing across all screens

@@ -14,3 +14,16 @@
 - Use GPT-4 Vision API
 - Train on gym equipment images
 - Confidence threshold: >80% = auto-fill
+
+
+## Regenerate Exercise (Priority:High)
+**Dependencies:** Core workout logging must work first
+
+### Feature Description:
+- A pressable button next to the exercise
+- Let user regenerate specific exercise
+- Keeping the same muscle group/CI
+- Can have different type
+
+### Technical approach
+- A helper function to regenerate a exercise
