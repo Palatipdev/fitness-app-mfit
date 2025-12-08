@@ -132,6 +132,11 @@ This is my first production mobile app, Building in public to:
   - generatorDay() - single day workout generation with week-dependent logic
   - generateWorkout() - main function for full workout plans
 - Upper/Lower split working for all durations (30/45/60+ min)
+
+- **Day 14 (Dec 8)**
+- Built workout template for PPL (30/45/60 mins)
+- Implemented generator for PPL with all time variants
+- All generator are finished and working
   
 ## 🔗 Links
 

@@ -43,3 +43,7 @@ Welcome Screen
 - [ ] Accessibility improvements
 - [ ] Loading states for all buttons
 - [ ] Error handling UI
+
+## Generator / Exercise Database
+- [ ] Adding differentiator variable for upper back and lats
+- [ ] Add more glutes exercises
