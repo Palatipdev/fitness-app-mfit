@@ -137,6 +137,9 @@ This is my first production mobile app, Building in public to:
 - Built workout template for PPL (30/45/60 mins)
 - Implemented generator for PPL with all time variants
 - All generator are finished and working
+
+- **Day 15 (Dec 9)**
+- Created workoutServices.ts for managing generated workout logic, seperating UI and Service 
   
 ## 🔗 Links
 

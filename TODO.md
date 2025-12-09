@@ -30,4 +30,4 @@
 ## PLANS 
 ## Prompting
  - [ ]  Using user's goal to give them a workout template preview
-
+ - [ ] Authenticate their email before allowing them to create account

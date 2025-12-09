@@ -17,6 +17,7 @@ import {
 import { auth } from '@/firebase/config';
 import { signInWithEmailAndPassword } from "firebase/auth";
 
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../constants/color";
 
 export default function SignIn() {
@@ -82,7 +83,7 @@ catch (error: any) {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <AntDesign name="arrow-left" size={24} color={Colors.primary} />
@@ -139,7 +140,7 @@ catch (error: any) {
       </View>
 
 
-    </View>
+    </SafeAreaView>
   );
 }
 

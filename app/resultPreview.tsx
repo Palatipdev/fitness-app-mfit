@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ResultPreview() {
   const params = useLocalSearchParams();
@@ -31,7 +32,7 @@ export default function ResultPreview() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <AntDesign name="arrow-left" size={24} color={Colors.primary} />
@@ -99,7 +100,7 @@ export default function ResultPreview() {
           </View>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

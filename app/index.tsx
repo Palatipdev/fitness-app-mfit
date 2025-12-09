@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { auth } from "@/firebase/config";
 import { useRouter } from 'expo-router';
@@ -34,7 +35,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
         <Text style={styles.titleLogoFont} allowFontScaling={true}>
           mfit.
@@ -60,7 +61,7 @@ export default function HomeScreen() {
           <Text style={styles.GSAppFont}>Sign In</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

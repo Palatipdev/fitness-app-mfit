@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../constants/color";
 export default function OnBoarding() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function OnBoarding() {
 
     // Navigate to results with the data
     router.push({
-      pathname: '/(tabs)/resultPreview',
+      pathname: '/resultPreview',
       params: {
         goal : selectedGoal,
         height: userHeight,
@@ -62,7 +63,7 @@ export default function OnBoarding() {
     );
   }
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <AntDesign name="arrow-left" size={24} color={Colors.primary} />
@@ -230,7 +231,7 @@ export default function OnBoarding() {
           </View>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

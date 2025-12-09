@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Homepage() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function Homepage() {
   }
 
   return (
-    <View style = {styles.container}>
+    <SafeAreaView style = {styles.container}>
 
     <ScrollView style={styles.scrollContent}>
       {/* Logo */}
@@ -101,7 +102,7 @@ export default function Homepage() {
           </ScrollView>
 
             <View style={styles.navBar}></View>
-    </View>
+    </SafeAreaView>
 
 
   );
