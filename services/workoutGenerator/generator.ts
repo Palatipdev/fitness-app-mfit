@@ -9,8 +9,9 @@ import {
   PPL_TEMPLATES,
   UPPER_LOWER_TEMPLATES,
 } from "@/utils/workoutTemplate";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { auth, db } from "../../firebase/config";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/config";
+
 
 export async function fetchExercise() {
   console.log("Starting fetching process");
@@ -27,24 +28,6 @@ export async function fetchExercise() {
   return exercises;
 }
 
-export async function getOnboardingData() {
-  console.log("Fetching data");
-
-  const currentUser = auth.currentUser;
-  if (!currentUser) throw new Error("not logged in");
-
-  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-  if (!userDoc.exists()) {
-    throw new Error("User document not found");
-  }
-  const userData = userDoc.data();
-
-  console.log("Retreived onboarding");
-  return {
-    workoutDays: userData.onboarding.workoutDays as "2" | "3-4" | "4+",
-    sessionLength: userData.onboarding.sessionLength as "30" | "30-60" | "60+",
-  };
-}
 
 export async function generatorDay(
   weekType: "A" | "B",

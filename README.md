@@ -140,6 +140,13 @@ This is my first production mobile app, Building in public to:
 
 - **Day 15 (Dec 9)**
 - Created workoutServices.ts for managing generated workout logic, seperating UI and Service 
+
+- **Day 16 (Dec 10)**
+- Built getweek() function with date/time logic
+- Created saveWorkout() with Firestore structure
+- Started homepage integration with useEffect()
+- Debugged Typescript issues, async patterns, Firestore paths
+
   
 ## 🔗 Links
 
