@@ -23,7 +23,11 @@ export default function Homepage() {
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
-  const [currentWorkout, setCurrentWorkout] = useState(null);
+  const [currentWorkout, setCurrentWorkout] = useState<{
+    workoutWeekA: any;
+    workoutWeekB: any;
+    workoutDays: string;
+  } | null>(null);
 
   // checking if user is current logged in
   useEffect(() => {
@@ -40,21 +44,22 @@ export default function Homepage() {
   useEffect(() => {
     const checkandLoadWorkout = async () => {
       const currentUser = auth.currentUser;
-      if (!currentUser){
-        console.log("not logged in")
+      if (!currentUser) {
+        console.log("not logged in");
         return;
       }
       const userDoc = await getDoc(
         doc(db, "users", currentUser?.uid, "workout", "current")
       );
-    
-    if (!userDoc.exists()) {
-      saveWorkout();
-    } else {
-      loadCurrentWorkout();
-    }
-  }
-  checkandLoadWorkout()
+
+      if (!userDoc.exists()) {
+        await saveWorkout();
+      }
+      const { workoutWeekA, workoutWeekB, workoutDays } =
+        await loadCurrentWorkout();
+      setCurrentWorkout({ workoutWeekA, workoutWeekB, workoutDays });
+    };
+    checkandLoadWorkout();
   }, []);
 
   if (!fontLoaded) {

@@ -11,6 +11,7 @@ a fitness app, that includes nutritional plan, calories tracking, personalized w
 ## 🚀 Features (Planned)
 
 ### Phase 1: Authentication & Onboarding (Week 1-2)
+
 - [x] Welcome screen
 - [x] Sign In screen
 - [x] Onboarding survey
@@ -19,17 +20,20 @@ a fitness app, that includes nutritional plan, calories tracking, personalized w
 - [x] Firebase authentication
 
 ### Phase 2: Core Features (Week 3-10)
+
 - [ ] Personalized workout generation
 - [ ] Nutrition tracking
 - [ ] Progress analytics
 - [ ] Workout logging
 
 ### Phase 3: AI Integration (Week 11-12)
+
 - [ ] AI workout coach
 - [ ] Form feedback
 - [ ] Conversational nutrition advice
 
 ### Phase 4: Polish & Launch (Week 13-16)
+
 - [ ] UI/UX refinements
 - [ ] App Store submission
 - [ ] Marketing materials
@@ -37,11 +41,13 @@ a fitness app, that includes nutritional plan, calories tracking, personalized w
 ## 🛠️ Development Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 - Expo CLI
 
 ### Installation
+
 ```bash
 # Install dependencies
 npm install
@@ -54,6 +60,7 @@ npx expo start
 ```
 
 ## 📁 Project Structure
+
 ```
 MFIT-FITNESS-APP/
 ├── app/              # Screens and routes (Expo Router)
@@ -72,6 +79,7 @@ MFIT-FITNESS-APP/
 ## 🎓 Learning Journey
 
 This is my first production mobile app, Building in public to:
+
 - Develop practical software engineering skills
 - Learn mobile development & AI integration
 - Create a portfolio project for internship applications
@@ -80,8 +88,8 @@ This is my first production mobile app, Building in public to:
 
 - **Day 1 (Nov 23):** Welcome, Sign In, and Onboarding screens completed. Navigation working.
 - **Day 2 (Nov 24):** Onboarding screens polished, Result preview screen created (WIP), project structure setup
-- **Day 3 (Nov 25):** 
-- Completed results preview screen with LinearGradient fade effect. 
+- **Day 3 (Nov 25):**
+- Completed results preview screen with LinearGradient fade effect.
 - Created reusable FloatingLabelInput component for label transitions
 - Implemented floating labels on Sign In and Sign Up screens,
 - Added navigationglow: Sign In -> Onboarding and Sign up -> Sign In
@@ -90,7 +98,7 @@ This is my first production mobile app, Building in public to:
 - Fixed spacing and polishing of all screens on mobile
 - **Day 6 (Nov 27):**
 - Firebase authenticator implementation on Sign-in (using email and password validation) and Sign-up (username stored in firebase) screen.
-- There was a major bug that I encountered. "Component auth has not been registered yet". Even with simple web SDK config, so I tried using lazy loading method, which broke the export. The fix was to download a more stable & older version of firebase (10.13.2) and used simple web SDK config, approx time to fix  3 hours.
+- There was a major bug that I encountered. "Component auth has not been registered yet". Even with simple web SDK config, so I tried using lazy loading method, which broke the export. The fix was to download a more stable & older version of firebase (10.13.2) and used simple web SDK config, approx time to fix 3 hours.
 - **Day 8 (Nov 30):**
   - Created homepage with scrollable content and fixed navbar
   - Added calorie tracker section with progress bar placeholder
@@ -99,6 +107,7 @@ This is my first production mobile app, Building in public to:
 - **Day 9 (Dec 1):**
   - Added protected route to prevent unauthorised access
 - **Day 10 (Dec 2):**
+
   - Added exercise database of 89 exercises each exercise includes:
     - Primary, Secondary, and Tertiary Muscle Groups.
     - Type of equipment (Machine,Barbell,Dumbbell,Bodyweight)
@@ -109,7 +118,6 @@ This is my first production mobile app, Building in public to:
 - Added pseudocode for workout generation algorithm:
   - 2 days per week:
     - Less than 30 mins
-  
 - **Day 12 (Dec 5)**
 - Finished all version of 2 days per week psuedocode
 - Made Day 11's pseudocode better and clearer
@@ -122,7 +130,6 @@ This is my first production mobile app, Building in public to:
   - Avoid equipment duplicates within the days
   - Avoid exercise duplictes across days
   - Created workout helper functions (checkTypeDupe1/2/3, checkRepeatedExercise)
-  
 - **Day 13 (Dec 6) Session 2**
 - Built template-driven workout generator architecture
 - Built UPPER_LOWER_TEMPLATES for all 3 durations (30/45/60+ min)
@@ -139,7 +146,7 @@ This is my first production mobile app, Building in public to:
 - All generator are finished and working
 
 - **Day 15 (Dec 9)**
-- Created workoutServices.ts for managing generated workout logic, seperating UI and Service 
+- Created workoutServices.ts for managing generated workout logic, seperating UI and Service
 
 - **Day 16 (Dec 10)**
 - Built getweek() function with date/time logic
@@ -147,7 +154,12 @@ This is my first production mobile app, Building in public to:
 - Started homepage integration with useEffect()
 - Debugged Typescript issues, async patterns, Firestore paths
 
-  
+- **Day 16 (Dec 10) Session 2:**
+- Built loadCurrentWorkout() to fetch workouts from Firestore
+- Integrated full backend flow: check → generate → save → load
+- Successfully tested end-to-end: workouts generating and persisting to Firebase
+- **Backend for workout system 100% complete ✅**
+
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)

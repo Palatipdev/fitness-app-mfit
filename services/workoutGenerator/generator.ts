@@ -1,3 +1,4 @@
+import { getOnboardingData } from "@/utils/fetchData";
 import {
   checkRepeatedExercise,
   checkTypeDupe1,
@@ -11,7 +12,6 @@ import {
 } from "@/utils/workoutTemplate";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
-
 
 export async function fetchExercise() {
   console.log("Starting fetching process");

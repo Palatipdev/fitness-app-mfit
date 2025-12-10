@@ -43,6 +43,7 @@ Welcome Screen
 - [ ] Accessibility improvements
 - [ ] Loading states for all buttons
 - [ ] Error handling UI
+- [ ] blue flame streaks!
 
 ## Generator / Exercise Database
 - [ ] Adding differentiator variable for upper back and lats
