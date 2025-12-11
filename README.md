@@ -160,6 +160,12 @@ This is my first production mobile app, Building in public to:
 - Successfully tested end-to-end: workouts generating and persisting to Firebase
 - **Backend for workout system 100% complete ✅**
 
+
+- **Day 17 (Dec 11)**
+- All generated workout are displayed, replacing the previous hardcoded-template
+- Tested with 9 accounts with different time and day variants
+- Added 6 Glutes exercise to the database
+
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)

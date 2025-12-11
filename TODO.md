@@ -1,9 +1,8 @@
 
 
-# Current Sprint Tasks
-- [] macros counter and progress bar skeleton (homepage)
-- [] add some temporary style to workout areas
-- [] add icon in nav bar
+# Need to do
+- [ ] Add glutes exercise atleast 4-5 to the database
+
 
 ## Week 1 (Nov 18-24) - Auth & Onboarding
 - [x] Welcome screen
@@ -23,7 +22,7 @@
 ## Week 3 (Dec 2-8) - Workout Generation
 - [x] Workout data structure design
 - [x] Basic workout generator algorithm
-- [ ] Workout display screen
+- [x] Workout display screen
 - [ ] Exercise detail view
 
 

@@ -19,16 +19,19 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Homepage() {
+
+
   const router = useRouter();
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
+  const reps = 8;
   const [currentWorkout, setCurrentWorkout] = useState<{
     workoutWeekA: any;
     workoutWeekB: any;
     workoutDays: string;
   } | null>(null);
-
+  const [splitName, setSplitName] = useState("");
   // checking if user is current logged in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -57,10 +60,34 @@ export default function Homepage() {
       }
       const { workoutWeekA, workoutWeekB, workoutDays } =
         await loadCurrentWorkout();
+      console.log({ workoutWeekA, workoutWeekB, workoutDays });
       setCurrentWorkout({ workoutWeekA, workoutWeekB, workoutDays });
+      if (workoutDays == "2") {
+        setSplitName("Full Body");
+      } else if (workoutDays == "3-4") {
+        setSplitName("Upper Lower");
+      } else if (workoutDays == "4+") {
+        setSplitName("Push Pull Legs");
+      }
+      return workoutWeekA;
     };
     checkandLoadWorkout();
   }, []);
+
+  const day = currentWorkout?.workoutDays;
+  const weekA = currentWorkout?.workoutWeekA;
+  const weekB = currentWorkout?.workoutWeekB;
+
+  let workoutHeight
+  if (day === "2"){
+    workoutHeight = 800
+  }
+  else if (day === "3-4"){
+    workoutHeight = 1400
+  }
+  else if (day === "4"){
+    workoutHeight = 1600
+  }
 
   if (!fontLoaded) {
     return (
@@ -110,31 +137,133 @@ export default function Homepage() {
         </View>
 
         {/* Workout routine */}
-        <View style={styles.bottomBar}>
+        <View style={styles.bottomBar }>
           <View style={styles.workoutArea}>
-            <Text style={styles.workoutHeader}>Your Workouts:</Text>
-            <Text>
-              Monday - Upper Push{"\n"}• Bench Press 4×8-10{"\n"}• Overhead
-              Press 3×10-12{"\n"}• Incline Dumbbell Press 3×10-12{"\n"}• Lateral
-              Raises 3×12-15{"\n"}• Tricep Dips 3×12-15{"\n"}• Tricep Pushdowns
-              3×15
-              {"\n"}
-              Tuesday - Lower (Quad Focus){"\n"}• Squats 4×8-10{"\n"}• Leg Press
-              3×12-15{"\n"}• Lunges 3×10 each leg{"\n"}• Leg Extensions 3×12-15
-              {"\n"}• Calf Raises 4×15-20{"\n"}
-              Wednesday - Rest{"\n"}• Thursday - Upper Pull{"\n"}• Deadlifts
-              4×6-8
-              {"\n"}• Pull-ups 3×8-12{"\n"}• Barbell Rows 3×10-12{"\n"}• Face
-              Pulls 3×15{"\n"}• Bicep Curls 3×12-15{"\n"}• Hammer Curls 3×12-15
-              {"\n"}
-              Friday - Lower (Hamstring/Glute Focus){"\n"}• Romanian Deadlifts
-              4×8-10{"\n"}• Hip Thrusts 3×12-15{"\n"}• Leg Curls 3×12-15{"\n"}•
-              Bulgarian Split Squats 3×10 each leg{"\n"}• Calf Raises 4×15-20
-              {"\n"}
-              Saturday - Rest{"\n"}
-              Sunday - Rest{"\n"}
+            <Text style={styles.workoutHeader}>
+              Your Workouts: {currentWorkout ? splitName : "not loaded"}
             </Text>
           </View>
+          {day === "2" && (
+            <>
+              <View style={styles.workoutRoutineA}>
+                <Text style={styles.workoutRoutineHeader}>
+                  Full Body Day A:
+                </Text>
+                {weekA?.dayA.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+
+              <View style={styles.workoutRoutineB}>
+                <Text style={styles.workoutRoutineHeader}>
+                  Full Body Day B:
+                </Text>
+                {weekA?.dayB.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+            </>
+          )}
+
+          {day === "3-4" && (
+            <>
+              <View style={styles.workoutRoutineA}>
+                <Text style={styles.workoutRoutineHeader}>Upper A:</Text>
+                {weekA?.upperA.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+              <View style={styles.workoutRoutineA}>
+                <Text style={styles.workoutRoutineHeader}>Lower A:</Text>
+                {weekA?.lowerA.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+
+              <View style={styles.workoutRoutineB}>
+                <Text style={styles.workoutRoutineHeader}>Upper B:</Text>
+                {weekA?.upperB.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+
+              <View style={styles.workoutRoutineB}>
+                <Text style={styles.workoutRoutineHeader}>Lower B:</Text>
+                {weekA?.lowerB.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+            </>
+          )}
+
+          {day === "4" && (
+            <>
+              <View style={styles.workoutRoutineA}>
+                <Text style={styles.workoutRoutineHeader}>Push A:</Text>
+                {weekA?.pushA.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+              <View style={styles.workoutRoutineA}>
+                <Text style={styles.workoutRoutineHeader}>Pull A:</Text>
+                {weekA?.pullA.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+
+              <View style={styles.workoutRoutineA}>
+                <Text style={styles.workoutRoutineHeader}>Legs A:</Text>
+                {weekA?.legsA.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+
+              <View style={styles.workoutRoutineB}>
+                <Text style={styles.workoutRoutineHeader}>Push B:</Text>
+                {weekA?.pushB.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+
+              <View style={styles.workoutRoutineB}>
+                <Text style={styles.workoutRoutineHeader}>Pull B:</Text>
+                {weekA?.pullB.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+
+              <View style={styles.workoutRoutineB}>
+                <Text style={styles.workoutRoutineHeader}>Legs B:</Text>
+                {weekA?.legsB.map((exercise: any, index: any) => (
+                  <Text key={index}>
+                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  </Text>
+                ))}
+              </View>
+            </>
+          )}
         </View>
       </ScrollView>
 
@@ -195,10 +324,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   bottomBar: {
-    height: 600,
     borderTopColor: Colors.border,
     borderTopWidth: 2,
     marginTop: 10,
+    paddingBottom: 20,
   },
   workoutArea: {
     paddingVertical: 10,

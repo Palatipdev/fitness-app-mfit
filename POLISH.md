@@ -25,6 +25,7 @@ Welcome Screen
 ## Result Preview
 - [ ] Confetti when opened
 - [ ] sliding transtion and bouncing effect on the header
+- [ ] removes nutrition, add real generated value
 
 
 

@@ -55,6 +55,7 @@ export async function loadCurrentWorkout() {
 
   const workoutRoutine = (await docRef).data();
   const daysPerWeek = (await onboarding).data();
+  
 
   if (!workoutRoutine) {
     throw new Error("Routine not found");
@@ -67,6 +68,6 @@ export async function loadCurrentWorkout() {
   return {
     workoutWeekA: workoutRoutine.weekA,
     workoutWeekB: workoutRoutine.weekB,
-    workoutDays: daysPerWeek.workoutDays,
+    workoutDays: daysPerWeek.onboarding.workoutDays,
   };
 }
