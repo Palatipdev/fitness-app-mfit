@@ -166,6 +166,12 @@ This is my first production mobile app, Building in public to:
 - Tested with 9 accounts with different time and day variants
 - Added 6 Glutes exercise to the database
 
+- **Day 18 (Dec 14)**
+- Added "Start Workout" pressable button to start workout logging process.
+- Created workoutLogging page.
+- Positioned button layout with proper spacing.
+
+
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)

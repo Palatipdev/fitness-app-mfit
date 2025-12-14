@@ -11,6 +11,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,8 +20,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Homepage() {
-
-
   const router = useRouter();
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
@@ -78,17 +77,6 @@ export default function Homepage() {
   const weekA = currentWorkout?.workoutWeekA;
   const weekB = currentWorkout?.workoutWeekB;
 
-  let workoutHeight
-  if (day === "2"){
-    workoutHeight = 800
-  }
-  else if (day === "3-4"){
-    workoutHeight = 1400
-  }
-  else if (day === "4"){
-    workoutHeight = 1600
-  }
-
   if (!fontLoaded) {
     return (
       <View style={styles.loadingContainer}>
@@ -137,11 +125,28 @@ export default function Homepage() {
         </View>
 
         {/* Workout routine */}
-        <View style={styles.bottomBar }>
+        <View style={styles.bottomBar}>
           <View style={styles.workoutArea}>
-            <Text style={styles.workoutHeader}>
-              Your Workouts: {currentWorkout ? splitName : "not loaded"}
-            </Text>
+            <View style={{flex: 1,flexDirection: "row",gap:5}}>
+              <Text>Your Workouts:</Text>
+              <Text style={styles.workoutHeader}>
+                {currentWorkout ? splitName : "not loaded"}
+              </Text>
+            </View>
+
+            <View>
+              <Pressable
+                style={styles.startWorkoutButton}
+                onPress={() => router.push("/workoutLogging")}
+              >
+                <Text
+                  style={{ fontFamily: "Poppins_700Bold", color: Colors.white }}
+                >
+                  {" "}
+                  Start Workout{" "}
+                </Text>
+              </Pressable>
+            </View>
           </View>
           {day === "2" && (
             <>
@@ -150,8 +155,8 @@ export default function Homepage() {
                   Full Body Day A:
                 </Text>
                 {weekA?.dayA.map((exercise: any, index: any) => (
-                  <Text key={index}>
-                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  <Text key={index} style={styles.exerciseText}>
+                    {exercise.name}: {exercise.sets} x {reps}
                   </Text>
                 ))}
               </View>
@@ -161,8 +166,8 @@ export default function Homepage() {
                   Full Body Day B:
                 </Text>
                 {weekA?.dayB.map((exercise: any, index: any) => (
-                  <Text key={index}>
-                    {exercise.name}: {exercise.sets} x {reps} {"\n"}
+                  <Text key={index} style={styles.exerciseText}>
+                    {exercise.name}: {exercise.sets} x {reps}
                   </Text>
                 ))}
               </View>
@@ -174,7 +179,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineA}>
                 <Text style={styles.workoutRoutineHeader}>Upper A:</Text>
                 {weekA?.upperA.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -182,7 +187,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineA}>
                 <Text style={styles.workoutRoutineHeader}>Lower A:</Text>
                 {weekA?.lowerA.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -191,7 +196,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineB}>
                 <Text style={styles.workoutRoutineHeader}>Upper B:</Text>
                 {weekA?.upperB.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -200,7 +205,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineB}>
                 <Text style={styles.workoutRoutineHeader}>Lower B:</Text>
                 {weekA?.lowerB.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -213,7 +218,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineA}>
                 <Text style={styles.workoutRoutineHeader}>Push A:</Text>
                 {weekA?.pushA.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -221,7 +226,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineA}>
                 <Text style={styles.workoutRoutineHeader}>Pull A:</Text>
                 {weekA?.pullA.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -230,7 +235,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineA}>
                 <Text style={styles.workoutRoutineHeader}>Legs A:</Text>
                 {weekA?.legsA.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -239,7 +244,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineB}>
                 <Text style={styles.workoutRoutineHeader}>Push B:</Text>
                 {weekA?.pushB.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -248,7 +253,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineB}>
                 <Text style={styles.workoutRoutineHeader}>Pull B:</Text>
                 {weekA?.pullB.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -257,7 +262,7 @@ export default function Homepage() {
               <View style={styles.workoutRoutineB}>
                 <Text style={styles.workoutRoutineHeader}>Legs B:</Text>
                 {weekA?.legsB.map((exercise: any, index: any) => (
-                  <Text key={index}>
+                  <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
                   </Text>
                 ))}
@@ -330,13 +335,16 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   workoutArea: {
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 10,
-  },
-  workoutHeader: {
-    marginBottom: 15,
+    flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: Colors.black,
+  },
+  workoutHeader: {
+    marginBottom: 5,
+    fontFamily: "Poppins_700Bold",
+    color: Colors.primary,
   },
 
   navBar: {
@@ -350,5 +358,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  workoutRoutineHeader: {
+    marginVertical: 10,
+    color: Colors.primary,
+  },
+
+  workoutRoutineA: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginHorizontal: 10,
+    marginBottom: 15,
+  },
+  workoutRoutineB: {
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    marginHorizontal: 10,
+    marginBottom: 15,
+  },
+  exerciseText: {
+    marginBottom: 5,
+  },
+  startWorkoutButton: {
+    borderWidth: 8,
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    borderColor: Colors.primary,
   },
 });
