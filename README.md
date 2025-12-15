@@ -171,6 +171,11 @@ This is my first production mobile app, Building in public to:
 - Created workoutLogging page.
 - Positioned button layout with proper spacing.
 
+**Day 19 (Dec 15):**
+- Created workout logging screen
+- Implemented real-time timer (HH:MM:SS format)
+- Added top navigation bar with logo, timer, and finish button
+
 
 ## 🔗 Links
 
