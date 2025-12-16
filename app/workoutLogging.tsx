@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/color";
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
+import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -7,17 +8,20 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function workoutLogging() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const workout = params.workout ? JSON.parse(params.workout as string) : null;
-  const splitName = params.splitName;
+  const [exercises, setExercises] = useState<any[]>([]);
+  const [currentSet,setCurrentSet] = useState("")
+  const [currentWeight,setCurrentWeight] = useState("")
+  const [currentRep,setCurrentRep] = useState("")
+
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
@@ -25,6 +29,11 @@ export default function workoutLogging() {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
+  useEffect(() => {
+    if (params.exercises) {
+      setExercises(JSON.parse(params.exercises as string));
+    }
+  }, []);
   useEffect(() => {
     setIsRunning(true);
   }, []);
@@ -87,7 +96,43 @@ export default function workoutLogging() {
         </View>
 
         <View style={styles.workouts}>
-          <Text></Text>
+          {exercises?.map( (exercise: any, index: any) => (
+            <View key={index}>
+              <View style={styles.exerciseHeader}>
+                <Text style={styles.exerciseText}>{exercise.name}</Text>
+                <TouchableOpacity>
+                  <Feather name="plus-circle" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.inputField}>
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Weight (lbs)"
+                  keyboardType="default"
+                  onChangeText={(text) => {
+                    const numbersOnly = text.replace(/[^0-9]/g, "");
+                    setCurrentWeight(numbersOnly)
+                  }}
+                  value = {currentWeight}
+                />
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Reps"
+                  keyboardType="default"
+                  onChangeText={(text) => {
+                    const numbersOnly = text.replace(/[^0-9]/g, "");
+                    setCurrentRep(numbersOnly)
+                  }}
+                  value={currentRep}
+                />
+              </View>
+              <View style={styles.setHeader}>
+                <Text>SET</Text>
+                <Text>WEIGHT</Text>
+                <Text>REPS</Text>
+              </View>
+            </View>
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -97,6 +142,7 @@ export default function workoutLogging() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.white,
   },
   topBar: {
     flexDirection: "row",
@@ -104,6 +150,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "space-between",
+    borderBottomColor: Colors.gray,
+    borderBottomWidth: 1,
   },
   titleLogoFont: {
     fontSize: 30,
@@ -114,5 +162,38 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  workouts: {
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  exerciseText: {
+    fontFamily: "Poppins_700Bold",
+    paddingHorizontal: 18,
+    fontSize: 15,
+  },
+  inputBox: {
+    fontFamily: "Poppins_700Bold",
+  },
+  exerciseHeader: {
+    flexDirection: "row",
+    paddingTop: 50,
+    marginBottom: 10,
+  },
+
+  inputField: {
+    flexDirection: "row",
+    paddingHorizontal: 18,
+    gap: 20,
+    paddingBottom: 10,
+    borderBottomColor: Colors.gray,
+    borderBottomWidth: 1,
+  },
+  setHeader: {
+    gap: 50,
+    flexDirection: "row",
+    marginTop: 10,
+    paddingHorizontal: 18,
+    paddingBottom: 100,
   },
 });

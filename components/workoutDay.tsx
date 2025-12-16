@@ -17,7 +17,7 @@ export function WorkoutDay({
   return (
     <View style={styles.workoutRoutine}>
       <View style={styles.dayHeader}>
-        <Text style={styles.workoutRoutineHeader}>{title}</Text>
+        <Text style={styles.workoutRoutineHeader}>{title} :</Text>
         <Pressable
           style={styles.startWorkoutButton}
           onPress={() =>

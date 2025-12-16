@@ -72,8 +72,7 @@ MFIT-FITNESS-APP/
 
 ## 📊 Progress Tracking
 
-**Current Phase:** Week 1 - Authentication & Onboarding
-**Screens Completed:** 3/x
+**Current Phase:** Week 5 - Workout Logging
 **Daily Commits:** ✅ (Tracking on GitHub)
 
 ## 🎓 Learning Journey
@@ -182,6 +181,12 @@ This is my first production mobile app, Building in public to:
 - Conditional rendering: only display workouts for current week
 - Reduced homepage from ~1000 lines to ~400 lines
 - Fixed workout generation bug (no longer regenerates on week change)
+
+**Day 20 (Dec 16) Session 2:**
+- Built workout logging UI with exercise list
+- Added weight/reps input fields
+- Fixed screen flickering issue
+- Optimized state management with useEffect
 
 ## 🔗 Links
 
