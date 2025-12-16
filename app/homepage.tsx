@@ -1,9 +1,11 @@
+import { WorkoutDay } from "@/components/workoutDay";
 import { Colors } from "@/constants/color";
 import { auth, db } from "@/firebase/config";
 import {
   loadCurrentWorkout,
   saveWorkout,
 } from "@/services/workoutGenerator/workoutServices";
+import { getWeek } from "@/utils/fetchData";
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import { useRouter } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
@@ -19,7 +21,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
 export default function Homepage() {
   const router = useRouter();
   const [fontLoaded] = useFonts({
@@ -32,6 +33,7 @@ export default function Homepage() {
     workoutDays: string;
   } | null>(null);
   const [splitName, setSplitName] = useState("");
+  const [currentWeek, setCurrentWeek] = useState<"A" | "B" | null>(null);
   // checking if user is current logged in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -77,6 +79,14 @@ export default function Homepage() {
   const day = currentWorkout?.workoutDays;
   const weekA = currentWorkout?.workoutWeekA;
   const weekB = currentWorkout?.workoutWeekB;
+
+  useEffect(() => {
+    const getCurrentWeek = async () => {
+      const week = await getWeek();
+      setCurrentWeek(week);
+    };
+    getCurrentWeek();
+  }, []);
 
   if (!fontLoaded) {
     return (
@@ -128,57 +138,142 @@ export default function Homepage() {
         {/* Workout routine */}
         <View style={styles.bottomBar}>
           <View style={styles.workoutArea}>
-            <View style={{flex: 1,flexDirection: "row",gap:5}}>
+            <View style={{ flexDirection: "row", gap: 5 }}>
               <Text>Your Workouts:</Text>
               <Text style={styles.workoutHeader}>
                 {currentWorkout ? splitName : "not loaded"}
               </Text>
             </View>
 
-            <View>
-              <Pressable
-                style={styles.startWorkoutButton}
-                onPress={() => router.push("/workoutLogging")}
-              >
-                <Text
-                  style={{ fontFamily: "Poppins_700Bold", color: Colors.white }}
-                >
-                  {" "}
-                  Start Workout{" "}
-                </Text>
-              </Pressable>
+            <View style={{ flexDirection: "row", gap: 5 }}>
+              <Text>Current Week:</Text>
+              <Text style={styles.workoutHeader}>{currentWeek}</Text>
             </View>
           </View>
           {day === "2" && (
             <>
-              <View style={styles.workoutRoutineA}>
-                <Text style={styles.workoutRoutineHeader}>
-                  Full Body Day A:
-                </Text>
-                {weekA?.dayA.map((exercise: any, index: any) => (
-                  <Text key={index} style={styles.exerciseText}>
-                    {exercise.name}: {exercise.sets} x {reps}
-                  </Text>
-                ))}
-              </View>
+              {currentWeek === "A" && (
+                <>
+                  <WorkoutDay
+                    title="Full Body Day A"
+                    exercises={weekA?.dayA}
+                    dayName="Full Body Day A"
+                  />
+                  <WorkoutDay
+                    title="Full Body Day B"
+                    exercises={weekA?.dayB}
+                    dayName="Full Body Day B"
+                  />
+                </>
+              )}
 
-              <View style={styles.workoutRoutineB}>
-                <Text style={styles.workoutRoutineHeader}>
-                  Full Body Day B:
-                </Text>
-                {weekA?.dayB.map((exercise: any, index: any) => (
-                  <Text key={index} style={styles.exerciseText}>
-                    {exercise.name}: {exercise.sets} x {reps}
-                  </Text>
-                ))}
-              </View>
+              {currentWeek === "B" && (
+                <>
+                  <View style={styles.workoutRoutineA}>
+                    <View style={styles.dayHeader}>
+                      <Text style={styles.workoutRoutineHeader}>
+                        Full Body Day A:
+                      </Text>
+                      <Pressable
+                        style={styles.startWorkoutButton}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/workoutLogging",
+                            params: {
+                              workout: JSON.stringify(currentWorkout),
+                              splitName: splitName,
+                            },
+                          })
+                        }
+                      >
+                        <Text
+                          style={{
+                            fontFamily: "Poppins_700Bold",
+                            color: Colors.primary,
+                            fontSize: 14,
+                          }}
+                        >
+                          {" "}
+                          Start Workout{" "}
+                        </Text>
+                      </Pressable>
+                    </View>
+                    {weekB?.dayA.map((exercise: any, index: any) => (
+                      <Text key={index} style={styles.exerciseText}>
+                        {exercise.name}: {exercise.sets} x {reps}
+                      </Text>
+                    ))}
+                  </View>
+
+                  <View style={styles.workoutRoutineB}>
+                    <View style={styles.dayHeader}>
+                      <Text style={styles.workoutRoutineHeader}>
+                        Full Body Day B:
+                      </Text>
+                      <Pressable
+                        style={styles.startWorkoutButton}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/workoutLogging",
+                            params: {
+                              workout: JSON.stringify(currentWorkout),
+                              splitName: splitName,
+                            },
+                          })
+                        }
+                      >
+                        <Text
+                          style={{
+                            fontFamily: "Poppins_700Bold",
+                            color: Colors.primary,
+                            fontSize: 14,
+                          }}
+                        >
+                          {" "}
+                          Start Workout{" "}
+                        </Text>
+                      </Pressable>
+                    </View>
+                    {weekB?.dayB.map((exercise: any, index: any) => (
+                      <Text key={index} style={styles.exerciseText}>
+                        {exercise.name}: {exercise.sets} x {reps}
+                      </Text>
+                    ))}
+                  </View>
+                </>
+              )}
             </>
           )}
 
           {day === "3-4" && (
             <>
               <View style={styles.workoutRoutineA}>
-                <Text style={styles.workoutRoutineHeader}>Upper A:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Upper A:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.upperA.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -186,7 +281,32 @@ export default function Homepage() {
                 ))}
               </View>
               <View style={styles.workoutRoutineA}>
-                <Text style={styles.workoutRoutineHeader}>Lower A:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Lower A:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.lowerA.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -195,7 +315,32 @@ export default function Homepage() {
               </View>
 
               <View style={styles.workoutRoutineB}>
-                <Text style={styles.workoutRoutineHeader}>Upper B:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Upper B:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.upperB.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -204,7 +349,32 @@ export default function Homepage() {
               </View>
 
               <View style={styles.workoutRoutineB}>
-                <Text style={styles.workoutRoutineHeader}>Lower B:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Lower B:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.lowerB.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -217,7 +387,32 @@ export default function Homepage() {
           {day === "4" && (
             <>
               <View style={styles.workoutRoutineA}>
-                <Text style={styles.workoutRoutineHeader}>Push A:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Push A:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.pushA.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -225,7 +420,32 @@ export default function Homepage() {
                 ))}
               </View>
               <View style={styles.workoutRoutineA}>
-                <Text style={styles.workoutRoutineHeader}>Pull A:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Pull A:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.pullA.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -234,7 +454,34 @@ export default function Homepage() {
               </View>
 
               <View style={styles.workoutRoutineA}>
-                <Text style={styles.workoutRoutineHeader}>Legs A:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Legs A:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+
+                          fontSize: 13,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.legsA.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -243,7 +490,33 @@ export default function Homepage() {
               </View>
 
               <View style={styles.workoutRoutineB}>
-                <Text style={styles.workoutRoutineHeader}>Push B:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Push B:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                          fontSize: 13,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.pushB.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -252,7 +525,32 @@ export default function Homepage() {
               </View>
 
               <View style={styles.workoutRoutineB}>
-                <Text style={styles.workoutRoutineHeader}>Pull B:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Pull B:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.pullB.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -261,7 +559,33 @@ export default function Homepage() {
               </View>
 
               <View style={styles.workoutRoutineB}>
-                <Text style={styles.workoutRoutineHeader}>Legs B:</Text>
+                <View style={styles.dayHeader}>
+                  <Text style={styles.workoutRoutineHeader}>Legs B:</Text>
+                  <Pressable
+                    style={styles.startWorkoutButton}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/workoutLogging",
+                        params: {
+                          workout: JSON.stringify(currentWorkout),
+                          splitName: splitName,
+                          fontSize: 13,
+                        },
+                      })
+                    }
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "Poppins_700Bold",
+                        color: Colors.primary,
+                        fontSize: 14,
+                      }}
+                    >
+                      {" "}
+                      Start Workout{" "}
+                    </Text>
+                  </Pressable>
+                </View>
                 {weekA?.legsB.map((exercise: any, index: any) => (
                   <Text key={index} style={styles.exerciseText}>
                     {exercise.name}: {exercise.sets} x {reps} {"\n"}
@@ -337,7 +661,7 @@ const styles = StyleSheet.create({
   },
   workoutArea: {
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    gap: 10,
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: Colors.black,
@@ -359,32 +683,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-
-  workoutRoutineHeader: {
-    marginVertical: 10,
-    color: Colors.primary,
-  },
-
-  workoutRoutineA: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginHorizontal: 10,
-    marginBottom: 15,
-  },
-  workoutRoutineB: {
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    marginHorizontal: 10,
-    marginBottom: 15,
-  },
-  exerciseText: {
-    marginBottom: 5,
-  },
-  startWorkoutButton: {
-    borderWidth: 8,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    borderColor: Colors.primary,
   },
 });

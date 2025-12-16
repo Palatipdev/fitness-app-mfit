@@ -21,7 +21,7 @@ a fitness app, that includes nutritional plan, calories tracking, personalized w
 
 ### Phase 2: Core Features (Week 3-10)
 
-- [ ] Personalized workout generation
+- [x] Personalized workout generation
 - [ ] Nutrition tracking
 - [ ] Progress analytics
 - [ ] Workout logging
@@ -176,6 +176,12 @@ This is my first production mobile app, Building in public to:
 - Implemented real-time timer (HH:MM:SS format)
 - Added top navigation bar with logo, timer, and finish button
 
+**Day 20 (Dec 16):**
+- Refactored homepage to use reusable WorkoutDay component
+- Added current week detection (Week A vs Week B)
+- Conditional rendering: only display workouts for current week
+- Reduced homepage from ~1000 lines to ~400 lines
+- Fixed workout generation bug (no longer regenerates on week change)
 
 ## 🔗 Links
 
