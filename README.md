@@ -188,6 +188,14 @@ This is my first production mobile app, Building in public to:
 - Fixed screen flickering issue
 - Optimized state management with useEffect
 
+
+**Day 21 (Dec 17):**
+- Implemented workout logging system with per-exercise set tracking
+- Built handleAddSet function to store weight/reps for each exercise
+- Added dynamic set display showing set number, weight, and reps
+- Fixed input field state management (independent inputs per exercise)
+
+
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)

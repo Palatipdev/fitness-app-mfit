@@ -18,9 +18,14 @@ export default function workoutLogging() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const [exercises, setExercises] = useState<any[]>([]);
-  const [currentSet,setCurrentSet] = useState("")
-  const [currentWeight,setCurrentWeight] = useState("")
-  const [currentRep,setCurrentRep] = useState("")
+  const [currentWeight, setCurrentWeight] = useState("");
+  const [currentRep, setCurrentRep] = useState("");
+  const [workoutLog, setWorkoutLog] = useState<
+    {
+      exerciseIndex: number;
+      sets: { weight: string; reps: string }[];
+    }[]
+  >([]);
 
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
@@ -28,6 +33,29 @@ export default function workoutLogging() {
 
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+
+  const handleAddSet = (exerciseIndex: number) => {
+    // check the current set of that exercise index
+    // add the current set, weight and reps to that exercise index, this is already updated in currentWeight and currentReps
+    const newLog = [...workoutLog];
+
+    if (!newLog[exerciseIndex]) {
+      newLog[exerciseIndex] = {
+        exerciseIndex: exerciseIndex,
+        sets: [],
+      };
+    }
+
+    newLog[exerciseIndex].sets.push({
+      weight: currentWeight,
+      reps: currentRep,
+    });
+
+    setWorkoutLog(newLog);
+
+    setCurrentWeight("");
+    setCurrentRep("");
+  };
 
   useEffect(() => {
     if (params.exercises) {
@@ -96,11 +124,11 @@ export default function workoutLogging() {
         </View>
 
         <View style={styles.workouts}>
-          {exercises?.map( (exercise: any, index: any) => (
+          {exercises?.map((exercise: any, index: any) => (
             <View key={index}>
               <View style={styles.exerciseHeader}>
                 <Text style={styles.exerciseText}>{exercise.name}</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => handleAddSet(index)}>
                   <Feather name="plus-circle" size={24} color="black" />
                 </TouchableOpacity>
               </View>
@@ -111,9 +139,8 @@ export default function workoutLogging() {
                   keyboardType="default"
                   onChangeText={(text) => {
                     const numbersOnly = text.replace(/[^0-9]/g, "");
-                    setCurrentWeight(numbersOnly)
+                    setCurrentWeight(numbersOnly);
                   }}
-                  value = {currentWeight}
                 />
                 <TextInput
                   style={styles.inputBox}
@@ -121,9 +148,8 @@ export default function workoutLogging() {
                   keyboardType="default"
                   onChangeText={(text) => {
                     const numbersOnly = text.replace(/[^0-9]/g, "");
-                    setCurrentRep(numbersOnly)
+                    setCurrentRep(numbersOnly);
                   }}
-                  value={currentRep}
                 />
               </View>
               <View style={styles.setHeader}>
@@ -131,6 +157,14 @@ export default function workoutLogging() {
                 <Text>WEIGHT</Text>
                 <Text>REPS</Text>
               </View>
+
+              {workoutLog[index]?.sets.map((set, setIndex) => (
+                <View key = {setIndex} style={styles.setRow}>
+                  <Text>{setIndex + 1}</Text>
+                  <Text>{set.weight}</Text>
+                  <Text>{set.reps}</Text>
+                </View>
+              ))}
             </View>
           ))}
         </View>
