@@ -1,7 +1,9 @@
 import { Colors } from "@/constants/color";
+import { auth, db } from "@/firebase/config";
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,8 +20,7 @@ export default function workoutLogging() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const [exercises, setExercises] = useState<any[]>([]);
-  const [currentWeight, setCurrentWeight] = useState("");
-  const [currentRep, setCurrentRep] = useState("");
+  const [inputValues, setInputValues] = useState< { [key : number] : {weight: string ; reps: string}}> ({})
   const [workoutLog, setWorkoutLog] = useState<
     {
       exerciseIndex: number;
@@ -34,6 +35,30 @@ export default function workoutLogging() {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
+  const handleFinishWorkout = async () => {
+    try{    const userInfo = auth.currentUser
+    if (!userInfo){
+      throw new Error("user nor found")
+    } 
+
+    const workoutRef = doc(db, "users", userInfo.uid,"logs" , new Date().toISOString())
+
+    await setDoc(workoutRef,{
+      workout: workoutLog,
+      duration: seconds, 
+      dayName: params.dayName,
+      date: new Date().toISOString()
+    })
+
+    console.log("Workout Logged")
+    router.push("/homepage")
+     
+  } catch (error){
+    console.log("Error: ",error)
+  }
+
+  }
+
   const handleAddSet = (exerciseIndex: number) => {
     // check the current set of that exercise index
     // add the current set, weight and reps to that exercise index, this is already updated in currentWeight and currentReps
@@ -47,14 +72,16 @@ export default function workoutLogging() {
     }
 
     newLog[exerciseIndex].sets.push({
-      weight: currentWeight,
-      reps: currentRep,
+      weight: inputValues[exerciseIndex]?.weight || "",
+      reps: inputValues[exerciseIndex]?.reps || ""
     });
 
     setWorkoutLog(newLog);
 
-    setCurrentWeight("");
-    setCurrentRep("");
+    setInputValues({
+      ... inputValues,
+      [exerciseIndex]: {weight:"",reps:""}
+    })
   };
 
   useEffect(() => {
@@ -109,7 +136,7 @@ export default function workoutLogging() {
             </Text>
           </View>
           <View>
-            <TouchableOpacity onPress={() => router.push("/homepage")}>
+            <TouchableOpacity onPress={handleFinishWorkout}>
               <Text
                 style={{
                   fontFamily: "Poppins_700Bold",
@@ -139,8 +166,15 @@ export default function workoutLogging() {
                   keyboardType="default"
                   onChangeText={(text) => {
                     const numbersOnly = text.replace(/[^0-9]/g, "");
-                    setCurrentWeight(numbersOnly);
+                    setInputValues({
+                      ...inputValues,
+                      [index]: {
+                        ...inputValues[index],
+                        weight:numbersOnly
+                      }
+                    })
                   }}
+                  value = {inputValues[index]?.weight || ""}
                 />
                 <TextInput
                   style={styles.inputBox}
@@ -148,21 +182,28 @@ export default function workoutLogging() {
                   keyboardType="default"
                   onChangeText={(text) => {
                     const numbersOnly = text.replace(/[^0-9]/g, "");
-                    setCurrentRep(numbersOnly);
+                    setInputValues({
+                      ...inputValues,
+                      [index]:{
+                        ...inputValues[index],
+                        reps:numbersOnly
+                      }
+                    })
                   }}
+                  value = {inputValues[index]?.reps || ""}
                 />
               </View>
               <View style={styles.setHeader}>
-                <Text>SET</Text>
-                <Text>WEIGHT</Text>
-                <Text>REPS</Text>
+                <Text style={styles.setSection}>SET</Text>
+                <Text style={styles.weightSection}>WEIGHT</Text>
+                <Text style={styles.repSection}>REPS</Text>
               </View>
 
               {workoutLog[index]?.sets.map((set, setIndex) => (
-                <View key = {setIndex} style={styles.setRow}>
-                  <Text>{setIndex + 1}</Text>
-                  <Text>{set.weight}</Text>
-                  <Text>{set.reps}</Text>
+                <View key={setIndex} style={styles.setRow}>
+                  <Text style={styles.setSection}>{setIndex + 1}</Text>
+                  <Text style={styles.weightSection}>{set.weight}</Text>
+                  <Text style={styles.repSection}>{set.reps}</Text>
                 </View>
               ))}
             </View>
@@ -228,6 +269,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 10,
     paddingHorizontal: 18,
-    paddingBottom: 100,
+  },
+  setSection: {
+    flex: 1,
+  },
+  weightSection: {
+    flex: 1,
+  },
+  repSection: {
+    flex: 1,
+  },
+
+  setRow: {
+    flexDirection: "row",
+    marginTop: 10,
+    paddingHorizontal: 18,
+    gap: 80
   },
 });

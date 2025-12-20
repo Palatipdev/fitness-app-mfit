@@ -24,7 +24,7 @@ a fitness app, that includes nutritional plan, calories tracking, personalized w
 - [x] Personalized workout generation
 - [ ] Nutrition tracking
 - [ ] Progress analytics
-- [ ] Workout logging
+- [x] Workout logging
 
 ### Phase 3: AI Integration (Week 11-12)
 
@@ -195,6 +195,14 @@ This is my first production mobile app, Building in public to:
 - Added dynamic set display showing set number, weight, and reps
 - Fixed input field state management (independent inputs per exercise)
 
+**Day 22 (Dec 20):**
+- Implemented per-exercise input state management (independent fields per exercise)
+- Fixed input clearing after adding sets
+- Improved set display alignment using flex layout
+- Built handleFinishWorkout function to save completed workouts to Firestore
+- Workout data saves: exercises, sets, weight, reps, duration, date, workout name
+- Successfully tested end-to-end: generate → log → save → retrieve from database
+- Core logging system complete and functional
 
 ## 🔗 Links
 
