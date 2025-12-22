@@ -7,16 +7,18 @@ import {
 } from "@/services/workoutGenerator/workoutServices";
 import { getWeek } from "@/utils/fetchData";
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
+import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -313,7 +315,14 @@ export default function Homepage() {
         </View>
       </ScrollView>
 
-      <View style={styles.navBar}></View>
+      <View style={styles.navBar}>
+        <Pressable onPress={() => router.push("/homepage")}>
+          <Feather name="home" size={24} color="black" />
+        </Pressable>
+        <Pressable onPress={() => router.push("/progressAnalytics")}>
+          <Feather name="book" size={24} color="black" />
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 }
@@ -344,8 +353,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_700Bold",
   },
   middleBar: {
-    justifyContent: "center",
-    alignItems: "center",
+ 
     height: 350,
   },
   nutrientBox: {
@@ -393,6 +401,10 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     borderTopWidth: 1,
     backgroundColor: Colors.white,
+    paddingHorizontal: 50,
+    flexDirection: "row",
+    gap: 100,
+    paddingTop: 5,
   },
 
   loadingContainer: {

@@ -46,6 +46,10 @@ Welcome Screen
 - [ ] Error handling UI
 - [ ] blue flame streaks!
 
+
+## icon interaction
+- [ ] when press on icon of current page, dont re-load the page
+
 ## Generator / Exercise Database
 - [ ] Adding differentiator variable for upper back and lats
 - [ ] Add more glutes exercises
