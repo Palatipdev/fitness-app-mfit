@@ -27,6 +27,9 @@ Welcome Screen
 - [ ] sliding transtion and bouncing effect on the header
 - [ ] removes nutrition, add real generated value
 
+## Progress Analytic
+- [ ] add exercise name instead of exercise index for the label
+
 
 
 ## Code Cleanup

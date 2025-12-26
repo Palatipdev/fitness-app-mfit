@@ -224,6 +224,13 @@ This is my first production mobile app, Building in public to:
 - Successfully displaying past workouts (date, dayName)
 - Fixed TypeScript errors with collection() and async useEffect
 
+**Day 24 (Dec 26):**
+- Progress analytics expansion - exercise names and muscle group tracking
+  - Added exerciseName and primaryMuscleGroup to workout logs
+  - Modified handleAddSet to save full exercise metadata
+  - Updated getHeaviestSet to display actual exercise names
+  - Planned 1RM-based muscle group progress calculation (sum of 1RMs approach)
+
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)

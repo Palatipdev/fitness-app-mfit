@@ -20,10 +20,14 @@ export default function workoutLogging() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const [exercises, setExercises] = useState<any[]>([]);
-  const [inputValues, setInputValues] = useState< { [key : number] : {weight: string ; reps: string}}> ({})
+  const [inputValues, setInputValues] = useState<{
+    [key: number]: { weight: string; reps: string };
+  }>({});
   const [workoutLog, setWorkoutLog] = useState<
     {
       exerciseIndex: number;
+      exerciseName: string;
+      primaryMuscleGroup: string
       sets: { weight: string; reps: string }[];
     }[]
   >([]);
@@ -36,52 +40,73 @@ export default function workoutLogging() {
   const [isRunning, setIsRunning] = useState(false);
 
   const handleFinishWorkout = async () => {
-    try{    const userInfo = auth.currentUser
-    if (!userInfo){
-      throw new Error("user nor found")
-    } 
 
-    const workoutRef = doc(db, "users", userInfo.uid,"logs" , new Date().toISOString())
+    if (workoutLog.length === 0){
+      alert("no workout")
+      router.push("/homepage")
+      return
+    }
+    try {
+      const userInfo = auth.currentUser;
+      if (!userInfo) {
+        throw new Error("user nor found");
+      }
 
-    await setDoc(workoutRef,{
-      workout: workoutLog,
-      duration: seconds, 
-      dayName: params.dayName,
-      date: new Date().toISOString()
-    })
+      const workoutRef = doc(
+        db,
+        "users",
+        userInfo.uid,
+        "logs",
+        new Date().toISOString()
+      );
 
-    console.log("Workout Logged")
-    router.push("/homepage")
-     
-  } catch (error){
-    console.log("Error: ",error)
-  }
+      console.log("Saving workout:", {
+        workout: workoutLog,
+        duration: seconds,
+        dayName: params.dayName,
+        date: new Date().toISOString(),
+      });
+      await setDoc(workoutRef, {
+        workout: workoutLog.filter(item => item !== undefined),
+        duration: seconds,
+        dayName: params.dayName,
+        date: new Date().toISOString(),
+      });
 
-  }
+      console.log("Workout Logged");
+      router.push("/homepage");
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  };
 
   const handleAddSet = (exerciseIndex: number) => {
     // check the current set of that exercise index
     // add the current set, weight and reps to that exercise index, this is already updated in currentWeight and currentReps
     const newLog = [...workoutLog];
+    const exercise = exercises[exerciseIndex]
 
     if (!newLog[exerciseIndex]) {
       newLog[exerciseIndex] = {
         exerciseIndex: exerciseIndex,
+        exerciseName: exercise.name,
+        primaryMuscleGroup: exercise.primaryMuscle ,
         sets: [],
       };
     }
 
+    console.log("Logged", newLog[exerciseIndex])
     newLog[exerciseIndex].sets.push({
       weight: inputValues[exerciseIndex]?.weight || "",
-      reps: inputValues[exerciseIndex]?.reps || ""
+      reps: inputValues[exerciseIndex]?.reps || "",
     });
 
     setWorkoutLog(newLog);
 
     setInputValues({
-      ... inputValues,
-      [exerciseIndex]: {weight:"",reps:""}
-    })
+      ...inputValues,
+      [exerciseIndex]: { weight: "", reps: "" },
+    });
   };
 
   useEffect(() => {
@@ -170,11 +195,11 @@ export default function workoutLogging() {
                       ...inputValues,
                       [index]: {
                         ...inputValues[index],
-                        weight:numbersOnly
-                      }
-                    })
+                        weight: numbersOnly,
+                      },
+                    });
                   }}
-                  value = {inputValues[index]?.weight || ""}
+                  value={inputValues[index]?.weight || ""}
                 />
                 <TextInput
                   style={styles.inputBox}
@@ -184,13 +209,13 @@ export default function workoutLogging() {
                     const numbersOnly = text.replace(/[^0-9]/g, "");
                     setInputValues({
                       ...inputValues,
-                      [index]:{
+                      [index]: {
                         ...inputValues[index],
-                        reps:numbersOnly
-                      }
-                    })
+                        reps: numbersOnly,
+                      },
+                    });
                   }}
-                  value = {inputValues[index]?.reps || ""}
+                  value={inputValues[index]?.reps || ""}
                 />
               </View>
               <View style={styles.setHeader}>
@@ -284,6 +309,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 10,
     paddingHorizontal: 18,
-    gap: 80
+    gap: 80,
   },
 });
