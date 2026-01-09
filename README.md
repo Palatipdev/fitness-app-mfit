@@ -231,6 +231,18 @@ This is my first production mobile app, Building in public to:
   - Updated getHeaviestSet to display actual exercise names
   - Planned 1RM-based muscle group progress calculation (sum of 1RMs approach)
 
+  
+  **Day 25 (Jan 9)**
+  
+- Complete muscle group progress tracking with 1RM calculations
+- Implemented 1RM formula (Epley) for strength comparison
+- Built getMuscleGroupStrength to aggregate muscle data per workout
+- Created calculateMuscleGroupProgress with workout-type filtering
+- Compare first vs last workouts of same type (Push A vs Push A, etc)
+- Calculate and display improvement percentages sorted by best gains
+- Added expand/collapse to show all muscle group improvements
+- Core analytics algorithm complete
+
 ## 🔗 Links
 
 - GitHub: (https://github.com/Palatipdev/fitness-app-mfit)

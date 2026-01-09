@@ -28,6 +28,9 @@ export default function progressAnalytics() {
     [key: string]: boolean;
   }>({});
 
+  const [workoutProgress, setWorkoutProgress] = useState<any[]>([])
+  const [progressExpanded, setProgressExpanded] = useState(false)
+
   useEffect(() => {
     const pastworkoutsFunction = async () => {
       const pastWorkouts = await fetchPastWorkouts();
@@ -69,11 +72,10 @@ export default function progressAnalytics() {
         }
         if (heaviestSet) {
           results.push({
-
             exerciseIndex: exercise.exerciseIndex,
             exerciseName: exercise.exerciseName,
             primaryMuscleGroup: exercise.primaryMuscleGroup,
-            ...heaviestSet
+            ...heaviestSet,
           });
         } else {
           results.push(null);
@@ -83,34 +85,144 @@ export default function progressAnalytics() {
     return results;
   };
 
+  const get1RM = (weight: number, reps: number) => {
+    return weight * (1 + reps / 30);
+  };
+
+  const getMuscleGroupStrength = (workout: any) => {
+    let results: { [key: string]: number } = {};
+    let heaviestArr = getHeaviestSet(workout);
+
+    for (const exercise of heaviestArr) {
+      if (!exercise) {
+        continue;
+      }
+      let current1RM = get1RM(
+        parseInt(exercise.weight),
+        parseInt(exercise.reps)
+      );
+
+      if (Object.hasOwn(results, exercise.primaryMuscleGroup)) {
+        results[exercise.primaryMuscleGroup] += current1RM;
+      } else {
+        results[exercise.primaryMuscleGroup] = current1RM;
+      }
+    }
+
+    return results;
+  };
+
+  const calculateMuscleGroupProgress = (workoutHistory: any) => {
+    let results: { [key: string]: { sum: number; count: number } } = {};
+
+    console.log("Total workouts:", workoutHistory.length);
+    console.log(
+      "All dayNames:",
+      workoutHistory.map((w: any) => w.dayName)
+    );
+    const workoutTypes = [
+      "Full Body Day A",
+      "Full Body Day B",
+      "Upper A",
+      "Upper B",
+      "Lower A",
+      "Lower B",
+      "Push A",
+      "Push B",
+      "Pull A",
+      "Pull B",
+      "Legs A",
+      "Legs B",
+    ];
+    let averages: { [key: string]: number } = {};
+
+    for (const type of workoutTypes) {
+      const filtered = workoutHistory.filter((w: { dayName: string }) =>
+        w.dayName.includes(type)
+      );
+
+      if (filtered.length >= 2) {
+        const current = getMuscleGroupStrength(filtered[filtered.length - 1]);
+        const first = getMuscleGroupStrength(filtered[0]);
+
+        for (const item in current) {
+          if (first[item]) {
+            const improvement =
+              ((current[item] - first[item]) / first[item]) * 100;
+
+            if (results[item]) {
+              results[item].sum += improvement;
+              results[item].count += 1;
+            } else {
+              results[item] = { sum: improvement, count: 1 };
+            }
+          }
+        }
+      }
+    }
+    for (const item in results) {
+      averages[item] = Math.round((results[item].sum / results[item].count) * 10) / 10
+    }
+    return averages;
+  };
+
+  const displayProgress = (averages: {[key:string] : number} ) => {
+    const sortedArray = Object.entries(averages)
+
+    sortedArray.sort(([,a],[,b]) => b-a)
+    console.log(sortedArray)
+    setWorkoutProgress(sortedArray)
+
+  }
+
+  useEffect(() => {
+    if (workoutHistory.length > 0) {
+
+      const progress = calculateMuscleGroupProgress(workoutHistory)
+      console.log("Progress:", progress)
+      displayProgress(progress)
+    }
+  }, [workoutHistory]);
+
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
         {/* Progress section */}
         <View style={styles.middleBar}>
           <View style={styles.chartBox}>
-            <Text>50%</Text>
+            <Pressable onPress={() => setProgressExpanded(!progressExpanded)}>
+            {workoutProgress[0] &&  (
+              <Text style= {styles.progressText}> {`${workoutProgress[0][0]} - ${workoutProgress[0][1]}%`} </Text>
+            )}
+
+            {progressExpanded && workoutProgress.slice(1).map((item : any,index : any) => (
+              <Text key = {index}> {`${item[0]} - ${item[1]}`}</Text>
+
+            ))}
+            </Pressable>
           </View>
         </View>
 
         {/* Workout History Section */}
         <View style={styles.bottomBar}>
           {workoutHistory?.map((workout: any, index: any) => (
-            <Pressable key = {workout.id}onPress={() => toggleWorkout(workout.id)}>
-              <Text  style={styles.workoutText}>
+            <Pressable
+              key={workout.id}
+              onPress={() => toggleWorkout(workout.id)}
+            >
+              <Text style={styles.workoutText}>
                 {`${workout.dayName} - ${formatDate(workout.date)}`}
               </Text>
 
               <View style={styles.expandedInfo}>
-                {expandedWorkout[workout.id] && (
-                getHeaviestSet(workout).map((set,setIndex) => (
-                  <Text key = {setIndex}>
-                    {set ? `${set.exerciseName} : ${set.weight} x ${set.reps}` : null }
-                  </Text>
-                  
-     
-                  ))
-                )}
+                {expandedWorkout[workout.id] &&
+                  getHeaviestSet(workout).map((set, setIndex) => (
+                    <Text key={setIndex}>
+                      {set
+                        ? `${set.exerciseName} : ${set.weight} x ${set.reps}`
+                        : null}
+                    </Text>
+                  ))}
               </View>
             </Pressable>
           ))}
@@ -145,6 +257,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     alignItems: "center",
     paddingRight: 150,
+    backgroundColor: "red"
   },
   bottomBar: {
     alignItems: "center",
