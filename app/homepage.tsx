@@ -8,6 +8,7 @@ import {
 import { getWeek } from "@/utils/fetchData";
 import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -322,6 +323,9 @@ export default function Homepage() {
         <Pressable onPress={() => router.push("/progressAnalytics")}>
           <Feather name="book" size={24} color="black" />
         </Pressable>
+          <Pressable onPress={() => router.push("/profilePage")}>
+          <FontAwesome name="user-circle" size={24} color="grey" />
+          </Pressable>
       </View>
     </SafeAreaView>
   );

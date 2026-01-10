@@ -2,18 +2,18 @@
 
 a fitness app, that includes nutrition tracking, calorie logging, and personalized workout plans, experience level, and availiable equipment.
 
-## 🎯 Project Overview
+## Project Overview
 
 ## ✨ Key Features
-- 🏋️ **AI Workout Generation** - Personalized routines based on schedule and experience
-- 📊 **Smart Logging** - Track sets, reps, and weights with real-time timer
-- 💾 **Progress Tracking** - Save workouts to Firebase, compare performance over time
-- 🎯 **Adaptive Programming** - Week A/B periodization for progressive overload
+- **AI Workout Generation** - Personalized routines based on schedule and experience
+- **Smart Logging** - Track sets, reps, and weights with real-time timer
+- **Progress Tracking** - Save workouts to Firebase, compare performance over time
+- **Adaptive Programming** - Week A/B periodization for progressive overload
 
 **Timeline:** 6-month development plan (Nov 2024 - May 2025)
 **Goal:** Launch on App Store with real users
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Frontend:** React Native (Expo), TypeScript
 - **Backend:** Firebase (Authentication, Firestore)
 - **State Management:** React Hooks
@@ -34,9 +34,12 @@ a fitness app, that includes nutrition tracking, calorie logging, and personaliz
 ### Phase 2: Core Features (Week 3-10)
 
 - [x] Personalized workout generation
-- [ ] Nutrition tracking
-- [ ] Progress analytics
-- [x] Workout logging
+- [x] Workout logging with real-time timer
+- [x] Progress analytics with 1RM calculations
+- [x] Profile page with logout
+- [ ] Edit Profile (username, picture)
+- [ ] Settings page
+- [ ] Nutrition tracking (optional for MVP)
 
 ### Phase 3: AI Integration (Week 11-12)
 
@@ -84,7 +87,7 @@ MFIT-FITNESS-APP/
 
 ## 📊 Progress Tracking
 
-**Current Phase:** Week 5-6 - Progress Tracking & Analytics
+**Current Phase:** Week 7-8 - Profile & Settings Implementation
 **Daily Commits:** ✅ (Tracking on GitHub)
 
 ## 🎓 Learning Journey
@@ -242,6 +245,20 @@ This is my first production mobile app, Building in public to:
 - Calculate and display improvement percentages sorted by best gains
 - Added expand/collapse to show all muscle group improvements
 - Core analytics algorithm complete
+
+**Day 26 (Jan 10):**
+
+- Complete profile page implementation
+  - Added profile navigation icon across all screens (homepage, progress analytics, profile)
+  - Created fetchInitial() service function to retrieve user's first initial from Firestore
+  - Built profile page layout with card-based design using light grey background (#F5F5F5)
+  - Implemented user profile section with circular icon and username initial display
+  - Added "Workout Logged" counter placeholder (ready for Firebase integration)
+  - Created settings options menu (Edit Profile, Settings) with proper icon alignment
+  - Implemented logout functionality with Firebase signOut and navigation redirect
+  - Fixed navigation bar positioning to properly cover bottom of screen
+  - Fixed hot-reload redirect issue by adding pathname check in index.tsx
+  - Applied consistent styling with white cards, rounded corners, and proper spacing
 
 ## 🔗 Links
 

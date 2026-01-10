@@ -9,23 +9,24 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { auth } from "@/firebase/config";
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { Colors } from "../constants/color";
 export default function HomeScreen() {
   const router = useRouter()
+  const pathname = usePathname()
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
   });
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user){
+      if (user && pathname === '/'){
         router.replace('/homepage')
       }
     });
     return unsubscribe;
-  }, []);
+  }, [pathname]);
   if (!fontLoaded) {
     return (
       <View style={styles.loadingContainer}>

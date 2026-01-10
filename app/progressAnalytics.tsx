@@ -7,6 +7,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/poppins";
 import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -28,8 +29,8 @@ export default function progressAnalytics() {
     [key: string]: boolean;
   }>({});
 
-  const [workoutProgress, setWorkoutProgress] = useState<any[]>([])
-  const [progressExpanded, setProgressExpanded] = useState(false)
+  const [workoutProgress, setWorkoutProgress] = useState<any[]>([]);
+  const [progressExpanded, setProgressExpanded] = useState(false);
 
   useEffect(() => {
     const pastworkoutsFunction = async () => {
@@ -161,50 +162,54 @@ export default function progressAnalytics() {
       }
     }
     for (const item in results) {
-      averages[item] = Math.round((results[item].sum / results[item].count) * 10) / 10
+      averages[item] =
+        Math.round((results[item].sum / results[item].count) * 10) / 10;
     }
     return averages;
   };
 
-  const displayProgress = (averages: {[key:string] : number} ) => {
-    const sortedArray = Object.entries(averages)
+  const displayProgress = (averages: { [key: string]: number }) => {
+    const sortedArray = Object.entries(averages);
 
-    sortedArray.sort(([,a],[,b]) => b-a)
-    console.log(sortedArray)
-    setWorkoutProgress(sortedArray)
-
-  }
+    sortedArray.sort(([, a], [, b]) => b - a);
+    console.log(sortedArray);
+    setWorkoutProgress(sortedArray);
+  };
 
   useEffect(() => {
     if (workoutHistory.length > 0) {
-
-      const progress = calculateMuscleGroupProgress(workoutHistory)
-      console.log("Progress:", progress)
-      displayProgress(progress)
+      const progress = calculateMuscleGroupProgress(workoutHistory);
+      console.log("Progress:", progress);
+      displayProgress(progress);
     }
   }, [workoutHistory]);
 
   return (
-    <ScrollView>
-      <SafeAreaView style={styles.container}>
-        {/* Progress section */}
-        <View style={styles.middleBar}>
-          <View style={styles.chartBox}>
-            <Pressable onPress={() => setProgressExpanded(!progressExpanded)}>
-            {workoutProgress[0] &&  (
-              <Text style= {styles.progressText}> {`${workoutProgress[0][0]} - ${workoutProgress[0][1]}%`} </Text>
+    <SafeAreaView style={styles.container}>
+      {/* Progress section */}
+      <View style={styles.middleBar}>
+        <View style={styles.chartBox}>
+          <Pressable onPress={() => setProgressExpanded(!progressExpanded)}>
+            {workoutProgress[0] && (
+              <Text style={styles.progressText}>
+                {" "}
+                {`${workoutProgress[0][0]} - ${workoutProgress[0][1]}%`}{" "}
+              </Text>
             )}
 
-            {progressExpanded && workoutProgress.slice(1).map((item : any,index : any) => (
-              <Text key = {index}> {`${item[0]} - ${item[1]}`}</Text>
-
-            ))}
-            </Pressable>
-          </View>
+            {progressExpanded &&
+              workoutProgress
+                .slice(1)
+                .map((item: any, index: any) => (
+                  <Text key={index}> {`${item[0]} - ${item[1]}%`}</Text>
+                ))}
+          </Pressable>
         </View>
+      </View>
 
-        {/* Workout History Section */}
-        <View style={styles.bottomBar}>
+      {/* Workout History Section */}
+      <View style={styles.bottomBar}>
+        <ScrollView style={styles.progressHistory}>
           {workoutHistory?.map((workout: any, index: any) => (
             <Pressable
               key={workout.id}
@@ -226,18 +231,21 @@ export default function progressAnalytics() {
               </View>
             </Pressable>
           ))}
-        </View>
+        </ScrollView>
+      </View>
 
-        <View style={styles.navBar}>
-          <Pressable onPress={() => router.push("/homepage")}>
-            <Feather name="home" size={24} color="black" />
-          </Pressable>
-          <Pressable onPress={() => router.push("/progressAnalytics")}>
-            <Feather name="book" size={24} color="black" />
-          </Pressable>
-        </View>
-      </SafeAreaView>
-    </ScrollView>
+      <View style={styles.navBar}>
+        <Pressable onPress={() => router.push("/homepage")}>
+          <Feather name="home" size={24} color="black" />
+        </Pressable>
+        <Pressable onPress={() => router.push("/progressAnalytics")}>
+          <Feather name="book" size={24} color="black" />
+        </Pressable>
+        <Pressable onPress={() => router.push("/profilePage")}>
+          <FontAwesome name="user-circle" size={24} color="grey" />
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -247,22 +255,37 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   middleBar: {
-    justifyContent: "center",
+    paddingVertical: 20,
     alignItems: "center",
   },
   chartBox: {
-    padding: 200,
+    padding: 20,
     borderWidth: 1.9,
-    borderRadius: 30,
+    borderRadius: 20,
     borderColor: Colors.border,
-    alignItems: "center",
-    paddingRight: 150,
-    backgroundColor: "red"
+    minWidth: "80%",
+  },
+  progressText: {
+    fontSize: 16,
+    fontFamily: "Poppins_500Medium",
+    marginVertical: 5,
   },
   bottomBar: {
-    alignItems: "center",
-    paddingVertical: 30,
-    gap: 20,
+    flex: 1, // Takes remaining space
+    paddingHorizontal: 20,
+  },
+  progressHistory: {
+    flex: 1,
+  },
+  workoutText: {
+    fontSize: 18,
+    fontFamily: "Poppins_500Medium",
+    color: Colors.primary,
+    marginBottom: 5,
+  },
+  expandedInfo: {
+    marginLeft: 15,
+    marginBottom: 15,
   },
   navBar: {
     height: 30,
@@ -273,10 +296,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 100,
     paddingTop: 5,
-  },
-  workoutText: {
-    fontSize: 18,
-    fontFamily: "Poppins_500Medium",
-    color: Colors.primary,
   },
 });
