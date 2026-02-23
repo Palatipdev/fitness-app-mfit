@@ -5,6 +5,7 @@ a fitness app, that includes nutrition tracking, calorie logging, and personaliz
 ## Project Overview
 
 ## ✨ Key Features
+
 - **AI Workout Generation** - Personalized routines based on schedule and experience
 - **Smart Logging** - Track sets, reps, and weights with real-time timer
 - **Progress Tracking** - Save workouts to Firebase, compare performance over time
@@ -14,13 +15,11 @@ a fitness app, that includes nutrition tracking, calorie logging, and personaliz
 **Goal:** Launch on App Store with real users
 
 ## Tech Stack
+
 - **Frontend:** React Native (Expo), TypeScript
 - **Backend:** Firebase (Authentication, Firestore)
 - **State Management:** React Hooks
 - **Navigation:** Expo Router
-
-
-
 
 ### Phase 1: Authentication & Onboarding (Week 1-2)
 
@@ -31,7 +30,7 @@ a fitness app, that includes nutrition tracking, calorie logging, and personaliz
 - [x] Sign Up screen
 - [x] Firebase authentication
 
-### Phase 2: Core Features MVP (Week 3-10) 
+### Phase 2: Core Features MVP (Week 3-10)
 
 - [x] Personalized workout generation
 - [x] Workout logging with real-time timer
@@ -120,7 +119,6 @@ This is my first production mobile app, Building in public to:
 - **Day 9 (Dec 1):**
   - Added protected route to prevent unauthorised access
 - **Day 10 (Dec 2):**
-
   - Added exercise database of 89 exercises each exercise includes:
     - Primary, Secondary, and Tertiary Muscle Groups.
     - Type of equipment (Machine,Barbell,Dumbbell,Bodyweight)
@@ -173,7 +171,6 @@ This is my first production mobile app, Building in public to:
 - Successfully tested end-to-end: workouts generating and persisting to Firebase
 - **Backend for workout system 100% complete ✅**
 
-
 - **Day 17 (Dec 11)**
 - All generated workout are displayed, replacing the previous hardcoded-template
 - Tested with 9 accounts with different time and day variants
@@ -185,11 +182,13 @@ This is my first production mobile app, Building in public to:
 - Positioned button layout with proper spacing.
 
 **Day 19 (Dec 15):**
+
 - Created workout logging screen
 - Implemented real-time timer (HH:MM:SS format)
 - Added top navigation bar with logo, timer, and finish button
 
 **Day 20 (Dec 16):**
+
 - Refactored homepage to use reusable WorkoutDay component
 - Added current week detection (Week A vs Week B)
 - Conditional rendering: only display workouts for current week
@@ -197,19 +196,21 @@ This is my first production mobile app, Building in public to:
 - Fixed workout generation bug (no longer regenerates on week change)
 
 **Day 20 (Dec 16) Session 2:**
+
 - Built workout logging UI with exercise list
 - Added weight/reps input fields
 - Fixed screen flickering issue
 - Optimized state management with useEffect
 
-
 **Day 21 (Dec 17):**
+
 - Implemented workout logging system with per-exercise set tracking
 - Built handleAddSet function to store weight/reps for each exercise
 - Added dynamic set display showing set number, weight, and reps
 - Fixed input field state management (independent inputs per exercise)
 
 **Day 22 (Dec 20):**
+
 - Implemented per-exercise input state management (independent fields per exercise)
 - Fixed input clearing after adding sets
 - Improved set display alignment using flex layout
@@ -227,15 +228,15 @@ This is my first production mobile app, Building in public to:
 - Fixed TypeScript errors with collection() and async useEffect
 
 **Day 24 (Dec 26):**
+
 - Progress analytics expansion - exercise names and muscle group tracking
   - Added exerciseName and primaryMuscleGroup to workout logs
   - Modified handleAddSet to save full exercise metadata
   - Updated getHeaviestSet to display actual exercise names
   - Planned 1RM-based muscle group progress calculation (sum of 1RMs approach)
 
-  
   **Day 25 (Jan 9)**
-  
+
 - Complete muscle group progress tracking with 1RM calculations
 - Implemented 1RM formula (Epley) for strength comparison
 - Built getMuscleGroupStrength to aggregate muscle data per workout
@@ -260,10 +261,19 @@ This is my first production mobile app, Building in public to:
   - Applied consistent styling with white cards, rounded corners, and proper spacing
 
 **Day 27 (Jan 18):**
+
 - Built Edit Profile page with username update functionality
 - Implemented Firebase updateDoc for profile changes
 - Created About page with app info, version, creator details, GitHub link
 - Added clickable links in About page using Linking API
+
+**Day 28 (Feb 23):**
+
+- Final UI polish and spacing adjustments across all screens
+- Implemented consistent background color scheme (#F5F5F5 grey with white card containers)
+- Fixed spacing between workout cards, progress analytics, and profile sections
+- Standardized border radius and padding for professional appearance
+- Added proper color separation between features and background
 
 **v1.0 MVP Complete ✅**
 
@@ -274,10 +284,8 @@ This is my first production mobile app, Building in public to:
 
 ## 📄 License
 
-
 This is a personal portfolio project built for educational purposes and internship applications.
 
-Not currently licensed for commercial use.
----
+## Not currently licensed for commercial use.
 
 **Built by Palatip Boonmeerit | CS @ UniMelb**
