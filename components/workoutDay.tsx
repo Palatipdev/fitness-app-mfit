@@ -2,11 +2,11 @@ import { Colors } from "@/constants/color";
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-export function WorkoutDay({ 
-  title, 
-  exercises, 
-  dayName 
-}: { 
+export function WorkoutDay({
+  title,
+  exercises,
+  dayName,
+}: {
   title: string;
   exercises: any[];
   dayName: string;
@@ -44,10 +44,12 @@ export function WorkoutDay({
 
 const styles = StyleSheet.create({
   workoutRoutine: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginHorizontal: 10,
+    marginHorizontal: 15,
     marginBottom: 15,
+    backgroundColor: Colors.white,
+    borderRadius: 30,
+    marginVertical: 10,
+    padding: 35,
   },
   dayHeader: {
     flexDirection: "row",

@@ -6,9 +6,13 @@ import {
   saveWorkout,
 } from "@/services/workoutGenerator/workoutServices";
 import { getWeek } from "@/utils/fetchData";
-import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
+import {
+  Poppins_700Bold,
+  Poppins_500Medium,
+  useFonts,
+} from "@expo-google-fonts/poppins";
 import Feather from "@expo/vector-icons/Feather";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -27,6 +31,7 @@ export default function Homepage() {
   const router = useRouter();
   const [fontLoaded] = useFonts({
     Poppins_700Bold,
+    Poppins_500Medium,
   });
   const reps = 8;
   const [currentWorkout, setCurrentWorkout] = useState<{
@@ -56,7 +61,7 @@ export default function Homepage() {
         return;
       }
       const userDoc = await getDoc(
-        doc(db, "users", currentUser?.uid, "workout", "current")
+        doc(db, "users", currentUser?.uid, "workout", "current"),
       );
 
       if (!userDoc.exists()) {
@@ -108,50 +113,30 @@ export default function Homepage() {
               mfit.
             </Text>
           </View>
-          {/* Streak */}
-          <View style={styles.middleTop}>
-            <Text>2🔥</Text>
-          </View>
-        </View>
-
-        {/* Nutrient tracker */}
-        <View style={styles.middleBar}>
-          <View style={styles.nutrientBox}>
-            <View style={styles.calories}>
-              <Text
-                style={{
-                  fontFamily: "Poppins_700Bold",
-                  fontSize: 30,
-                  color: Colors.primary,
-                }}
-              >
-                2100{" "}
-              </Text>
-              <Text style={{ fontSize: 15, marginTop: 18 }}>
-                Calories remaining
-              </Text>
-            </View>
-            <View style={styles.progressBar}>
-              {/* progress filled when calories is reached */}
-            </View>
-          </View>
         </View>
 
         {/* Workout routine */}
-        <View style={styles.bottomBar}>
+        <View style={styles.middleBar}>
           <View style={styles.workoutArea}>
-            <View style={{ flexDirection: "row", gap: 5 }}>
-              <Text>Your Workouts:</Text>
+            <View style={{ flexDirection: "row", gap: 5, marginLeft: 20 }}>
+              <Text style={{ fontSize: 16, fontFamily: "Poppins_500Medium" }}>
+                Your Workouts:
+              </Text>
               <Text style={styles.workoutHeader}>
                 {currentWorkout ? splitName : "not loaded"}
               </Text>
             </View>
 
-            <View style={{ flexDirection: "row", gap: 5 }}>
-              <Text>Current Week:</Text>
+            <View style={{ flexDirection: "row", gap: 5, marginLeft: 20 }}>
+              <Text style={{ fontSize: 16, fontFamily: "Poppins_500Medium" }}>
+                Current Week:
+              </Text>
               <Text style={styles.workoutHeader}>{currentWeek}</Text>
             </View>
           </View>
+        </View>
+
+        <View style={styles.bottomBar}>
           {day === "2" && (
             <>
               {currentWeek === "A" && (
@@ -323,9 +308,9 @@ export default function Homepage() {
         <Pressable onPress={() => router.push("/progressAnalytics")}>
           <Feather name="book" size={24} color="black" />
         </Pressable>
-          <Pressable onPress={() => router.push("/profilePage")}>
+        <Pressable onPress={() => router.push("/profilePage")}>
           <FontAwesome name="user-circle" size={24} color="grey" />
-          </Pressable>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -356,48 +341,26 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontFamily: "Poppins_700Bold",
   },
+
   middleBar: {
- 
-    height: 350,
-  },
-  nutrientBox: {
-    width: "90%",
-    height: "85%",
-    borderWidth: 1.9,
-    borderRadius: 30,
-    borderColor: Colors.border,
-    alignItems: "flex-end",
-    paddingRight: 50,
-  },
-  calories: {
-    paddingTop: 60,
-    flexDirection: "row",
-  },
-  progressBar: {
-    marginTop: 10,
-    width: "80%",
-    height: "10%",
-    borderWidth: 2,
-    borderColor: Colors.black,
-    borderRadius: 30,
-  },
-  bottomBar: {
     borderTopColor: Colors.border,
     borderTopWidth: 2,
     marginTop: 10,
-    paddingBottom: 20,
+  },
+  bottomBar: {
+    backgroundColor: "#F5F5F5",
   },
   workoutArea: {
     paddingVertical: 5,
-    gap: 10,
-    flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: Colors.black,
+    marginTop: 5,
   },
   workoutHeader: {
     marginBottom: 5,
     fontFamily: "Poppins_700Bold",
     color: Colors.primary,
+    fontSize: 16,
   },
 
   navBar: {

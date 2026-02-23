@@ -1,6 +1,9 @@
 import { Colors } from "@/constants/color";
 import { auth } from "@/firebase/config";
-import { fetchInitial } from "@/services/workoutAnalytic/fetchingServices";
+import {
+  fetchInitial,
+  fetchLogCount,
+} from "@/services/workoutAnalytic/fetchingServices";
 import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -9,28 +12,45 @@ import { useRouter } from "expo-router";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import {
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+
 export default function profilePage() {
   const router = useRouter();
   const [initial, setInitial] = useState("");
   const [loggedCount, setLoggedCount] = useState(0);
+  const params = useLocalSearchParams();
 
   useEffect(() => {
-    const getInitialFunction = async () => {
-      const username = await fetchInitial();
-      if (!username) {
-      } else {
-        setInitial(username);
+    if (params.updatedName) {
+      setInitial(params.updatedName as string);
+    } else {
+      const getInitialFunction = async () => {
+        const username = await fetchInitial();
+        if (!username) {
+        } else {
+          setInitial(username);
+        }
+      };
+      getInitialFunction();
+    }
+
+    const getLoggedCount = async () => {
+      const count = await fetchLogCount();
+      if (count) {
+        setLoggedCount(count);
       }
     };
-    getInitialFunction();
-  }, []);
+
+    getLoggedCount();
+  }, [params.updatedName]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,7 +90,17 @@ export default function profilePage() {
         </View>
 
         <View style={styles.moreOptionsBox}>
-          <TouchableOpacity style={styles.optionBox}>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() =>
+              router.push({
+                pathname: "/editProfile",
+                params: {
+                  name: initial,
+                },
+              })
+            }
+          >
             <View style={styles.optionBoxLeft}>
               <Feather name="user" size={28} color="black" />
               <Text style={{ fontSize: 18, fontFamily: "Poppins_500Medium" }}>
@@ -79,11 +109,14 @@ export default function profilePage() {
             </View>
             <Entypo name="chevron-thin-right" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.optionBox}>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => router.push("/aboutPage")}
+          >
             <View style={styles.optionBoxLeft}>
-              <Feather name="settings" size={28} color="black" />
+              <FontAwesome5 name="question-circle" size={24} color="black" />
               <Text style={{ fontSize: 18, fontFamily: "Poppins_500Medium" }}>
-                Settings
+                About
               </Text>
             </View>
             <Entypo name="chevron-thin-right" size={24} color="black" />
@@ -126,7 +159,7 @@ export default function profilePage() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#f5f5f5",
     flex: 1,
   },
 

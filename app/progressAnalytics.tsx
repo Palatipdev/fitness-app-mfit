@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 // Fetch user's past workouts
 // Display them in a list
@@ -100,7 +101,7 @@ export default function progressAnalytics() {
       }
       let current1RM = get1RM(
         parseInt(exercise.weight),
-        parseInt(exercise.reps)
+        parseInt(exercise.reps),
       );
 
       if (Object.hasOwn(results, exercise.primaryMuscleGroup)) {
@@ -119,7 +120,7 @@ export default function progressAnalytics() {
     console.log("Total workouts:", workoutHistory.length);
     console.log(
       "All dayNames:",
-      workoutHistory.map((w: any) => w.dayName)
+      workoutHistory.map((w: any) => w.dayName),
     );
     const workoutTypes = [
       "Full Body Day A",
@@ -139,7 +140,7 @@ export default function progressAnalytics() {
 
     for (const type of workoutTypes) {
       const filtered = workoutHistory.filter((w: { dayName: string }) =>
-        w.dayName.includes(type)
+        w.dayName.includes(type),
       );
 
       if (filtered.length >= 2) {
@@ -186,10 +187,27 @@ export default function progressAnalytics() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.topBar}>
+        <View>
+          <Text style={styles.titleLogoFont} allowFontScaling={true}>
+            mfit.
+          </Text>
+        </View>
+      </View>
       {/* Progress section */}
       <View style={styles.middleBar}>
         <View style={styles.chartBox}>
           <Pressable onPress={() => setProgressExpanded(!progressExpanded)}>
+            <Text
+              style={{
+                fontFamily: "Poppins_700Bold",
+                fontSize: 20,
+                marginBottom: 10,
+              }}
+            >
+              Strength Increased:
+            </Text>
+
             {workoutProgress[0] && (
               <Text style={styles.progressText}>
                 {" "}
@@ -198,11 +216,30 @@ export default function progressAnalytics() {
             )}
 
             {progressExpanded &&
-              workoutProgress
-                .slice(1)
-                .map((item: any, index: any) => (
-                  <Text key={index}> {`${item[0]} - ${item[1]}%`}</Text>
-                ))}
+              workoutProgress.slice(1).map((item: any, index: any) => (
+                <Text key={index} style={styles.progressText}>
+                  {" "}
+                  {`${item[0]} - ${item[1]}%`}
+                </Text>
+              ))}
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 3,
+                alignSelf: "flex-end",
+              }}
+            >
+              <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 14 }}>
+                {progressExpanded ? "Collapse" : "Expand"}
+              </Text>
+              <AntDesign
+                name={progressExpanded ? "up" : "down"}
+                size={14}
+                color={"black"}
+              />
+            </View>
           </Pressable>
         </View>
       </View>
@@ -210,24 +247,42 @@ export default function progressAnalytics() {
       {/* Workout History Section */}
       <View style={styles.bottomBar}>
         <ScrollView style={styles.progressHistory}>
+          <Text
+            style={{
+              fontFamily: "Poppins_700Bold",
+              fontSize: 16,
+              marginBottom: 20,
+              color: Colors.primary,
+            }}
+          >
+            Workout History:
+          </Text>
           {workoutHistory?.map((workout: any, index: any) => (
             <Pressable
               key={workout.id}
               onPress={() => toggleWorkout(workout.id)}
             >
-              <Text style={styles.workoutText}>
-                {`${workout.dayName} - ${formatDate(workout.date)}`}
-              </Text>
+              <View style={styles.workoutCard}>
+                <Text style={styles.workoutText}>
+                  {`${workout.dayName} - ${formatDate(workout.date)}`}
+                </Text>
 
-              <View style={styles.expandedInfo}>
-                {expandedWorkout[workout.id] &&
-                  getHeaviestSet(workout).map((set, setIndex) => (
-                    <Text key={setIndex}>
-                      {set
-                        ? `${set.exerciseName} : ${set.weight} x ${set.reps}`
-                        : null}
-                    </Text>
-                  ))}
+                <View style={styles.expandedInfo}>
+                  {expandedWorkout[workout.id] &&
+                    getHeaviestSet(workout).map((set, setIndex) => (
+                      <Text key={setIndex}>
+                        {set
+                          ? `${set.exerciseName} : ${set.weight} x ${set.reps}`
+                          : null}
+                      </Text>
+                    ))}
+                </View>
+                <AntDesign
+                  name={expandedWorkout[workout.id] ? "up" : "down"}
+                  size={16}
+                  color={"black"}
+                  style={{ alignSelf: "flex-end" }}
+                />
               </View>
             </Pressable>
           ))}
@@ -254,6 +309,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
   },
+  topBar: {
+    flexDirection: "row",
+    width: "100%",
+    paddingHorizontal: 20,
+    alignItems: "flex-start",
+  },
+  titleLogoFont: {
+    fontSize: 30,
+    color: Colors.primary,
+    fontFamily: "Poppins_700Bold",
+  },
   middleBar: {
     paddingVertical: 20,
     alignItems: "center",
@@ -272,20 +338,27 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     flex: 1, // Takes remaining space
-    paddingHorizontal: 20,
+    backgroundColor: "#fafafa",
+    padding: 20,
   },
   progressHistory: {
     flex: 1,
   },
+  workoutCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 30,
+    padding: 15,
+    marginBottom: 15,
+  },
   workoutText: {
     fontSize: 18,
     fontFamily: "Poppins_500Medium",
-    color: Colors.primary,
     marginBottom: 5,
   },
   expandedInfo: {
     marginLeft: 15,
     marginBottom: 15,
+    gap: 5,
   },
   navBar: {
     height: 30,

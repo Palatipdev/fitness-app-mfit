@@ -31,15 +31,14 @@ a fitness app, that includes nutrition tracking, calorie logging, and personaliz
 - [x] Sign Up screen
 - [x] Firebase authentication
 
-### Phase 2: Core Features (Week 3-10)
+### Phase 2: Core Features MVP (Week 3-10) 
 
 - [x] Personalized workout generation
 - [x] Workout logging with real-time timer
 - [x] Progress analytics with 1RM calculations
 - [x] Profile page with logout
-- [ ] Edit Profile (username, picture)
-- [ ] Settings page
-- [ ] Nutrition tracking (optional for MVP)
+- [x] Edit Profile (username, picture)
+- [x] Settings page
 
 ### Phase 3: AI Integration (Week 11-12)
 
@@ -87,7 +86,7 @@ MFIT-FITNESS-APP/
 
 ## 📊 Progress Tracking
 
-**Current Phase:** Week 7-8 - Profile & Settings Implementation
+**Current Phase:** 1.0.0 MVP Complete
 **Daily Commits:** ✅ (Tracking on GitHub)
 
 ## 🎓 Learning Journey
@@ -259,6 +258,14 @@ This is my first production mobile app, Building in public to:
   - Fixed navigation bar positioning to properly cover bottom of screen
   - Fixed hot-reload redirect issue by adding pathname check in index.tsx
   - Applied consistent styling with white cards, rounded corners, and proper spacing
+
+**Day 27 (Jan 18):**
+- Built Edit Profile page with username update functionality
+- Implemented Firebase updateDoc for profile changes
+- Created About page with app info, version, creator details, GitHub link
+- Added clickable links in About page using Linking API
+
+**v1.0 MVP Complete ✅**
 
 ## 🔗 Links
 

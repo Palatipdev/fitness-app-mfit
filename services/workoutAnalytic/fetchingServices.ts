@@ -1,5 +1,5 @@
 import { auth, db } from "@/firebase/config";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getCountFromServer, getDoc, getDocs } from "firebase/firestore";
 
 export async function fetchPastWorkouts() {
   console.log("fetching past workouts");
@@ -36,7 +36,21 @@ export async function fetchInitial() {
   const userName = (await workoutRef).data();
 
   if (userName) {
-    return userName.username[0].toUpperCase();
+    return userName.username
   }
+
   return "";
+}
+
+export async function fetchLogCount() {
+  console.log("fetching log count")
+
+  const currentUser = auth.currentUser
+  if (!currentUser){
+    throw new Error ("user not authenticated")
+  }
+  const workoutRef = collection(db,"users",currentUser.uid,"logs")
+
+  const snapshot = await getCountFromServer(workoutRef)
+  return snapshot.data().count
 }

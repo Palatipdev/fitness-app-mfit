@@ -27,7 +27,7 @@ export default function workoutLogging() {
     {
       exerciseIndex: number;
       exerciseName: string;
-      primaryMuscleGroup: string
+      primaryMuscleGroup: string;
       sets: { weight: string; reps: string }[];
     }[]
   >([]);
@@ -40,11 +40,10 @@ export default function workoutLogging() {
   const [isRunning, setIsRunning] = useState(false);
 
   const handleFinishWorkout = async () => {
-
-    if (workoutLog.length === 0){
-      alert("no workout")
-      router.push("/homepage")
-      return
+    if (workoutLog.length === 0) {
+      alert("no workout");
+      router.push("/homepage");
+      return;
     }
     try {
       const userInfo = auth.currentUser;
@@ -57,7 +56,7 @@ export default function workoutLogging() {
         "users",
         userInfo.uid,
         "logs",
-        new Date().toISOString()
+        new Date().toISOString(),
       );
 
       console.log("Saving workout:", {
@@ -67,7 +66,7 @@ export default function workoutLogging() {
         date: new Date().toISOString(),
       });
       await setDoc(workoutRef, {
-        workout: workoutLog.filter(item => item !== undefined),
+        workout: workoutLog.filter((item) => item !== undefined),
         duration: seconds,
         dayName: params.dayName,
         date: new Date().toISOString(),
@@ -84,18 +83,18 @@ export default function workoutLogging() {
     // check the current set of that exercise index
     // add the current set, weight and reps to that exercise index, this is already updated in currentWeight and currentReps
     const newLog = [...workoutLog];
-    const exercise = exercises[exerciseIndex]
+    const exercise = exercises[exerciseIndex];
 
     if (!newLog[exerciseIndex]) {
       newLog[exerciseIndex] = {
         exerciseIndex: exerciseIndex,
         exerciseName: exercise.name,
-        primaryMuscleGroup: exercise.primaryMuscle ,
+        primaryMuscleGroup: exercise.primaryMuscle,
         sets: [],
       };
     }
 
-    console.log("Logged", newLog[exerciseIndex])
+    console.log("Logged", newLog[exerciseIndex]);
     newLog[exerciseIndex].sets.push({
       weight: inputValues[exerciseIndex]?.weight || "",
       reps: inputValues[exerciseIndex]?.reps || "",
@@ -177,7 +176,7 @@ export default function workoutLogging() {
 
         <View style={styles.workouts}>
           {exercises?.map((exercise: any, index: any) => (
-            <View key={index}>
+            <View key={index} style={styles.exerciseCard}>
               <View style={styles.exerciseHeader}>
                 <Text style={styles.exerciseText}>{exercise.name}</Text>
                 <TouchableOpacity onPress={() => handleAddSet(index)}>
@@ -188,6 +187,7 @@ export default function workoutLogging() {
                 <TextInput
                   style={styles.inputBox}
                   placeholder="Weight (lbs)"
+                  placeholderTextColor={"#666666"}
                   keyboardType="default"
                   onChangeText={(text) => {
                     const numbersOnly = text.replace(/[^0-9]/g, "");
@@ -204,6 +204,7 @@ export default function workoutLogging() {
                 <TextInput
                   style={styles.inputBox}
                   placeholder="Reps"
+                  placeholderTextColor={"#666666"}
                   keyboardType="default"
                   onChangeText={(text) => {
                     const numbersOnly = text.replace(/[^0-9]/g, "");
@@ -250,7 +251,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomColor: Colors.gray,
+    paddingBottom: 10,
+    borderBottomColor: "black",
     borderBottomWidth: 1,
   },
   titleLogoFont: {
@@ -266,6 +268,14 @@ const styles = StyleSheet.create({
   workouts: {
     alignContent: "center",
     justifyContent: "center",
+    backgroundColor: "#f5f5f5",
+    padding: 10,
+    gap: 20,
+  },
+  exerciseCard: {
+    backgroundColor: Colors.white,
+    paddingBottom: 20,
+    borderRadius: 30,
   },
   exerciseText: {
     fontFamily: "Poppins_700Bold",
@@ -277,7 +287,7 @@ const styles = StyleSheet.create({
   },
   exerciseHeader: {
     flexDirection: "row",
-    paddingTop: 50,
+    paddingTop: 25,
     marginBottom: 10,
   },
 

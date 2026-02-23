@@ -24,7 +24,7 @@ export default function OnBoarding() {
   //Entering height, weight and age.
   const [userHeight, setHeight] = useState("");
   const [userWeight, setWeight] = useState("");
-  const [age,setAge] = useState("");
+  const [age, setAge] = useState("");
 
   //clicking button
   const [selectedGoal, setSelectedGoal] = useState("");
@@ -34,25 +34,32 @@ export default function OnBoarding() {
 
   const handleContinue = () => {
     // validating the data field
-    if (!selectedGoal || !userHeight || !userWeight || ! selectedGender || !selectedDays || ! selectedSession || ! age){
-      Alert.alert("Please fill in all fields")
+    if (
+      !selectedGoal ||
+      !userHeight ||
+      !userWeight ||
+      !selectedGender ||
+      !selectedDays ||
+      !selectedSession ||
+      !age
+    ) {
+      Alert.alert("Please fill in all fields");
       return;
     }
 
     // Navigate to results with the data
     router.push({
-      pathname: '/resultPreview',
+      pathname: "/resultPreview",
       params: {
-        goal : selectedGoal,
+        goal: selectedGoal,
         height: userHeight,
         weight: userWeight,
         gender: selectedGender,
         age: age,
         workoutDays: selectedDays,
-        sessionLength: selectedSession
-      }
+        sessionLength: selectedSession,
+      },
     });
-    
   };
 
   if (!fontLoaded) {
@@ -102,6 +109,7 @@ export default function OnBoarding() {
             <TextInput
               style={styles.inputBox}
               placeholder="Weight (lbs)"
+              placeholderTextColor={"#666666"}
               keyboardType="default"
               onChangeText={(text) => {
                 const numbersOnly = text.replace(/[^0-9]/g, "");
@@ -112,6 +120,7 @@ export default function OnBoarding() {
             <TextInput
               style={styles.inputBox}
               placeholder="Height (cm)"
+              placeholderTextColor={"#666666"}
               keyboardType="default"
               onChangeText={(text) => {
                 const numbersOnly = text.replace(/[^0-9]/g, "");
@@ -145,18 +154,18 @@ export default function OnBoarding() {
         <Text style={[styles.appFont, { paddingTop: 10 }]}>
           How old are you?
         </Text>
-        <View style ={styles.ageBox}>
-        <TextInput
-          style={[styles.inputBox]}
-          placeholder="Age"
-          keyboardType="default"
-          onChangeText={(text) => {
-            const numbersOnly = text.replace(/[^0-9]/g, "");
-            setAge(numbersOnly);
-          }}
-          value={age}
-        />
-
+        <View style={styles.ageBox}>
+          <TextInput
+            style={[styles.inputBox]}
+            placeholder="Age"
+            placeholderTextColor={"#666666"}
+            keyboardType="default"
+            onChangeText={(text) => {
+              const numbersOnly = text.replace(/[^0-9]/g, "");
+              setAge(numbersOnly);
+            }}
+            value={age}
+          />
         </View>
 
         <Text style={[styles.appFont, { paddingTop: 10 }]}>
@@ -335,7 +344,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 6,
   },
-  ageBox:{
-    width: '40%',
+  ageBox: {
+    width: "40%",
   },
 });
