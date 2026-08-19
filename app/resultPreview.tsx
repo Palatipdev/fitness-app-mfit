@@ -1,221 +1,190 @@
-import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from "expo-router";
-import { Colors } from "../constants/color";
-// setting param
-import { useLocalSearchParams } from "expo-router";
+import Feather from "@expo/vector-icons/Feather";
+import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useMemo } from "react";
+import { Pressable, ScrollView, View } from "react-native";
 
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import exerciseData from "@/exercises.json";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Screen } from "@/components/ui/Screen";
+import { Text } from "@/components/ui/Text";
+import { getSplit, toDayList } from "@/constants/splits";
+import { useTheme } from "@/hooks/useTheme";
+import { buildWeek } from "@/services/workoutGenerator/generator";
+import type {
+  Exercise,
+  SessionLengthAnswer,
+  WorkoutDaysAnswer,
+} from "@/types/workout";
+
+/** How many days are shown in full before the plan fades out. */
+const VISIBLE_DAYS = 2;
 
 export default function ResultPreview() {
+  const t = useTheme();
+  const router = useRouter();
   const params = useLocalSearchParams();
-  const router = useRouter()
-  const [fontLoaded] = useFonts({
-    Poppins_700Bold,
-  });
 
-  if (!fontLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
+  const workoutDays = params.workoutDays as WorkoutDaysAnswer;
+  const sessionLength = params.sessionLength as SessionLengthAnswer;
+
+  const split = getSplit(workoutDays);
+
+  // Built from the bundled exercise list, so the preview shows the plan the
+  // user will actually get rather than a hardcoded sample.
+  const days = useMemo(() => {
+    const week = buildWeek(
+      exerciseData as Exercise[],
+      workoutDays,
+      sessionLength,
+      "A",
     );
-  }
+    return toDayList(week, workoutDays);
+  }, [workoutDays, sessionLength]);
+
+  const totalExercises = days.reduce((sum, day) => sum + day.exercises.length, 0);
+  const totalSets = days.reduce(
+    (sum, day) => sum + day.exercises.reduce((s, e) => s + e.sets, 0),
+    0,
+  );
+
+  const sessionLabel =
+    sessionLength === "30"
+      ? "Up to 30 min"
+      : sessionLength === "30-60"
+        ? "30 to 60 min"
+        : "60+ min";
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <AntDesign name="arrow-left" size={24} color={Colors.primary} />
-          <Text style={styles.appFont}>Back</Text>
+    <Screen edges={["top", "bottom"]}>
+      <View style={{ paddingHorizontal: t.space.xl }}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          hitSlop={12}
+          onPress={() => router.back()}
+          style={{ height: t.hitTarget, justifyContent: "center" }}
+        >
+          <Feather name="arrow-left" size={22} color={t.colors.text} />
         </Pressable>
       </View>
-      <View style={styles.middleBar}>
-        <Text style={[styles.appFont, { fontSize: 20 }]}> We've created a custom workout plan based on your goals!</Text>
 
-        <View style={styles.previewContainer}>
-          <View style={styles.planPreview}>
-            {/* Summary badges */}
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.badge}>4 Days/Week</Text>
-              <Text style={styles.badge}>60 Minutes</Text>
-            </View>
-
-            {/* Workout preview */}
-            <Text style={styles.sectionTitle}>Your Training Split:</Text>
-            <Text style={styles.planText}>
-              <Text style={styles.dayTitle}>Monday - Upper Push{'\n'}</Text>
-              • Bench Press: 4×8-10{'\n'}
-              • Overhead Press: 3×10-12{'\n'}
-              • Incline Dumbbell Press: 3×10-12{'\n'}
-              • Tricep Dips: 3×12-15{'\n'}
-
-              <Text style={styles.dayTitle}>Tuesday - Rest</Text>
-              {'\n'}
-
-            </Text>
-            {/* Fade gradient */}
-            <LinearGradient
-              colors={['transparent', 'rgba(255,255,255,0.9)', 'white']}
-              locations={[0, 0.5, 1]}
-              style={styles.fadeOverlay1}
-            />
-            {/* Nutrition preview */}
-            <Text style={styles.sectionTitle}>Your Nutrition Plan:</Text>
-            <Text style={styles.planText}>
-              Daily Calories: 2,800{'\n'}
-              Protein: 160g {'\n'}
-              Carbs: 350g{'\n'}
-              Fats: 80g{'\n'}
-              {'\n'}
-              Sample Meal Plan:{'\n'}
-              Breakfast: Oatmeal with protein...
-            </Text>
-          </View>
-
-          {/* Fade gradient */}
-          <LinearGradient
-            colors={['transparent', 'rgba(255,255,255,0.9)', 'white']}
-            locations={[0, 0.5, 1]}
-            style={styles.fadeOverlay2}
-          />
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: t.space.xl,
+          paddingBottom: t.space.xxl,
+          gap: t.space.lg,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ gap: t.space.sm }}>
+          <Badge label="Your plan is ready" tone="accent" />
+          <Text variant="h1">{split?.name ?? "Your split"}</Text>
+          <Text variant="body" tone="muted">
+            {split?.description}. Two weeks of variation, then it rotates.
+          </Text>
         </View>
-      </View>
 
-      <View style={styles.bottomBar}>
-        <Text style={[styles.appFont, { fontSize: 20 }]}></Text>
-        <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/sign-up', params: params})}>
-          <View style={styles.continue}>
-            <Text style={[styles.font, { color: Colors.white }, { fontSize: 15 }, { marginTop: 2 }]}>Create an account to see!</Text>
+        <View style={{ flexDirection: "row", gap: t.space.sm, flexWrap: "wrap" }}>
+          <Badge label={`${days.length} sessions`} tone="primary" />
+          <Badge label={sessionLabel} />
+          <Badge label={`${totalExercises} exercises`} />
+          <Badge label={`${totalSets} sets`} />
+        </View>
+
+        <View style={{ gap: t.space.md }}>
+          {days.slice(0, VISIBLE_DAYS).map((day) => (
+            <Card key={day.key} style={{ gap: t.space.md }}>
+              <Text variant="h3">{day.title}</Text>
+
+              <View style={{ gap: t.space.sm }}>
+                {day.exercises.map((exercise) => (
+                  <View
+                    key={exercise.name}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: t.space.md,
+                    }}
+                  >
+                    <Text
+                      variant="small"
+                      style={{ flex: 1 }}
+                      numberOfLines={2}
+                    >
+                      {exercise.name}
+                    </Text>
+                    <Text variant="caption" tone="faint">
+                      {`${exercise.sets} x ${exercise.repRange}`}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </Card>
+          ))}
+        </View>
+
+        {days.length > VISIBLE_DAYS ? (
+          <View>
+            <Card style={{ gap: t.space.md, opacity: 0.75 }}>
+              <Text variant="h3">{days[VISIBLE_DAYS].title}</Text>
+              <View style={{ gap: t.space.sm }}>
+                {days[VISIBLE_DAYS].exercises.slice(0, 4).map((exercise) => (
+                  <Text key={exercise.name} variant="small" numberOfLines={1}>
+                    {exercise.name}
+                  </Text>
+                ))}
+              </View>
+            </Card>
+
+            {/* Fades the remaining days out rather than cutting them off. */}
+            <LinearGradient
+              colors={["transparent", t.colors.background]}
+              locations={[0, 0.85]}
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 140,
+              }}
+              pointerEvents="none"
+              accessibilityElementsHidden
+            />
           </View>
-        </TouchableOpacity>
+        ) : null}
+
+        <Text variant="caption" tone="faint" align="center">
+          {days.length > VISIBLE_DAYS
+            ? `Plus ${days.length - VISIBLE_DAYS} more sessions in the full plan.`
+            : "Your full plan is above."}
+        </Text>
+      </ScrollView>
+
+      <View
+        style={{
+          paddingHorizontal: t.space.xl,
+          paddingTop: t.space.md,
+          paddingBottom: t.space.base,
+          borderTopWidth: 1,
+          borderTopColor: t.colors.border,
+          gap: t.space.sm,
+        }}
+      >
+        <Button
+          label="Save my plan"
+          size="lg"
+          fullWidth
+          onPress={() =>
+            router.push({ pathname: "/sign-up", params })
+          }
+        />
+        <Text variant="caption" tone="faint" align="center">
+          Create an account to keep it and start logging.
+        </Text>
       </View>
-    </SafeAreaView>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  topBar: {
-    width: "100%",
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 15,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 5,
-  },
-  appFont: {
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-  },
-  middleBar: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 15,
-    
-  },
-  previewContainer: {
-    alignItems: 'center',
-    flex: 1,
-    paddingTop: 15,
-  },
-  planPreview: {
-    borderWidth: 2,
-    padding: 25,
-    borderRadius: 20,
-    backgroundColor: Colors.gray,
-
-  },
-  summaryRow: {
-
-    marginBottom: 10,
-    flexDirection: 'row',
-    gap: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.black,
-  },
-
-  badge: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 15,
-  },
-  sectionTitle: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 16,
-    marginTop: 10,
-    color: Colors.primary,
-  },
-  dayTitle: {
-    fontFamily: "Poppins_700Bold",
-  },
-
-  bottomBar: {
-    alignItems: 'center',
-    height: '20%',
-    paddingTop: 30,
-    gap: 10,
-  },
-  continue: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-
-  },
-  planText: {
-    fontSize: 13,
-    lineHeight: 24,
-    color: '#666',
-  },
-  font: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 10,
-  },
-  fadeOverlay1: {
-    position: 'absolute',
-    bottom: 250,
-    left: 0,
-    right: 0,
-    height: 300,
-    pointerEvents: 'none',
-  },
-    fadeOverlay2: {
-    position: 'absolute',
-    bottom: -70,
-    left: 0,
-    right: 0,
-    height: 200,
-    pointerEvents: 'none',
-    },
-  button: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-    borderWidth: 4,
-    borderRadius: 30,
-    padding: 10,
-    width: 250,
-    alignItems: "center",
-  },
-});

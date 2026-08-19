@@ -12,7 +12,8 @@ import { Text } from "@/components/ui/Text";
 import { useTheme } from "@/hooks/useTheme";
 
 export type InputProps = Omit<TextInputProps, "style"> & {
-  label: string;
+  /** Omit when a sibling element already labels the field visually. */
+  label?: string;
   /** Shown under the field. Replaced by `error` when one is present. */
   hint?: string;
   error?: string;
@@ -52,9 +53,11 @@ export function Input({
 
   return (
     <View style={[{ gap: t.space.sm }, containerStyle]}>
-      <Text variant="label" tone="muted">
-        {label}
-      </Text>
+      {label ? (
+        <Text variant="label" tone="muted">
+          {label}
+        </Text>
+      ) : null}
 
       <View
         style={{
@@ -72,7 +75,7 @@ export function Input({
           secureTextEntry={masked}
           placeholderTextColor={t.colors.textFaint}
           selectionColor={t.colors.primary}
-          accessibilityLabel={label}
+          accessibilityLabel={rest.accessibilityLabel ?? label}
           onFocus={(e) => {
             setFocused(true);
             onFocus?.(e);

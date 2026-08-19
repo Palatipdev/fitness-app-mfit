@@ -1,324 +1,378 @@
-import { Colors } from "@/constants/color";
-import { auth, db } from "@/firebase/config";
-import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ActivityIndicator,
+  Alert,
+  BackHandler,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
   ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function workoutLogging() {
-  const router = useRouter();
-  const params = useLocalSearchParams();
-  const [exercises, setExercises] = useState<any[]>([]);
-  const [inputValues, setInputValues] = useState<{
-    [key: number]: { weight: string; reps: string };
-  }>({});
-  const [workoutLog, setWorkoutLog] = useState<
-    {
-      exerciseIndex: number;
-      exerciseName: string;
-      primaryMuscleGroup: string;
-      sets: { weight: string; reps: string }[];
-    }[]
-  >([]);
+import {
+  ExerciseLogCard,
+  type DraftExercise,
+  type DraftSet,
+} from "@/components/logging/ExerciseLogCard";
+import { RestTimer } from "@/components/logging/RestTimer";
+import {
+  WorkoutTimer,
+  elapsedSeconds,
+} from "@/components/logging/WorkoutTimer";
+import { Button } from "@/components/ui/Button";
+import { Screen } from "@/components/ui/Screen";
+import { Text } from "@/components/ui/Text";
+import { auth, db } from "@/firebase/config";
+import { useTheme } from "@/hooks/useTheme";
+import { fetchPastWorkouts } from "@/services/workoutAnalytic/fetchingServices";
+import {
+  estimate1RM,
+  personalBests,
+  topSetsFor,
+} from "@/services/workoutAnalytic/progress";
+import type { PlannedExercise, WorkoutLog } from "@/types/workout";
 
-  const [fontLoaded] = useFonts({
-    Poppins_700Bold,
-  });
+const DEFAULT_REST = 90;
 
-  const [seconds, setSeconds] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
+let setCounter = 0;
+const newSetId = () => `s${(setCounter += 1)}`;
 
-  const handleFinishWorkout = async () => {
-    if (workoutLog.length === 0) {
-      alert("no workout");
-      router.push("/homepage");
-      return;
-    }
-    try {
-      const userInfo = auth.currentUser;
-      if (!userInfo) {
-        throw new Error("user nor found");
-      }
-
-      const workoutRef = doc(
-        db,
-        "users",
-        userInfo.uid,
-        "logs",
-        new Date().toISOString(),
-      );
-
-      console.log("Saving workout:", {
-        workout: workoutLog,
-        duration: seconds,
-        dayName: params.dayName,
-        date: new Date().toISOString(),
-      });
-      await setDoc(workoutRef, {
-        workout: workoutLog.filter((item) => item !== undefined),
-        duration: seconds,
-        dayName: params.dayName,
-        date: new Date().toISOString(),
-      });
-
-      console.log("Workout Logged");
-      router.push("/homepage");
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-  };
-
-  const handleAddSet = (exerciseIndex: number) => {
-    // check the current set of that exercise index
-    // add the current set, weight and reps to that exercise index, this is already updated in currentWeight and currentReps
-    const newLog = [...workoutLog];
-    const exercise = exercises[exerciseIndex];
-
-    if (!newLog[exerciseIndex]) {
-      newLog[exerciseIndex] = {
-        exerciseIndex: exerciseIndex,
-        exerciseName: exercise.name,
-        primaryMuscleGroup: exercise.primaryMuscle,
-        sets: [],
-      };
-    }
-
-    console.log("Logged", newLog[exerciseIndex]);
-    newLog[exerciseIndex].sets.push({
-      weight: inputValues[exerciseIndex]?.weight || "",
-      reps: inputValues[exerciseIndex]?.reps || "",
-    });
-
-    setWorkoutLog(newLog);
-
-    setInputValues({
-      ...inputValues,
-      [exerciseIndex]: { weight: "", reps: "" },
-    });
-  };
-
-  useEffect(() => {
-    if (params.exercises) {
-      setExercises(JSON.parse(params.exercises as string));
-    }
-  }, []);
-  useEffect(() => {
-    setIsRunning(true);
-  }, []);
-  useEffect(() => {
-    let interval: any;
-
-    if (isRunning) {
-      interval = setInterval(() => {
-        setSeconds((seconds) => seconds + 1);
-      }, 1000);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRunning]);
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  const timeString = `${hours.toString().padStart(2, "0")}:${minutes
-    .toString()
-    .padStart(2, "0")}:${secs.toString().padStart(2, "0")} `;
-  if (!fontLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.topBar}>
-          <View>
-            <Text style={styles.titleLogoFont} allowFontScaling={true}>
-              mfit.
-            </Text>
-          </View>
-          <View>
-            <Text style={{ fontFamily: "Popins_700Bold", fontSize: 18 }}>
-              Workout:
-            </Text>
-            <Text style={{ fontFamily: "Popins_700Bold", fontSize: 18 }}>
-              {timeString}
-            </Text>
-          </View>
-          <View>
-            <TouchableOpacity onPress={handleFinishWorkout}>
-              <Text
-                style={{
-                  fontFamily: "Poppins_700Bold",
-                  color: Colors.primary,
-                  fontSize: 18,
-                }}
-              >
-                Finish
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.workouts}>
-          {exercises?.map((exercise: any, index: any) => (
-            <View key={index} style={styles.exerciseCard}>
-              <View style={styles.exerciseHeader}>
-                <Text style={styles.exerciseText}>{exercise.name}</Text>
-                <TouchableOpacity onPress={() => handleAddSet(index)}>
-                  <Feather name="plus-circle" size={24} color="black" />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.inputField}>
-                <TextInput
-                  style={styles.inputBox}
-                  placeholder="Weight (lbs)"
-                  placeholderTextColor={"#666666"}
-                  keyboardType="default"
-                  onChangeText={(text) => {
-                    const numbersOnly = text.replace(/[^0-9]/g, "");
-                    setInputValues({
-                      ...inputValues,
-                      [index]: {
-                        ...inputValues[index],
-                        weight: numbersOnly,
-                      },
-                    });
-                  }}
-                  value={inputValues[index]?.weight || ""}
-                />
-                <TextInput
-                  style={styles.inputBox}
-                  placeholder="Reps"
-                  placeholderTextColor={"#666666"}
-                  keyboardType="default"
-                  onChangeText={(text) => {
-                    const numbersOnly = text.replace(/[^0-9]/g, "");
-                    setInputValues({
-                      ...inputValues,
-                      [index]: {
-                        ...inputValues[index],
-                        reps: numbersOnly,
-                      },
-                    });
-                  }}
-                  value={inputValues[index]?.reps || ""}
-                />
-              </View>
-              <View style={styles.setHeader}>
-                <Text style={styles.setSection}>SET</Text>
-                <Text style={styles.weightSection}>WEIGHT</Text>
-                <Text style={styles.repSection}>REPS</Text>
-              </View>
-
-              {workoutLog[index]?.sets.map((set, setIndex) => (
-                <View key={setIndex} style={styles.setRow}>
-                  <Text style={styles.setSection}>{setIndex + 1}</Text>
-                  <Text style={styles.weightSection}>{set.weight}</Text>
-                  <Text style={styles.repSection}>{set.reps}</Text>
-                </View>
-              ))}
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+function blankSet(): DraftSet {
+  return { id: newSetId(), weight: "", reps: "", done: false, isPr: false };
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  topBar: {
-    flexDirection: "row",
-    width: "100%",
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: 10,
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-  },
-  titleLogoFont: {
-    fontSize: 30,
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  workouts: {
-    alignContent: "center",
-    justifyContent: "center",
-    backgroundColor: "#f5f5f5",
-    padding: 10,
-    gap: 20,
-  },
-  exerciseCard: {
-    backgroundColor: Colors.white,
-    paddingBottom: 20,
-    borderRadius: 30,
-  },
-  exerciseText: {
-    fontFamily: "Poppins_700Bold",
-    paddingHorizontal: 18,
-    fontSize: 15,
-  },
-  inputBox: {
-    fontFamily: "Poppins_700Bold",
-  },
-  exerciseHeader: {
-    flexDirection: "row",
-    paddingTop: 25,
-    marginBottom: 10,
-  },
+function toDraft(exercises: PlannedExercise[]): DraftExercise[] {
+  return exercises.map((exercise) => ({
+    name: exercise.name,
+    primaryMuscle: exercise.primaryMuscle,
+    repRange: exercise.repRange ?? "8-12",
+    targetSets: exercise.sets ?? 3,
+    // Rows are laid out up front so the table shows the prescribed volume.
+    sets: Array.from({ length: Math.max(1, exercise.sets ?? 3) }, blankSet),
+  }));
+}
 
-  inputField: {
-    flexDirection: "row",
-    paddingHorizontal: 18,
-    gap: 20,
-    paddingBottom: 10,
-    borderBottomColor: Colors.gray,
-    borderBottomWidth: 1,
-  },
-  setHeader: {
-    gap: 50,
-    flexDirection: "row",
-    marginTop: 10,
-    paddingHorizontal: 18,
-  },
-  setSection: {
-    flex: 1,
-  },
-  weightSection: {
-    flex: 1,
-  },
-  repSection: {
-    flex: 1,
-  },
+export default function WorkoutLogging() {
+  const t = useTheme();
+  const router = useRouter();
+  const params = useLocalSearchParams();
 
-  setRow: {
-    flexDirection: "row",
-    marginTop: 10,
-    paddingHorizontal: 18,
-    gap: 80,
-  },
-});
+  const dayName = (params.dayName as string) ?? "Workout";
+
+  const startedAt = useRef(Date.now()).current;
+  const [exercises, setExercises] = useState<DraftExercise[]>(() => {
+    try {
+      return toDraft(JSON.parse((params.exercises as string) ?? "[]"));
+    } catch {
+      return [];
+    }
+  });
+
+  const [bests, setBests] = useState<Record<string, number>>({});
+  const [previous, setPrevious] = useState<
+    Record<string, { weight: number; reps: number }>
+  >({});
+  const [saving, setSaving] = useState(false);
+  const [restStartedAt, setRestStartedAt] = useState<number | null>(null);
+  const [restDuration, setRestDuration] = useState(DEFAULT_REST);
+
+  /* ----------------------------- history ---------------------------- */
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchPastWorkouts(60)
+      .then((logs: WorkoutLog[]) => {
+        if (cancelled) return;
+        setBests(personalBests(logs));
+
+        // Most recent top set per exercise, shown in the "Prev" column.
+        const seen: Record<string, { weight: number; reps: number }> = {};
+        for (const log of logs) {
+          for (const set of topSetsFor(log)) {
+            seen[set.exerciseName] = { weight: set.weight, reps: set.reps };
+          }
+        }
+        setPrevious(seen);
+      })
+      .catch(() => {
+        // History is an enhancement here; logging still works without it.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /* --------------------------- set editing -------------------------- */
+
+  const completedSets = useMemo(
+    () =>
+      exercises.reduce(
+        (sum, exercise) => sum + exercise.sets.filter((s) => s.done).length,
+        0,
+      ),
+    [exercises],
+  );
+
+  const updateExercise = useCallback(
+    (index: number, update: (exercise: DraftExercise) => DraftExercise) => {
+      // Every level that changes is copied. The previous version spread the
+      // outer array but then pushed into the nested `sets` array in place, so
+      // React saw the same reference and could skip the re-render.
+      setExercises((current) =>
+        current.map((exercise, i) => (i === index ? update(exercise) : exercise)),
+      );
+    },
+    [],
+  );
+
+  const handleChangeSet = useCallback(
+    (
+      index: number,
+      setId: string,
+      patch: Partial<Pick<DraftSet, "weight" | "reps">>,
+    ) => {
+      updateExercise(index, (exercise) => ({
+        ...exercise,
+        sets: exercise.sets.map((set) =>
+          set.id === setId ? { ...set, ...patch } : set,
+        ),
+      }));
+    },
+    [updateExercise],
+  );
+
+  const handleToggleSet = useCallback(
+    (index: number, setId: string) => {
+      let startedRest = false;
+
+      setExercises((current) =>
+        current.map((exercise, i) => {
+          if (i !== index) return exercise;
+
+          return {
+            ...exercise,
+            sets: exercise.sets.map((set) => {
+              if (set.id !== setId) return set;
+
+              const weight = Number(set.weight);
+              const reps = Number(set.reps);
+              const nextDone = !set.done;
+
+              if (nextDone && reps > 0) startedRest = true;
+
+              return {
+                ...set,
+                done: nextDone,
+                isPr:
+                  nextDone &&
+                  reps > 0 &&
+                  estimate1RM(weight, reps) > (bests[exercise.name] ?? 0),
+              };
+            }),
+          };
+        }),
+      );
+
+      if (startedRest) setRestStartedAt(Date.now());
+    },
+    [bests],
+  );
+
+  const handleAddSet = useCallback(
+    (index: number) => {
+      updateExercise(index, (exercise) => ({
+        ...exercise,
+        sets: [...exercise.sets, blankSet()],
+      }));
+    },
+    [updateExercise],
+  );
+
+  const handleRemoveSet = useCallback(
+    (index: number, setId: string) => {
+      updateExercise(index, (exercise) =>
+        exercise.sets.length <= 1
+          ? exercise
+          : {
+              ...exercise,
+              sets: exercise.sets.filter((set) => set.id !== setId),
+            },
+      );
+    },
+    [updateExercise],
+  );
+
+  /* ------------------------------ saving ---------------------------- */
+
+  const finish = useCallback(async () => {
+    const logged = exercises
+      .map((exercise, index) => ({
+        exerciseIndex: index,
+        exerciseName: exercise.name,
+        primaryMuscleGroup: exercise.primaryMuscle,
+        sets: exercise.sets
+          .filter((set) => set.done && Number(set.reps) > 0)
+          .map((set) => ({
+            weight: Number(set.weight) || 0,
+            reps: Number(set.reps),
+            isPr: set.isPr,
+          })),
+      }))
+      .filter((exercise) => exercise.sets.length > 0);
+
+    if (logged.length === 0) {
+      Alert.alert(
+        "Nothing logged yet",
+        "Check off at least one set before finishing.",
+        [{ text: "Keep going" }],
+      );
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("You are no longer signed in.");
+
+      const date = new Date().toISOString();
+      await setDoc(doc(db, "users", user.uid, "logs", date), {
+        workout: logged,
+        duration: elapsedSeconds(startedAt),
+        dayName,
+        date,
+      });
+
+      router.replace("/homepage");
+    } catch (error) {
+      setSaving(false);
+      Alert.alert(
+        "Could not save",
+        error instanceof Error
+          ? error.message
+          : "Check your connection and try again.",
+        [{ text: "OK" }],
+      );
+    }
+  }, [exercises, dayName, startedAt, router]);
+
+  const confirmDiscard = useCallback(() => {
+    if (completedSets === 0) {
+      router.back();
+      return true;
+    }
+
+    Alert.alert(
+      "Discard this workout?",
+      `${completedSets} logged ${completedSets === 1 ? "set" : "sets"} will be lost.`,
+      [
+        { text: "Keep logging", style: "cancel" },
+        {
+          text: "Discard",
+          style: "destructive",
+          onPress: () => router.back(),
+        },
+      ],
+    );
+    return true;
+  }, [completedSets, router]);
+
+  // Android back must not silently drop a session in progress.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener(
+      "hardwareBackPress",
+      confirmDiscard,
+    );
+    return () => sub.remove();
+  }, [confirmDiscard]);
+
+  /* ------------------------------ render ---------------------------- */
+
+  return (
+    <Screen edges={["top", "bottom"]}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: t.space.md,
+            paddingHorizontal: t.space.lg,
+            paddingBottom: t.space.md,
+            borderBottomWidth: 1,
+            borderBottomColor: t.colors.border,
+          }}
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Discard workout"
+            hitSlop={12}
+            onPress={confirmDiscard}
+            style={{ height: t.hitTarget, justifyContent: "center" }}
+          >
+            <Feather name="x" size={22} color={t.colors.textMuted} />
+          </Pressable>
+
+          <View style={{ flex: 1 }}>
+            <Text variant="title" numberOfLines={1}>
+              {dayName}
+            </Text>
+            <WorkoutTimer startedAt={startedAt} />
+          </View>
+
+          <Button
+            label="Finish"
+            size="sm"
+            loading={saving}
+            onPress={finish}
+            accessibilityHint="Saves this session and returns home"
+          />
+        </View>
+
+        <ScrollView
+          contentContainerStyle={{
+            padding: t.space.lg,
+            paddingBottom: t.space.xxl,
+            gap: t.space.md,
+          }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          showsVerticalScrollIndicator={false}
+        >
+          {exercises.map((exercise, index) => (
+            <ExerciseLogCard
+              key={exercise.name}
+              exercise={exercise}
+              index={index}
+              previous={previous[exercise.name]}
+              onChangeSet={handleChangeSet}
+              onToggleSet={handleToggleSet}
+              onAddSet={handleAddSet}
+              onRemoveSet={handleRemoveSet}
+            />
+          ))}
+
+          <Text variant="caption" tone="faint" align="center">
+            Long press a checkmark to delete that set.
+          </Text>
+        </ScrollView>
+
+        <RestTimer
+          startedAt={restStartedAt}
+          durationSeconds={restDuration}
+          onDismiss={() => {
+            setRestStartedAt(null);
+            setRestDuration(DEFAULT_REST);
+          }}
+          onAdjust={(extra) => setRestDuration((d) => d + extra)}
+        />
+      </KeyboardAvoidingView>
+    </Screen>
+  );
+}
