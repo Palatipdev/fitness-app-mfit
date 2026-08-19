@@ -1,48 +1,56 @@
-import { auth, db } from "@/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
 
-export async function getOnboardingData() {
-  console.log("Fetching data");
+import { auth, db } from "@/firebase/config";
+import type { OnboardingData, WeekLabel } from "@/types/workout";
 
-  const currentUser = auth.currentUser;
-  if (!currentUser) throw new Error("not logged in");
+const WEEK_MS = 604_800_000;
 
-  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-  if (!userDoc.exists()) {
-    throw new Error("User document not found");
-  }
-  const userData = userDoc.data();
+function requireUid(): string {
+  const user = auth.currentUser;
+  if (!user) throw new Error("You need to be signed in to do that.");
+  return user.uid;
+}
 
-  console.log("Retreived onboarding");
+/**
+ * Reads the whole user document once. The previous version exported three
+ * functions that each re-fetched the same document.
+ */
+export async function getUserProfile(): Promise<{
+  username: string;
+  onboarding: OnboardingData;
+}> {
+  const uid = requireUid();
+  const snapshot = await getDoc(doc(db, "users", uid));
+
+  if (!snapshot.exists()) throw new Error("Your profile could not be found.");
+  const data = snapshot.data();
+  if (!data.onboarding) throw new Error("Onboarding is not finished yet.");
+
   return {
-    workoutDays: userData.onboarding.workoutDays as "2" | "3-4" | "4+",
-    sessionLength: userData.onboarding.sessionLength as "30" | "30-60" | "60+",
+    username: typeof data.username === "string" ? data.username : "",
+    onboarding: data.onboarding as OnboardingData,
   };
 }
 
-export async function getOnboardingDate(){
-    const currentUser = auth.currentUser;
-    if (!currentUser) throw new Error ("not logged in");
-
-    const userDoc = await getDoc(doc(db,"users",currentUser.uid));
-    if (!userDoc.exists()) {
-        throw new Error ("User document not found");
-    }
-
-    const userData = userDoc.data();
-
-    return  userData.onboarding.completedAt 
-    
+export async function getOnboardingData(): Promise<OnboardingData> {
+  return (await getUserProfile()).onboarding;
 }
 
-export async function getWeek(){
-    const createdDay = await getOnboardingDate()
-    const createdDayJS = new Date(createdDay);
-    let currentDiff = new Date().getTime() - createdDayJS.getTime()
-    if (Math.trunc(currentDiff / 604800000) % 2 == 1){
-        return 'B'
-    }
-    else{
-        return 'A'
-    }
+/**
+ * Which half of the A/B rotation the user is in, derived from how many whole
+ * weeks have passed since onboarding.
+ */
+export function weekLabelFor(
+  completedAt: string,
+  now: number = Date.now(),
+): WeekLabel {
+  const start = new Date(completedAt).getTime();
+  if (Number.isNaN(start)) return "A";
+  const weeksElapsed = Math.trunc((now - start) / WEEK_MS);
+  return weeksElapsed % 2 === 1 ? "B" : "A";
+}
+
+export async function getWeek(): Promise<WeekLabel> {
+  const { onboarding } = await getUserProfile();
+  return weekLabelFor(onboarding.completedAt);
 }
