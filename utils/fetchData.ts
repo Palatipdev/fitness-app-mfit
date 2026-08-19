@@ -49,8 +49,3 @@ export function weekLabelFor(
   const weeksElapsed = Math.trunc((now - start) / WEEK_MS);
   return weeksElapsed % 2 === 1 ? "B" : "A";
 }
-
-export async function getWeek(): Promise<WeekLabel> {
-  const { onboarding } = await getUserProfile();
-  return weekLabelFor(onboarding.completedAt);
-}

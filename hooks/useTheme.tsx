@@ -92,12 +92,3 @@ export function useThemePreference() {
     throw new Error("useThemePreference must be used inside <ThemeProvider>");
   return { preference: ctx.preference, setPreference: ctx.setPreference };
 }
-
-/**
- * Builds a StyleSheet from the active theme and memoises it per scheme, so
- * switching themes rebuilds styles but ordinary re-renders do not.
- */
-export function useThemedStyles<T>(factory: (theme: Theme) => T): T {
-  const theme = useTheme();
-  return useMemo(() => factory(theme), [theme, factory]);
-}

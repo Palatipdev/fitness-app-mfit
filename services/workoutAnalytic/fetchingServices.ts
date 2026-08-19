@@ -1,8 +1,6 @@
 import {
   collection,
-  doc,
   getCountFromServer,
-  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -67,13 +65,6 @@ export async function fetchPastWorkouts(maxLogs = 200): Promise<WorkoutLog[]> {
   return logs.docs
     .map((entry) => normaliseLog(entry.id, entry.data()))
     .reverse();
-}
-
-export async function fetchUsername(): Promise<string> {
-  const uid = requireUid();
-  const snapshot = await getDoc(doc(db, "users", uid));
-  const data = snapshot.data();
-  return typeof data?.username === "string" ? data.username : "";
 }
 
 /** Server-side count, so it stays cheap as the log collection grows. */
