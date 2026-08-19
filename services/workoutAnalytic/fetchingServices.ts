@@ -45,11 +45,13 @@ function normaliseLog(id: string, raw: Record<string, unknown>): WorkoutLog {
 }
 
 /**
- * Past workouts in chronological order (oldest first), which is what the
- * progress maths wants. The history list reverses it for display.
+ * The most recent `maxLogs` workouts, returned oldest first.
  *
- * `maxLogs` caps the read so a long-running account does not download its
- * entire history on every visit.
+ * The query orders descending so the cap keeps the newest sessions, then the
+ * result is reversed because the progress maths wants chronological order.
+ * Ordering ascending and capping would have returned the oldest N instead,
+ * which would pin "last session" to an old workout once an account passed the
+ * limit.
  */
 export async function fetchPastWorkouts(maxLogs = 200): Promise<WorkoutLog[]> {
   const uid = requireUid();
@@ -57,12 +59,14 @@ export async function fetchPastWorkouts(maxLogs = 200): Promise<WorkoutLog[]> {
   const logs = await getDocs(
     query(
       collection(db, "users", uid, "logs"),
-      orderBy("date", "asc"),
+      orderBy("date", "desc"),
       limit(maxLogs),
     ),
   );
 
-  return logs.docs.map((entry) => normaliseLog(entry.id, entry.data()));
+  return logs.docs
+    .map((entry) => normaliseLog(entry.id, entry.data()))
+    .reverse();
 }
 
 export async function fetchUsername(): Promise<string> {

@@ -46,3 +46,6 @@ app-example
 
 # vendored ui-ux-pro-max skill files (4.6MB of tooling, not app code)
 .claude/
+
+# expo export output
+/dist

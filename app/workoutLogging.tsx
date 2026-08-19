@@ -347,7 +347,7 @@ export default function WorkoutLogging() {
         >
           {exercises.map((exercise, index) => (
             <ExerciseLogCard
-              key={exercise.name}
+              key={`${exercise.name}-${index}`}
               exercise={exercise}
               index={index}
               previous={previous[exercise.name]}

@@ -100,9 +100,9 @@ export default function ResultPreview() {
               <Text variant="h3">{day.title}</Text>
 
               <View style={{ gap: t.space.sm }}>
-                {day.exercises.map((exercise) => (
+                {day.exercises.map((exercise, exerciseIndex) => (
                   <View
-                    key={exercise.name}
+                    key={`${exercise.name}-${exerciseIndex}`}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -131,8 +131,8 @@ export default function ResultPreview() {
             <Card style={{ gap: t.space.md, opacity: 0.75 }}>
               <Text variant="h3">{days[VISIBLE_DAYS].title}</Text>
               <View style={{ gap: t.space.sm }}>
-                {days[VISIBLE_DAYS].exercises.slice(0, 4).map((exercise) => (
-                  <Text key={exercise.name} variant="small" numberOfLines={1}>
+                {days[VISIBLE_DAYS].exercises.slice(0, 4).map((exercise, i) => (
+                  <Text key={`${exercise.name}-${i}`} variant="small" numberOfLines={1}>
                     {exercise.name}
                   </Text>
                 ))}

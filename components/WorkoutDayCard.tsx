@@ -102,9 +102,9 @@ function WorkoutDayCardBase({
       </Pressable>
 
       <View style={{ gap: t.space.sm }}>
-        {visible.map((exercise) => (
+        {visible.map((exercise, exerciseIndex) => (
           <View
-            key={exercise.name}
+            key={`${exercise.name}-${exerciseIndex}`}
             style={{
               flexDirection: "row",
               alignItems: "center",
