@@ -1,5 +1,5 @@
 import Feather from "@expo/vector-icons/Feather";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import {
   BackHandler,
@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/Input";
 import { Screen } from "@/components/ui/Screen";
 import { ProgressBar } from "@/components/ui/Stat";
 import { Text } from "@/components/ui/Text";
-import { useFocusEffect } from "expo-router";
 import { useTheme } from "@/hooks/useTheme";
 import type {
   GenderAnswer,

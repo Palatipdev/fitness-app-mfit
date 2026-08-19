@@ -110,7 +110,7 @@ export function generateDay(
   return day;
 }
 
-function templatesFor(
+export function templatesFor(
   workoutDays: WorkoutDaysAnswer,
   sessionLength: SessionLengthAnswer,
 ): Record<string, TemplateSlot[]> {
@@ -124,6 +124,30 @@ function templatesFor(
   return (source as Record<string, Record<string, TemplateSlot[]>>)[
     sessionLength
   ];
+}
+
+/**
+ * Builds one week from explicit inputs, with no Firestore involved.
+ *
+ * The onboarding preview uses this against the bundled exercise list so it can
+ * show a real plan before an account exists.
+ */
+export function buildWeek(
+  exercises: Exercise[],
+  workoutDays: WorkoutDaysAnswer,
+  sessionLength: SessionLengthAnswer,
+  week: WeekLabel,
+): WeekPlan {
+  const templates = templatesFor(workoutDays, sessionLength);
+  if (!templates) return {};
+
+  const allowance = equipmentAllowance(sessionLength);
+  const plan: WeekPlan = {};
+
+  for (const [dayKey, slots] of Object.entries(templates)) {
+    plan[dayKey] = generateDay(week, slots, exercises, allowance);
+  }
+  return plan;
 }
 
 /**
@@ -143,22 +167,15 @@ export async function generateBothWeeks(): Promise<{
     fetchExercises(),
   ]);
 
-  const templates = templatesFor(workoutDays, sessionLength);
-  if (!templates) {
+  if (!templatesFor(workoutDays, sessionLength)) {
     throw new Error(
       `No template for ${workoutDays} days at ${sessionLength} minutes`,
     );
   }
 
-  const allowance = equipmentAllowance(sessionLength);
-
-  const buildWeek = (week: WeekLabel): WeekPlan => {
-    const plan: WeekPlan = {};
-    for (const [dayKey, slots] of Object.entries(templates)) {
-      plan[dayKey] = generateDay(week, slots, exercises, allowance);
-    }
-    return plan;
+  return {
+    weekA: buildWeek(exercises, workoutDays, sessionLength, "A"),
+    weekB: buildWeek(exercises, workoutDays, sessionLength, "B"),
+    workoutDays,
   };
-
-  return { weekA: buildWeek("A"), weekB: buildWeek("B"), workoutDays };
 }
