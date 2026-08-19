@@ -18,8 +18,28 @@ a fitness app, that includes nutrition tracking, calorie logging, and personaliz
 
 - **Frontend:** React Native (Expo), TypeScript
 - **Backend:** Firebase (Authentication, Firestore)
-- **State Management:** React Hooks
-- **Navigation:** Expo Router
+- **State Management:** React Hooks + Context (theme, auth)
+- **Navigation:** Expo Router (stack + bottom tabs)
+- **Design system:** In-house tokens, dark and light, Barlow / Barlow Condensed
+
+## Design System
+
+Design decisions live in `design-system/mfit/MASTER.md`. Screens never
+hardcode a colour or a font size. They read semantic tokens through
+`useTheme()`, which resolves against the active scheme.
+
+```
+constants/theme.ts    primitives -> semantic roles -> shared scales
+hooks/useTheme.tsx    provider, scheme preference, persisted to storage
+components/ui/        Text, Button, Card, Screen, Input, Badge,
+                      ChoiceGroup, StatTile, ProgressBar, Skeleton,
+                      EmptyState, PressScale
+```
+
+Type comes from a fixed scale (`variant="h1"`, `"body"`, `"label"`,
+`"numeric"`), colour from a role (`tone="muted"`, `"primary"`,
+`"danger"`), spacing from a 4pt rhythm. Adding a new screen means
+composing primitives, not writing another StyleSheet of raw hex.
 
 ### Phase 1: Authentication & Onboarding (Week 1-2)
 
@@ -76,11 +96,27 @@ npx expo start
 
 ```
 MFIT-FITNESS-APP/
-├── app/              # Screens and routes (Expo Router)
-├── components/       # Reusable UI components
-├── constants/        # Colors, themes, config
-├── assets/          # Images, fonts
-└── POLISH.md        # Week 13-14 improvement backlog
+├── app/
+│   ├── (tabs)/           # Home, progress, profile (bottom tabs)
+│   ├── _layout.tsx       # Providers, fonts, splash, auth guard
+│   ├── onboarding.tsx    # Five-step questionnaire
+│   ├── resultPreview.tsx # Generated plan shown before sign-up
+│   └── workoutLogging.tsx
+├── components/
+│   ├── ui/               # Design system primitives
+│   ├── logging/          # Set table, workout timer, rest timer
+│   ├── TabBar.tsx
+│   └── WorkoutDayCard.tsx
+├── constants/
+│   ├── theme.ts          # Design tokens
+│   └── splits.ts         # Split definitions and day ordering
+├── services/
+│   ├── workoutGenerator/ # Plan generation and persistence
+│   └── workoutAnalytic/  # History fetching, progress maths, formatting
+├── hooks/                # useTheme, useAuth, useAppFonts
+├── types/workout.ts      # Shared Firestore and screen shapes
+├── design-system/mfit/   # MASTER.md, the visual source of truth
+└── POLISH.md             # Improvement backlog
 ```
 
 ## 📊 Progress Tracking

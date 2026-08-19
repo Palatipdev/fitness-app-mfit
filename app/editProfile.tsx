@@ -1,131 +1,148 @@
-import { Colors } from "@/constants/color";
-import { auth, db } from "@/firebase/config";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import Feather from "@expo/vector-icons/Feather";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { doc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function editProfile() {
-  const params = useLocalSearchParams();
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Screen } from "@/components/ui/Screen";
+import { Text } from "@/components/ui/Text";
+import { auth, db } from "@/firebase/config";
+import { useTheme } from "@/hooks/useTheme";
+
+const MAX_NAME = 30;
+
+export default function EditProfile() {
+  const t = useTheme();
   const router = useRouter();
-  const currentName = params.currentName as string;
+  const params = useLocalSearchParams();
 
-  const [username, setUsername] = useState(currentName || "");
+  // The old screen read `params.currentName` while the profile screen sent
+  // `name`, so the field always opened empty.
+  const initialName = (params.currentName as string) ?? "";
 
-  const handleSave = async () => {
-    if (!username.trim()) {
-      Alert.alert("Error", "Username cannot be empty");
+  const [username, setUsername] = useState(initialName);
+  const [error, setError] = useState<string | undefined>();
+  const [saving, setSaving] = useState(false);
+
+  const dirty = username.trim() !== initialName.trim();
+
+  const save = async () => {
+    const trimmed = username.trim();
+    if (!trimmed) {
+      setError("Your display name cannot be empty.");
       return;
     }
 
+    setSaving(true);
     try {
       const user = auth.currentUser;
-      if (!user) return;
+      if (!user) throw new Error("You are no longer signed in.");
 
-      // Update Firebase
-      await updateDoc(doc(db, "users", user.uid), {
-        username: username.trim(),
-      });
-
-      // Navigate back with updated name
-      router.push({
-        pathname: "/profilePage",
-        params: { updatedName: username.trim() },
-      });
-    } catch (error) {
-      Alert.alert("Error", "Failed to update username");
-      console.log(error);
+      await updateDoc(doc(db, "users", user.uid), { username: trimmed });
+      router.back();
+    } catch (saveError) {
+      setSaving(false);
+      Alert.alert(
+        "Could not save",
+        saveError instanceof Error
+          ? saveError.message
+          : "Check your connection and try again.",
+      );
     }
   };
 
+  const cancel = () => {
+    if (!dirty) {
+      router.back();
+      return;
+    }
+    Alert.alert("Discard changes?", "Your edits will not be saved.", [
+      { text: "Keep editing", style: "cancel" },
+      { text: "Discard", style: "destructive", onPress: () => router.back() },
+    ]);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-        <Text style={styles.titleLogoFont}>mfit.</Text>
-      </View>
+    <Screen edges={["top", "bottom"]}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: t.space.md,
+            paddingHorizontal: t.space.lg,
+          }}
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            hitSlop={12}
+            onPress={cancel}
+            style={{ height: t.hitTarget, justifyContent: "center" }}
+          >
+            <Feather name="arrow-left" size={22} color={t.colors.text} />
+          </Pressable>
+          <Text variant="title">Edit profile</Text>
+        </View>
 
-      <View style={styles.middleBar}>
-        <FontAwesome name="user-circle" size={110} color="grey" />
+        <ScrollView
+          contentContainerStyle={{
+            padding: t.space.lg,
+            gap: t.space.xl,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Input
+            label="Display name"
+            value={username}
+            onChangeText={(text) => {
+              setUsername(text);
+              if (error) setError(undefined);
+            }}
+            error={error}
+            hint={`${username.trim().length}/${MAX_NAME} characters`}
+            maxLength={MAX_NAME}
+            autoCapitalize="words"
+            autoComplete="name"
+            placeholder="Your name"
+            returnKeyType="done"
+            onSubmitEditing={save}
+          />
+        </ScrollView>
 
-        <TextInput
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Enter username"
-        />
-
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        <View
+          style={{
+            paddingHorizontal: t.space.lg,
+            paddingTop: t.space.md,
+            paddingBottom: t.space.base,
+            borderTopWidth: 1,
+            borderTopColor: t.colors.border,
+            gap: t.space.sm,
+          }}
+        >
+          <Button
+            label="Save changes"
+            size="lg"
+            fullWidth
+            loading={saving}
+            disabled={!dirty}
+            onPress={save}
+          />
+          <Button label="Cancel" variant="ghost" fullWidth onPress={cancel} />
+        </View>
+      </KeyboardAvoidingView>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#F5F5F5",
-    flex: 1,
-  },
-  topBar: {
-    flexDirection: "row",
-    width: "100%",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    alignItems: "flex-start",
-  },
-  middleBar: {
-    marginTop: 20,
-    marginHorizontal: 20,
-    alignItems: "center",
-    backgroundColor: Colors.white,
-    padding: 40,
-    borderRadius: 30,
-    gap: 20,
-  },
-  titleLogoFont: {
-    fontSize: 30,
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-  },
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 18,
-    fontFamily: "Poppins_500Medium",
-  },
-  saveButton: {
-    backgroundColor: Colors.primary,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-    width: "100%",
-    alignItems: "center",
-  },
-  saveButtonText: {
-    color: Colors.white,
-    fontSize: 18,
-    fontFamily: "Poppins_700Bold",
-  },
-  cancelText: {
-    color: Colors.primary,
-    fontSize: 16,
-    fontFamily: "Poppins_500Medium",
-  },
-});

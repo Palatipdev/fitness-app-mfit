@@ -1,350 +1,406 @@
-import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-
+import Feather from "@expo/vector-icons/Feather";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
+  BackHandler,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
+  ScrollView,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "../constants/color";
-export default function OnBoarding() {
+
+import { Button } from "@/components/ui/Button";
+import { ChoiceGroup, type ChoiceOption } from "@/components/ui/Choice";
+import { Input } from "@/components/ui/Input";
+import { Screen } from "@/components/ui/Screen";
+import { ProgressBar } from "@/components/ui/Stat";
+import { Text } from "@/components/ui/Text";
+import { useTheme } from "@/hooks/useTheme";
+import type {
+  GenderAnswer,
+  GoalAnswer,
+  SessionLengthAnswer,
+  WorkoutDaysAnswer,
+} from "@/types/workout";
+
+type Answers = {
+  goal: GoalAnswer | null;
+  gender: GenderAnswer | null;
+  age: string;
+  height: string;
+  weight: string;
+  workoutDays: WorkoutDaysAnswer | null;
+  sessionLength: SessionLengthAnswer | null;
+};
+
+const GOALS: ChoiceOption<GoalAnswer>[] = [
+  { value: "wl", label: "Lose fat", detail: "Keep strength while cutting" },
+  { value: "maintain", label: "Maintain", detail: "Hold your current shape" },
+  { value: "gain", label: "Build muscle", detail: "Add size and strength" },
+];
+
+const GENDERS: ChoiceOption<GenderAnswer>[] = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+];
+
+const DAYS: ChoiceOption<WorkoutDaysAnswer>[] = [
+  { value: "2", label: "2 or fewer", detail: "Full body" },
+  { value: "3-4", label: "3 to 4", detail: "Upper / lower" },
+  { value: "4", label: "4 or more", detail: "Push pull legs" },
+];
+
+const SESSIONS: ChoiceOption<SessionLengthAnswer>[] = [
+  { value: "30", label: "Up to 30 min", detail: "Tight, compound focused" },
+  { value: "30-60", label: "30 to 60 min", detail: "The usual session" },
+  { value: "60+", label: "Over an hour", detail: "Room for extra volume" },
+];
+
+/** lbs and cm are what gets stored; the toggles only change what you type. */
+const LB_PER_KG = 2.2046226;
+const CM_PER_IN = 2.54;
+
+const STEP_COUNT = 5;
+
+export default function Onboarding() {
+  const t = useTheme();
   const router = useRouter();
-  const [fontLoaded] = useFonts({
-    Poppins_700Bold,
+
+  const [step, setStep] = useState(0);
+  const [weightUnit, setWeightUnit] = useState<"lb" | "kg">("lb");
+  const [heightUnit, setHeightUnit] = useState<"cm" | "in">("cm");
+  const [answers, setAnswers] = useState<Answers>({
+    goal: null,
+    gender: null,
+    age: "",
+    height: "",
+    weight: "",
+    workoutDays: null,
+    sessionLength: null,
   });
 
-  //Entering height, weight and age.
-  const [userHeight, setHeight] = useState("");
-  const [userWeight, setWeight] = useState("");
-  const [age, setAge] = useState("");
+  const set = <K extends keyof Answers>(key: K, value: Answers[K]) =>
+    setAnswers((prev) => ({ ...prev, [key]: value }));
 
-  //clicking button
-  const [selectedGoal, setSelectedGoal] = useState("");
-  const [selectedGender, setSelectedGender] = useState("");
-  const [selectedDays, setSelectedDays] = useState("");
-  const [selectedSession, setSelectedSession] = useState("");
+  const digitsOnly = (text: string) => text.replace(/[^0-9]/g, "");
 
-  const handleContinue = () => {
-    // validating the data field
-    if (
-      !selectedGoal ||
-      !userHeight ||
-      !userWeight ||
-      !selectedGender ||
-      !selectedDays ||
-      !selectedSession ||
-      !age
-    ) {
-      Alert.alert("Please fill in all fields");
-      return;
+  const back = useCallback(() => {
+    if (step > 0) {
+      setStep((s) => s - 1);
+      return true;
     }
+    router.back();
+    return true;
+  }, [step, router]);
 
-    // Navigate to results with the data
+  // Android hardware back walks the wizard instead of dropping the whole flow.
+  useFocusEffect(
+    useCallback(() => {
+      const sub = BackHandler.addEventListener("hardwareBackPress", back);
+      return () => sub.remove();
+    }, [back]),
+  );
+
+  const ageNumber = Number(answers.age);
+  const heightNumber = Number(answers.height);
+  const weightNumber = Number(answers.weight);
+
+  const stepValid = useMemo(() => {
+    switch (step) {
+      case 0:
+        return answers.goal !== null;
+      case 1:
+        return answers.gender !== null && ageNumber >= 13 && ageNumber <= 100;
+      case 2:
+        return heightNumber > 0 && weightNumber > 0;
+      case 3:
+        return answers.workoutDays !== null;
+      case 4:
+        return answers.sessionLength !== null;
+      default:
+        return false;
+    }
+  }, [step, answers, ageNumber, heightNumber, weightNumber]);
+
+  const finish = () => {
+    const weightLb =
+      weightUnit === "lb" ? weightNumber : weightNumber * LB_PER_KG;
+    const heightCm =
+      heightUnit === "cm" ? heightNumber : heightNumber * CM_PER_IN;
+
     router.push({
       pathname: "/resultPreview",
       params: {
-        goal: selectedGoal,
-        height: userHeight,
-        weight: userWeight,
-        gender: selectedGender,
-        age: age,
-        workoutDays: selectedDays,
-        sessionLength: selectedSession,
+        goal: answers.goal!,
+        gender: answers.gender!,
+        age: answers.age,
+        weight: Math.round(weightLb).toString(),
+        height: Math.round(heightCm).toString(),
+        workoutDays: answers.workoutDays!,
+        sessionLength: answers.sessionLength!,
       },
     });
   };
 
-  if (!fontLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <AntDesign name="arrow-left" size={24} color={Colors.primary} />
-          <Text style={styles.appFont}>Back</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.questionaire}>
-        <Text style={styles.appFont}>What is your goal?</Text>
-        <View style={styles.answerButtons}>
-          <TouchableOpacity
-            style={selectedGoal === "wl" ? styles.pressed : styles.unPressed}
-            onPress={() => setSelectedGoal("wl")}
-          >
-            <Text style={styles.font}> Weight Lost</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={
-              selectedGoal === "maintain" ? styles.pressed : styles.unPressed
+  const STEPS = [
+    {
+      title: "What are you training for?",
+      hint: "This sets how much volume your plan carries.",
+      body: (
+        <ChoiceGroup
+          options={GOALS}
+          value={answers.goal}
+          onChange={(v) => set("goal", v)}
+          layout="stack"
+          accessibilityLabel="Training goal"
+        />
+      ),
+    },
+    {
+      title: "Tell us about you",
+      hint: "Used to scale starting loads, nothing else.",
+      body: (
+        <View style={{ gap: t.space.xl }}>
+          <View style={{ gap: t.space.sm }}>
+            <Text variant="label" tone="muted">
+              Sex
+            </Text>
+            <ChoiceGroup
+              options={GENDERS}
+              value={answers.gender}
+              onChange={(v) => set("gender", v)}
+              accessibilityLabel="Sex"
+            />
+          </View>
+          <Input
+            label="Age"
+            value={answers.age}
+            onChangeText={(text) => set("age", digitsOnly(text))}
+            keyboardType="number-pad"
+            placeholder="24"
+            maxLength={3}
+            suffix="years"
+            error={
+              answers.age && (ageNumber < 13 || ageNumber > 100)
+                ? "Enter an age between 13 and 100."
+                : undefined
             }
-            onPress={() => setSelectedGoal("maintain")}
-          >
-            <Text style={styles.font}> Maintain</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={selectedGoal === "gain" ? styles.pressed : styles.unPressed}
-            onPress={() => setSelectedGoal("gain")}
-          >
-            <Text style={styles.font}> Gain Weight</Text>
-          </TouchableOpacity>
+          />
         </View>
+      ),
+    },
+    {
+      title: "Your measurements",
+      hint: "Tap the unit to switch.",
+      body: (
+        <View style={{ gap: t.space.xl }}>
+          <View style={{ gap: t.space.sm }}>
+            <UnitRow
+              label="Weight"
+              unit={weightUnit}
+              options={["lb", "kg"]}
+              onChange={setWeightUnit}
+            />
+            <Input
+              accessibilityLabel="Weight"
+              value={answers.weight}
+              onChangeText={(text) => set("weight", digitsOnly(text))}
+              keyboardType="number-pad"
+              placeholder={weightUnit === "lb" ? "170" : "77"}
+              maxLength={3}
+              suffix={weightUnit}
+            />
+          </View>
 
-        <Text style={styles.appFont}>What is your height and weight?</Text>
-        <View style={styles.heightAndWeight}>
-          <View style={styles.heightAndWeightLeft}>
-            <TextInput
-              style={styles.inputBox}
-              placeholder="Weight (lbs)"
-              placeholderTextColor={"#666666"}
-              keyboardType="default"
-              onChangeText={(text) => {
-                const numbersOnly = text.replace(/[^0-9]/g, "");
-                setWeight(numbersOnly);
-              }}
-              value={userWeight}
+          <View style={{ gap: t.space.sm }}>
+            <UnitRow
+              label="Height"
+              unit={heightUnit}
+              options={["cm", "in"]}
+              onChange={setHeightUnit}
             />
-            <TextInput
-              style={styles.inputBox}
-              placeholder="Height (cm)"
-              placeholderTextColor={"#666666"}
-              keyboardType="default"
-              onChangeText={(text) => {
-                const numbersOnly = text.replace(/[^0-9]/g, "");
-                setHeight(numbersOnly);
-              }}
-              value={userHeight}
+            <Input
+              accessibilityLabel="Height"
+              value={answers.height}
+              onChangeText={(text) => set("height", digitsOnly(text))}
+              keyboardType="number-pad"
+              placeholder={heightUnit === "cm" ? "178" : "70"}
+              maxLength={3}
+              suffix={heightUnit}
             />
-          </View>
-          <View style={styles.heightAndWeightRight}>
-            <TouchableOpacity
-              style={[
-                selectedGender === "male" ? styles.pressed : styles.unPressed,
-                { width: 85 },
-                { marginRight: 10 },
-              ]}
-              onPress={() => setSelectedGender("male")}
-            >
-              <Text style={styles.font}>Male</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                selectedGender === "female" ? styles.pressed : styles.unPressed,
-                { width: 85 },
-              ]}
-              onPress={() => setSelectedGender("female")}
-            >
-              <Text style={styles.font}>Female</Text>
-            </TouchableOpacity>
           </View>
         </View>
-        <Text style={[styles.appFont, { paddingTop: 10 }]}>
-          How old are you?
-        </Text>
-        <View style={styles.ageBox}>
-          <TextInput
-            style={[styles.inputBox]}
-            placeholder="Age"
-            placeholderTextColor={"#666666"}
-            keyboardType="default"
-            onChangeText={(text) => {
-              const numbersOnly = text.replace(/[^0-9]/g, "");
-              setAge(numbersOnly);
+      ),
+    },
+    {
+      title: "How many days can you train?",
+      hint: "Be honest. The split is built around this.",
+      body: (
+        <ChoiceGroup
+          options={DAYS}
+          value={answers.workoutDays}
+          onChange={(v) => set("workoutDays", v)}
+          layout="stack"
+          accessibilityLabel="Training days per week"
+        />
+      ),
+    },
+    {
+      title: "How long is a session?",
+      hint: "Shorter sessions get fewer, harder movements.",
+      body: (
+        <ChoiceGroup
+          options={SESSIONS}
+          value={answers.sessionLength}
+          onChange={(v) => set("sessionLength", v)}
+          layout="stack"
+          accessibilityLabel="Session length"
+        />
+      ),
+    },
+  ];
+
+  const current = STEPS[step];
+  const isLast = step === STEP_COUNT - 1;
+
+  return (
+    <Screen edges={["top", "bottom"]}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <View style={{ paddingHorizontal: t.space.xl, gap: t.space.base }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: t.space.base,
             }}
-            value={age}
+          >
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              hitSlop={12}
+              onPress={back}
+              style={{ height: t.hitTarget, justifyContent: "center" }}
+            >
+              <Feather name="arrow-left" size={22} color={t.colors.text} />
+            </Pressable>
+            <Text variant="label" tone="faint">
+              {`Step ${step + 1} of ${STEP_COUNT}`}
+            </Text>
+          </View>
+
+          <ProgressBar
+            value={(step + 1) / STEP_COUNT}
+            label={`Step ${step + 1} of ${STEP_COUNT}`}
           />
         </View>
 
-        <Text style={[styles.appFont, { paddingTop: 10 }]}>
-          How many days CAN you workout per week?
-        </Text>
-        <View style={styles.answerButtons}>
-          <TouchableOpacity
-            style={selectedDays === "2" ? styles.pressed : styles.unPressed}
-            onPress={() => setSelectedDays("2")}
-          >
-            <Text style={styles.font}> 2 or less</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={selectedDays === "3-4" ? styles.pressed : styles.unPressed}
-            onPress={() => setSelectedDays("3-4")}
-          >
-            <Text style={styles.font}> 3 - 4</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={selectedDays === "4" ? styles.pressed : styles.unPressed}
-            onPress={() => setSelectedDays("4")}
-          >
-            <Text style={styles.font}> 4+</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={[styles.appFont]}>
-          How long are your usual workout session? (minutes){" "}
-        </Text>
-        <View style={styles.answerButtons}>
-          <TouchableOpacity
-            style={selectedSession === "30" ? styles.pressed : styles.unPressed}
-            onPress={() => setSelectedSession("30")}
-          >
-            <Text style={styles.font}> 30 or less </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={
-              selectedSession === "30-60" ? styles.pressed : styles.unPressed
-            }
-            onPress={() => setSelectedSession("30-60")}
-          >
-            <Text style={styles.font}> 30 - 60</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={
-              selectedSession === "60+" ? styles.pressed : styles.unPressed
-            }
-            onPress={() => setSelectedSession("60+")}
-          >
-            <Text style={styles.font}> 60+</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.bottomBar}>
-        <TouchableOpacity
-          style={[styles.pressed, { width: 130 }]}
-          onPress={handleContinue}
+        <ScrollView
+          contentContainerStyle={{
+            padding: t.space.xl,
+            paddingBottom: t.space.xxl,
+            gap: t.space.xl,
+          }}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.continue}>
-            <Text
-              style={[
-                styles.font,
-                { color: Colors.white },
-                { fontSize: 15 },
-                { marginTop: 2 },
-              ]}
-            >
-              Continue
+          <View style={{ gap: t.space.sm }}>
+            <Text variant="h1">{current.title}</Text>
+            <Text variant="small" tone="muted">
+              {current.hint}
             </Text>
-            <AntDesign name="arrow-right" size={15} color={Colors.white} />
           </View>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+
+          {current.body}
+        </ScrollView>
+
+        <View
+          style={{
+            paddingHorizontal: t.space.xl,
+            paddingTop: t.space.md,
+            paddingBottom: t.space.base,
+            borderTopWidth: 1,
+            borderTopColor: t.colors.border,
+            backgroundColor: t.colors.background,
+          }}
+        >
+          <Button
+            label={isLast ? "See my plan" : "Continue"}
+            size="lg"
+            fullWidth
+            disabled={!stepValid}
+            onPress={() => (isLast ? finish() : setStep((s) => s + 1))}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+/** Label with an inline unit switch, e.g. Weight [lb|kg]. */
+function UnitRow<T extends string>({
+  label,
+  unit,
+  options,
+  onChange,
+}: {
+  label: string;
+  unit: T;
+  options: readonly T[];
+  onChange: (next: T) => void;
+}) {
+  const t = useTheme();
 
-  topBar: {
-    width: "100%",
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 15,
-  },
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <Text variant="label" tone="muted">
+        {label}
+      </Text>
 
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 5,
-  },
-  appFont: {
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-  },
-
-  font: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 12,
-  },
-
-  questionaire: {
-    flex: 1,
-    width: "100%",
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    gap: 15,
-  },
-  answerButtons: {
-    width: "100%",
-    height: "10%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  heightAndWeight: {
-    width: "100%",
-    flexDirection: "row",
-  },
-  heightAndWeightLeft: {
-    flex: 1,
-    width: "40%",
-    justifyContent: "space-between",
-    paddingRight: 30,
-    gap: 15,
-  },
-  heightAndWeightRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingRight: 20,
-  },
-  inputBox: {
-    fontFamily: "Poppins_700Bold",
-    borderBottomColor: Colors.gray,
-    borderBottomWidth: 1,
-  },
-  unPressed: {
-    borderWidth: 4,
-    borderRadius: 30,
-    borderColor: Colors.gray,
-    backgroundColor: Colors.gray,
-    padding: 10,
-    width: 120,
-    alignItems: "center",
-  },
-  pressed: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-    borderWidth: 4,
-    borderRadius: 30,
-    padding: 10,
-    width: 120,
-    alignItems: "center",
-  },
-  bottomBar: {
-    alignItems: "flex-end",
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-  },
-  continue: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 6,
-  },
-  ageBox: {
-    width: "40%",
-  },
-});
+      <View
+        style={{
+          flexDirection: "row",
+          backgroundColor: t.colors.surfaceAlt,
+          borderRadius: t.radius.pill,
+          padding: 3,
+        }}
+      >
+        {options.map((option) => {
+          const active = option === unit;
+          return (
+            <Pressable
+              key={option}
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
+              accessibilityLabel={`Use ${option}`}
+              hitSlop={8}
+              onPress={() => onChange(option)}
+              style={{
+                paddingHorizontal: t.space.base,
+                paddingVertical: 6,
+                borderRadius: t.radius.pill,
+                backgroundColor: active ? t.colors.primary : "transparent",
+              }}
+            >
+              <Text
+                variant="caption"
+                tone={active ? "onPrimary" : "muted"}
+                style={{ fontFamily: t.type.smallStrong.fontFamily }}
+              >
+                {option}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}

@@ -1,56 +1,77 @@
+import {
+  collection,
+  getCountFromServer,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+} from "firebase/firestore";
+
 import { auth, db } from "@/firebase/config";
-import { collection, doc, getCountFromServer, getDoc, getDocs } from "firebase/firestore";
+import type { LoggedExercise, WorkoutLog } from "@/types/workout";
 
-export async function fetchPastWorkouts() {
-  console.log("fetching past workouts");
-
-  //get user id
-  const currentUser = auth.currentUser;
-  if (!currentUser) {
-    throw new Error("user not authenticated");
-  }
-  const workoutRef = collection(db, "users", currentUser.uid, "logs");
-  const allWorkout = await getDocs(workoutRef);
-  // get the snapshot
-  // an object that contains the past workout
-
-  const workouts = allWorkout.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-
-  console.log("fetched workouts: ", workouts);
-  return workouts;
+function requireUid(): string {
+  const user = auth.currentUser;
+  if (!user) throw new Error("You need to be signed in to do that.");
+  return user.uid;
 }
 
-export async function fetchInitial() {
-  console.log("fetching initials");
+/** Older logs stored weights and reps as strings. Normalise on read. */
+function normaliseLog(id: string, raw: Record<string, unknown>): WorkoutLog {
+  const exercises = Array.isArray(raw.workout) ? raw.workout : [];
 
-  // getting user id
-
-  const currentUser = auth.currentUser;
-  if (!currentUser) {
-    throw new Error("user not authenticated");
-  }
-  const workoutRef = getDoc(doc(db, "users", currentUser.uid));
-  const userName = (await workoutRef).data();
-
-  if (userName) {
-    return userName.username
-  }
-
-  return "";
+  return {
+    id,
+    dayName: typeof raw.dayName === "string" ? raw.dayName : "Workout",
+    date: typeof raw.date === "string" ? raw.date : new Date(0).toISOString(),
+    duration: Number(raw.duration) || 0,
+    workout: exercises
+      .filter(Boolean)
+      .map((entry: any, index: number): LoggedExercise => ({
+        exerciseIndex: Number(entry.exerciseIndex ?? index),
+        exerciseName: String(entry.exerciseName ?? "Exercise"),
+        primaryMuscleGroup: String(entry.primaryMuscleGroup ?? "Other"),
+        sets: (Array.isArray(entry.sets) ? entry.sets : [])
+          .map((set: any) => ({
+            weight: Number(set?.weight) || 0,
+            reps: Number(set?.reps) || 0,
+            isPr: Boolean(set?.isPr),
+          }))
+          .filter((set: { weight: number; reps: number }) => set.reps > 0),
+      })),
+  };
 }
 
-export async function fetchLogCount() {
-  console.log("fetching log count")
+/**
+ * The most recent `maxLogs` workouts, returned oldest first.
+ *
+ * The query orders descending so the cap keeps the newest sessions, then the
+ * result is reversed because the progress maths wants chronological order.
+ * Ordering ascending and capping would have returned the oldest N instead,
+ * which would pin "last session" to an old workout once an account passed the
+ * limit.
+ */
+export async function fetchPastWorkouts(maxLogs = 200): Promise<WorkoutLog[]> {
+  const uid = requireUid();
 
-  const currentUser = auth.currentUser
-  if (!currentUser){
-    throw new Error ("user not authenticated")
-  }
-  const workoutRef = collection(db,"users",currentUser.uid,"logs")
+  const logs = await getDocs(
+    query(
+      collection(db, "users", uid, "logs"),
+      orderBy("date", "desc"),
+      limit(maxLogs),
+    ),
+  );
 
-  const snapshot = await getCountFromServer(workoutRef)
-  return snapshot.data().count
+  return logs.docs
+    .map((entry) => normaliseLog(entry.id, entry.data()))
+    .reverse();
+}
+
+/** Server-side count, so it stays cheap as the log collection grows. */
+export async function fetchLogCount(): Promise<number> {
+  const uid = requireUid();
+  const snapshot = await getCountFromServer(
+    collection(db, "users", uid, "logs"),
+  );
+  return snapshot.data().count;
 }

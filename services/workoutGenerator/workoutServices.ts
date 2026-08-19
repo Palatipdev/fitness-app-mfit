@@ -1,65 +1,64 @@
-import { auth, db } from "@/firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { generateWorkout } from "./generator";
 
-export async function saveWorkout() {
-  console.log("Generating");
-  //generating the workout
-  const weekAWorkout = await generateWorkout("A");
-  const weekBWorkout = await generateWorkout("B");
-  console.log("Generated workout");
-  //saving the workout to firestore
-  //since there are two workout routine we can use collection
-  console.log("Saving to firebase");
-  try {
-    const currentUser = auth.currentUser;
-    if (!currentUser) throw new Error("not logged in");
-    const workoutRef = doc(db, "users", currentUser.uid, "workout", "current");
+import { auth, db } from "@/firebase/config";
+import type { StoredWorkout, WeekPlan, WorkoutDaysAnswer } from "@/types/workout";
+import { generateBothWeeks } from "./generator";
 
-    await setDoc(workoutRef, {
-      weekA: weekAWorkout,
-      weekB: weekBWorkout,
-    });
-
-    console.log("saved to firebase");
-  } catch (error) {
-    console.log("Error", error);
-  }
+function requireUid(): string {
+  const user = auth.currentUser;
+  if (!user) throw new Error("You need to be signed in to do that.");
+  return user.uid;
 }
 
-export async function loadCurrentWorkout() {
-  // 1. use some react native code to load the workout into the homepage
-  // 2. assume that the workout already exists in firestore
-  // 3. retrieve week A and week B workout from firestore
-  // 4. display? week A  (for now).
+const workoutDoc = (uid: string) =>
+  doc(db, "users", uid, "workout", "current");
 
-  const currentUser = auth.currentUser;
-  if (!currentUser) {
-    throw new Error("not logged in");
-  }
-  const docRef = getDoc(
-    doc(db, "users", currentUser.uid, "workout", "current")
-  );
-  if (!(await docRef).exists) {
-    throw new Error("Document not found");
-  }
-  const onboarding = getDoc(doc(db, "users", currentUser.uid));
+/** Generates a fresh plan and overwrites the stored one. */
+export async function saveWorkout(): Promise<StoredWorkout> {
+  const uid = requireUid();
+  const { weekA, weekB } = await generateBothWeeks();
 
-  const workoutRoutine = (await docRef).data();
-  const daysPerWeek = (await onboarding).data();
-  
+  await setDoc(workoutDoc(uid), {
+    weekA,
+    weekB,
+    generatedAt: new Date().toISOString(),
+  });
 
-  if (!workoutRoutine) {
-    throw new Error("Routine not found");
+  return { weekA, weekB };
+}
+
+export type CurrentWorkout = {
+  weekA: WeekPlan;
+  weekB: WeekPlan;
+  workoutDays: WorkoutDaysAnswer;
+};
+
+/**
+ * Reads the stored plan, generating one on first run.
+ *
+ * The previous version tested `snapshot.exists` instead of calling it. In the
+ * modular SDK that is a function reference, so the guard was always truthy and
+ * a missing document fell through to a crash on `.data()`.
+ */
+export async function loadCurrentWorkout(): Promise<CurrentWorkout> {
+  const uid = requireUid();
+
+  const [workoutSnap, userSnap] = await Promise.all([
+    getDoc(workoutDoc(uid)),
+    getDoc(doc(db, "users", uid)),
+  ]);
+
+  const user = userSnap.data();
+  if (!user?.onboarding) {
+    throw new Error("Finish onboarding before loading a plan.");
   }
-  if (!daysPerWeek) {
-    throw new Error("Days not");
+  const workoutDays = user.onboarding.workoutDays as WorkoutDaysAnswer;
+
+  if (!workoutSnap.exists()) {
+    const generated = await saveWorkout();
+    return { ...generated, workoutDays };
   }
 
-  console.log("loaded :)")
-  return {
-    workoutWeekA: workoutRoutine.weekA,
-    workoutWeekB: workoutRoutine.weekB,
-    workoutDays: daysPerWeek.onboarding.workoutDays,
-  };
+  const stored = workoutSnap.data() as StoredWorkout;
+  return { weekA: stored.weekA ?? {}, weekB: stored.weekB ?? {}, workoutDays };
 }

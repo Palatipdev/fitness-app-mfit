@@ -1,156 +1,141 @@
-import { Colors } from "@/constants/color";
-import { auth } from "@/firebase/config";
-import {
-  fetchInitial,
-  fetchLogCount,
-} from "@/services/workoutAnalytic/fetchingServices";
-import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { signOut } from "firebase/auth";
-import { useEffect, useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import { Linking } from "react-native";
+import { Linking, Pressable, ScrollView, View } from "react-native";
 
-export default function aboutPage() {
+import { Card } from "@/components/ui/Card";
+import { Screen } from "@/components/ui/Screen";
+import { Text } from "@/components/ui/Text";
+import { useTheme } from "@/hooks/useTheme";
+
+const REPO_URL = "https://github.com/Palatipdev/fitness-app-mfit";
+const CONTACT_EMAIL = "palatipten@gmail.com";
+
+export default function AboutPage() {
+  const t = useTheme();
   const router = useRouter();
-  const ABOUT_SECTION = [
-    {
-      title: "Version",
-      description: "1.0.0 MVP",
-    },
-    {
-      title: "Description",
-      description:
-        "personalized fitness tracking app that generates custom workout plan based on your goals, experience level, and time constraints. Tracking your progress using complex algorithm.",
-      stacked: true,
-    },
-    {
-      title: "Creator",
-      description: "Built and designed by Palatip Boonmeerit, CS @ Unimelb",
-      stacked: true,
-    },
-    {
-      title: "Github",
-      description: "https://github.com/Palatipdev/fitness-app-mfit",
-      url: "https://github.com/Palatipdev/fitness-app-mfit",
-    },
-    {
-      title: "Contact",
-      description: "palatipten@gmail.com",
-    },
-  ];
+
+  const version = Constants.expoConfig?.version ?? "1.0.0";
+
+  const open = (url: string) => {
+    Linking.openURL(url).catch(() => {});
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <AntDesign name="arrow-left" size={24} color={Colors.primary} />
-          <Text style={styles.appFont}>Back</Text>
+    <Screen edges={["top", "bottom"]}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: t.space.md,
+          paddingHorizontal: t.space.lg,
+        }}
+      >
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          hitSlop={12}
+          onPress={() => router.back()}
+          style={{ height: t.hitTarget, justifyContent: "center" }}
+        >
+          <Feather name="arrow-left" size={22} color={t.colors.text} />
         </Pressable>
+        <Text variant="title">About</Text>
       </View>
 
-      <View style={styles.middleBar}>
-        {ABOUT_SECTION.map((item) => (
-          <View
-            key={item.title}
-            style={[
-              styles.sectionBundle,
-              item.stacked && styles.sectionStacked,
-            ]}
-          >
-            <Text style={styles.titleFont}>{`${item.title}:`}</Text>
-            <Text
-              style={[
-                styles.descriptionFont,
-                item.stacked && styles.stackedDescription,
-                item.url && styles.linkText,
-              ]}
-              onPress={item.url ? () => Linking.openURL(item.url) : undefined}
-            >
-              {item.description}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </SafeAreaView>
+      <ScrollView
+        contentContainerStyle={{
+          padding: t.space.lg,
+          paddingBottom: t.space.xxl,
+          gap: t.space.lg,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ alignItems: "center", gap: t.space.xs, paddingVertical: t.space.lg }}>
+          <Text variant="display" tone="primary">
+            mfit.
+          </Text>
+          <Text variant="caption" tone="faint">
+            {`Version ${version}`}
+          </Text>
+        </View>
+
+        <Card style={{ gap: t.space.sm }}>
+          <Text variant="h3">What it does</Text>
+          <Text variant="small" tone="muted">
+            mfit builds a training split around three things: how many days you
+            can train, how long a session runs, and what you are training for.
+            The plan rotates across a two-week cycle so you are not repeating
+            the same session indefinitely, and it tracks estimated one-rep max
+            per muscle group as you log.
+          </Text>
+        </Card>
+
+        <Card style={{ gap: t.space.sm }}>
+          <Text variant="h3">Who built it</Text>
+          <Text variant="small" tone="muted">
+            Built and designed by Palatip Boonmeerit, CS at the University of
+            Melbourne.
+          </Text>
+        </Card>
+
+        <View style={{ gap: t.space.sm }}>
+          <Text variant="label" tone="faint">
+            Links
+          </Text>
+          <Card padded={false}>
+            <LinkRow
+              icon="github"
+              label="Source on GitHub"
+              onPress={() => open(REPO_URL)}
+            />
+            <LinkRow
+              icon="mail"
+              label={CONTACT_EMAIL}
+              onPress={() => open(`mailto:${CONTACT_EMAIL}`)}
+              last
+            />
+          </Card>
+        </View>
+      </ScrollView>
+    </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#F5F5F5",
-    flex: 1,
-  },
-  topBar: {
-    flexDirection: "row",
-    width: "100%",
-    paddingHorizontal: 20,
-    alignItems: "flex-start",
-  },
+function LinkRow({
+  icon,
+  label,
+  onPress,
+  last = false,
+}: {
+  icon: React.ComponentProps<typeof Feather>["name"];
+  label: string;
+  onPress: () => void;
+  last?: boolean;
+}) {
+  const t = useTheme();
 
-  titleLogoFont: {
-    fontSize: 30,
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 5,
-  },
-  appFont: {
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-    fontSize: 20,
-  },
-  middleBar: {
-    borderWidth: 1,
-    backgroundColor: Colors.white,
-    borderColor: Colors.white,
-    padding: 125,
-    borderRadius: 30,
-    paddingHorizontal: 30,
-    marginHorizontal: 30,
-    marginVertical: 30,
-    gap: 20,
-  },
-  sectionBundle: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-
-  titleFont: {
-    fontFamily: "Poppins_700Bold",
-    fontSize: 16,
-    color: Colors.primary,
-    marginRight: 5,
-  },
-
-  descriptionFont: {
-    fontFamily: "Poppins_500Medium",
-    fontSize: 14,
-    color: Colors.black,
-  },
-  sectionStacked: {
-    flexDirection: "column",
-  },
-  stackedDescription: {
-    marginLeft: 10,
-  },
-  linkText: {
-    textDecorationLine: "underline",
-  },
-});
+  return (
+    <Pressable
+      accessibilityRole="link"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        flexDirection: "row",
+        alignItems: "center",
+        gap: t.space.md,
+        minHeight: 56,
+        paddingHorizontal: t.space.base,
+        borderBottomWidth: last ? 0 : 1,
+        borderBottomColor: t.colors.border,
+        backgroundColor: pressed ? t.colors.surfacePressed : "transparent",
+      })}
+    >
+      <Feather name={icon} size={19} color={t.colors.text} />
+      <Text variant="title" style={{ flex: 1 }} numberOfLines={1}>
+        {label}
+      </Text>
+      <Feather name="external-link" size={16} color={t.colors.textFaint} />
+    </Pressable>
+  );
+}

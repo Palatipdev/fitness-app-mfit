@@ -1,225 +1,181 @@
+import { collection, getDocs } from "firebase/firestore";
+
+import { db } from "@/firebase/config";
+import type {
+  Exercise,
+  PlannedExercise,
+  SessionLengthAnswer,
+  WeekLabel,
+  WeekPlan,
+  WorkoutDaysAnswer,
+} from "@/types/workout";
 import { getOnboardingData } from "@/utils/fetchData";
 import {
-  checkRepeatedExercise,
-  checkTypeDupe1,
-  checkTypeDupe2,
-  checkTypeDupe3,
+  equipmentAllowance,
+  isEquipmentSaturated,
+  isExerciseUsed,
+  repRangeFor,
 } from "@/utils/workoutHelper";
 import {
   FULL_BODY_TEMPLATES,
   PPL_TEMPLATES,
   UPPER_LOWER_TEMPLATES,
 } from "@/utils/workoutTemplate";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase/config";
 
-export async function fetchExercise() {
-  console.log("Starting fetching process");
+type TemplateSlot = {
+  muscle: string;
+  ci: "Compound" | "Isolation";
+  sets: number;
+  weekDependent?: boolean;
+};
 
-  const exerciseRef = collection(db, "exercises");
-  const allExercises = await getDocs(exerciseRef);
-  // gives a snapshot like a box
-  // an object that CONTAINS the exercises
+/** Muscles whose target alternates between week A and week B. */
+const WEEK_DEPENDENT: Record<string, [string, string]> = {
+  legIsolation: ["Quads", "Hamstrings"],
+  legIsolationA: ["Quads", "Hamstrings"],
+  legIsolationB: ["Hamstrings", "Quads"],
+  thighIsolation: ["Inner Thigh", "Outer Thigh"],
+};
 
-  //Since its an object this is the syntax
-  //take each exercises document, map the data into the array exercises
-  const exercises = allExercises.docs.map((exercise) => exercise.data());
-  //return the exercises array
-  return exercises;
+export async function fetchExercises(): Promise<Exercise[]> {
+  const snapshot = await getDocs(collection(db, "exercises"));
+  return snapshot.docs.map((doc) => doc.data() as Exercise);
 }
 
+function resolveMuscle(slot: TemplateSlot, week: WeekLabel): string {
+  if (!slot.weekDependent) return slot.muscle;
+  const pair = WEEK_DEPENDENT[slot.muscle];
+  if (!pair) return slot.muscle;
+  return week === "A" ? pair[0] : pair[1];
+}
 
-export async function generatorDay(
-  weekType: "A" | "B",
-  dayTemplate: any[],
-  dupeCheckTypeFunc: Function,
-  dupeCheckExercise: Function,
-  exercises: any[]
-) {
-  let usedType: string[] = [];
-  let usedExercise: string[] = [];
-  let workout: any[] = [];
-  const maxAttempt = 20;
+/**
+ * Builds one training day.
+ *
+ * Picks a random candidate per slot, then re-rolls while it duplicates an
+ * exercise already chosen or over-uses one piece of equipment. The previous
+ * version passed whole exercise objects into helpers that compared strings, so
+ * every check silently returned false and no de-duplication ever happened. It
+ * also never incremented its attempt counter.
+ */
+export function generateDay(
+  week: WeekLabel,
+  template: TemplateSlot[],
+  exercises: Exercise[],
+  allowance: number,
+): PlannedExercise[] {
+  const usedEquipment: string[] = [];
+  const usedNames: string[] = [];
+  const day: PlannedExercise[] = [];
+  const MAX_ATTEMPTS = 24;
 
-  console.log("Generating Day", dayTemplate);
-  // TODO: Loop through each exercise spec in dayTemplate
-  for (let spec = 0; spec < dayTemplate.length; spec++) {
-    let attempt = 0;
-    // TODO: Inside loop, handle week-dependent muscles
-    let targetMuscle = dayTemplate[spec].muscle;
-    if (dayTemplate[spec].weekDependent) {
-      if (dayTemplate[spec].muscle === "legIsolation") {
-        targetMuscle = weekType === "A" ? "Quads" : "Hamstrings";
-      } else if (dayTemplate[spec].muscle === "thighIsolation") {
-        targetMuscle = weekType === "A" ? "Inner Thigh" : "Outer Thigh";
-      } else if (dayTemplate[spec].muscle === "legIsolationA") {
-        targetMuscle = weekType === "A" ? "Quads" : "Hamstrings";
-      } else if (dayTemplate[spec].muscle === "legIsolationB") {
-        targetMuscle = weekType === "A" ? "Hamstrings" : "Quads";
-      }
-    }
+  for (const slot of template) {
+    const targetMuscle = resolveMuscle(slot, week);
 
-    let list = exercises.filter(
-      (exercises) =>
-        exercises.primaryMuscle === targetMuscle &&
-        exercises.compoundIsolation === dayTemplate[spec].ci &&
-        exercises.type != "Bodyweight" &&
-        exercises.type != "Band"
+    const candidates = exercises.filter(
+      (exercise) =>
+        exercise.primaryMuscle === targetMuscle &&
+        exercise.compoundIsolation === slot.ci &&
+        exercise.type !== "Bodyweight" &&
+        exercise.type !== "Band",
     );
-    let index = Math.floor(Math.random() * list.length);
-    workout[spec] = {
-      ...list[index],
-      sets: dayTemplate[spec].sets,
-    };
+
+    // No candidate means the exercise database has a gap for this muscle and
+    // role. Skip the slot rather than pushing an undefined row into the plan.
+    if (candidates.length === 0) continue;
+
+    let pick = candidates[Math.floor(Math.random() * candidates.length)];
+    let attempts = 0;
+
     while (
-      dupeCheckTypeFunc(workout[spec], usedType) == true &&
-      dupeCheckExercise(workout[spec], usedExercise) == true &&
-      attempt < maxAttempt
+      attempts < MAX_ATTEMPTS &&
+      (isExerciseUsed(pick.name, usedNames) ||
+        isEquipmentSaturated(pick.type, usedEquipment, allowance))
     ) {
-      let index = Math.floor(Math.random() * list.length);
-      workout[spec] = {
-        ...list[index],
-        sets: dayTemplate[spec].sets,
-      };
+      pick = candidates[Math.floor(Math.random() * candidates.length)];
+      attempts += 1;
     }
-    usedType.push(workout[spec].type);
-    usedExercise.push(workout[spec].name);
+
+    // A duplicate that survives the retry budget is better than a missing slot,
+    // so the last pick is kept either way.
+    usedEquipment.push(pick.type);
+    usedNames.push(pick.name);
+    day.push({
+      ...pick,
+      sets: slot.sets,
+      repRange: repRangeFor(pick.compoundIsolation),
+    });
   }
 
-  return workout;
+  return day;
 }
 
-export async function generateWorkout(weekType: "A" | "B") {
-  const { workoutDays, sessionLength } = await getOnboardingData();
-  const exercises = await fetchExercise();
-  let dupeFunc;
-  if (sessionLength == "30") {
-    dupeFunc = checkTypeDupe1;
-  } else if (sessionLength == "30-60") {
-    dupeFunc = checkTypeDupe2;
-  } else {
-    dupeFunc = checkTypeDupe3;
-  }
+export function templatesFor(
+  workoutDays: WorkoutDaysAnswer,
+  sessionLength: SessionLengthAnswer,
+): Record<string, TemplateSlot[]> {
+  const source =
+    workoutDays === "2"
+      ? FULL_BODY_TEMPLATES
+      : workoutDays === "3-4"
+        ? UPPER_LOWER_TEMPLATES
+        : PPL_TEMPLATES;
 
-  //FB
-  if (workoutDays === "2") {
-    //Template to be built
-    let currentTemplate = FULL_BODY_TEMPLATES[sessionLength];
-
-    let dayA = await generatorDay(
-      weekType,
-      currentTemplate.dayA,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let dayB = await generatorDay(
-      weekType,
-      currentTemplate.dayB,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    return {
-      dayA,
-      dayB,
-    };
-  }
-  //UL
-  else if (workoutDays === "3-4") {
-    let currentTemplate = UPPER_LOWER_TEMPLATES[sessionLength];
-
-    let upperA = await generatorDay(
-      weekType,
-      currentTemplate.upperA,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let upperB = await generatorDay(
-      weekType,
-      currentTemplate.upperB,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let lowerA = await generatorDay(
-      weekType,
-      currentTemplate.lowerA,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let lowerB = await generatorDay(
-      weekType,
-      currentTemplate.lowerB,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    return {
-      upperA,
-      upperB,
-      lowerA,
-      lowerB,
-    };
-  }
-  // PPL
-  else {
-    //Template to be built
-    let currentTemplate = PPL_TEMPLATES[sessionLength];
-
-    let pushA = await generatorDay(
-      weekType,
-      currentTemplate.pushA,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let pullA = await generatorDay(
-      weekType,
-      currentTemplate.pullA,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let legsA = await generatorDay(
-      weekType,
-      currentTemplate.legsA,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let pushB = await generatorDay(
-      weekType,
-      currentTemplate.pushB,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let pullB = await generatorDay(
-      weekType,
-      currentTemplate.pullB,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-    let legsB = await generatorDay(
-      weekType,
-      currentTemplate.legsB,
-      dupeFunc,
-      checkRepeatedExercise,
-      exercises
-    );
-
-    return {
-      pushA,
-      pullA,
-      legsA,
-      pushB,
-      pullB,
-      legsB,
-    };
-  }
+  return (source as Record<string, Record<string, TemplateSlot[]>>)[
+    sessionLength
+  ];
 }
 
+/**
+ * Builds one week from explicit inputs, with no Firestore involved.
+ *
+ * The onboarding preview uses this against the bundled exercise list so it can
+ * show a real plan before an account exists.
+ */
+export function buildWeek(
+  exercises: Exercise[],
+  workoutDays: WorkoutDaysAnswer,
+  sessionLength: SessionLengthAnswer,
+  week: WeekLabel,
+): WeekPlan {
+  const templates = templatesFor(workoutDays, sessionLength);
+  if (!templates) return {};
+
+  const allowance = equipmentAllowance(sessionLength);
+  const plan: WeekPlan = {};
+
+  for (const [dayKey, slots] of Object.entries(templates)) {
+    plan[dayKey] = generateDay(week, slots, exercises, allowance);
+  }
+  return plan;
+}
+
+/**
+ * Generates both weeks in one pass.
+ *
+ * The exercise collection and the user document are read once and shared. The
+ * previous version called `generateWorkout()` twice, and each call re-read the
+ * whole collection, so a single plan cost four network round trips.
+ */
+export async function generateBothWeeks(): Promise<{
+  weekA: WeekPlan;
+  weekB: WeekPlan;
+  workoutDays: WorkoutDaysAnswer;
+}> {
+  const [{ workoutDays, sessionLength }, exercises] = await Promise.all([
+    getOnboardingData(),
+    fetchExercises(),
+  ]);
+
+  if (!templatesFor(workoutDays, sessionLength)) {
+    throw new Error(
+      `No template for ${workoutDays} days at ${sessionLength} minutes`,
+    );
+  }
+
+  return {
+    weekA: buildWeek(exercises, workoutDays, sessionLength, "A"),
+    weekB: buildWeek(exercises, workoutDays, sessionLength, "B"),
+    workoutDays,
+  };
+}

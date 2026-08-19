@@ -1,227 +1,129 @@
-import FloatingLabelInput from "@/components/floating-label-input";
-import { Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
-
-//auth
-import { auth } from '@/firebase/config';
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
+import { Pressable, View } from "react-native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "../constants/color";
+import { AuthScaffold } from "@/components/AuthScaffold";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
+import { auth } from "@/firebase/config";
+import { useTheme } from "@/hooks/useTheme";
+import {
+  authErrorField,
+  authErrorMessage,
+  isValidEmail,
+} from "@/utils/authErrors";
+
+type FieldErrors = { email?: string; password?: string; form?: string };
 
 export default function SignIn() {
+  const t = useTheme();
   const router = useRouter();
-  const [fontLoaded] = useFonts({
-    Poppins_700Bold,
-  });
 
-  const [passWord, setPassWord] = useState("");
-  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [loading, setLoading] = useState(false);
 
+  const validate = (): FieldErrors => {
+    const next: FieldErrors = {};
+    if (!email.trim()) next.email = "Enter your email address.";
+    else if (!isValidEmail(email)) next.email = "That does not look like an email.";
+    if (!password) next.password = "Enter your password.";
+    return next;
+  };
 
-
-  const handleSignIn = async() => {
-    if (!email) {
-      Alert.alert("Please enter your email");
+  const handleSignIn = async () => {
+    const found = validate();
+    if (Object.keys(found).length > 0) {
+      setErrors(found);
       return;
     }
-    if (!passWord) {
-      Alert.alert("Please enter your password");
-      return;
-    }
-        if (!email || !passWord ) {
-          Alert.alert("Please enter all the field.");
-          return;
-        
-    }
-  
-  setLoading(true);
-  try{  
-    const userCredential = await signInWithEmailAndPassword(auth, email,passWord);
-    console.log ("Successfully signed in!" , userCredential.user.uid)
-    Alert.alert("Success!", "Signed in successfully");
 
-    // Navigate to home page when created
-    router.replace('/homepage')
-  }
-
-catch (error: any) {
-      console.error("Sign in error:", error);
-      
-      if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
-        Alert.alert("Error", "Invalid email or password");
-      } else if (error.code === "auth/user-not-found") {
-        Alert.alert("Error", "No account found with this email");
-      } else {
-        Alert.alert("Error", "Sign in failed: " + error.message);
-      }
+    setLoading(true);
+    setErrors({});
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      router.replace("/homepage");
+    } catch (error) {
+      setErrors({ [authErrorField(error)]: authErrorMessage(error) });
     } finally {
       setLoading(false);
     }
   };
 
-  
-
-  if (!fontLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <AntDesign name="arrow-left" size={24} color={Colors.primary} />
-          <Text style={styles.appFont}>Back</Text>
-        </Pressable>
-        <Text style={styles.header}>Sign in</Text>
-      </View>
-
-      <View style={styles.middleBar}>
-        <FloatingLabelInput
-          label='Email'
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="default"
-        />
-
-        <FloatingLabelInput
-          label="Password"
-          autoCapitalize='none'
-          onChangeText={setPassWord}
-          value={passWord}
-          secureTextEntry={true}
-        />
-        <TouchableOpacity style={styles.continueButton}
-        onPress = {handleSignIn}
-        disabled = {loading}>
-          <Text
-            style={[styles.appFont, { fontSize: 20 }, { color: Colors.white }]}
-          >
-            {loading ? 'Signing in...' : 'Continue'}
+    <AuthScaffold
+      title="Welcome back"
+      subtitle="Pick up where you left off."
+      formError={errors.form ?? null}
+      footer={
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: t.space.xs,
+          }}
+        >
+          <Text variant="small" tone="muted">
+            No account yet?
           </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.bottomBar}>
-        <Text>Or Sign In with</Text>
-        <View style={styles.otherSignInOptions}>
-          <TouchableOpacity>
-            <Text>Google</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Facebook</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Apple</Text>
-          </TouchableOpacity>
+          <Pressable
+            accessibilityRole="link"
+            hitSlop={10}
+            onPress={() => router.push("/onboarding")}
+          >
+            <Text variant="smallStrong" tone="primary">
+              Build your plan
+            </Text>
+          </Pressable>
         </View>
-        <View style={styles.getStarted}>
-          <Text>Don't have an account?</Text>
-          <TouchableOpacity onPress={() => router.push('/onboarding')}>
-            <Text style={{ color: Colors.primary }} >Get Started!</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      }
+    >
+      <Input
+        label="Email"
+        value={email}
+        onChangeText={(text) => {
+          setEmail(text);
+          if (errors.email) setErrors((e) => ({ ...e, email: undefined }));
+        }}
+        error={errors.email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="email"
+        textContentType="emailAddress"
+        placeholder="you@example.com"
+        returnKeyType="next"
+      />
 
+      <Input
+        label="Password"
+        value={password}
+        onChangeText={(text) => {
+          setPassword(text);
+          if (errors.password) setErrors((e) => ({ ...e, password: undefined }));
+        }}
+        error={errors.password}
+        password
+        autoCapitalize="none"
+        autoComplete="current-password"
+        textContentType="password"
+        placeholder="Your password"
+        returnKeyType="go"
+        onSubmitEditing={handleSignIn}
+      />
 
-    </SafeAreaView>
+      <Button
+        label="Sign in"
+        size="lg"
+        fullWidth
+        loading={loading}
+        onPress={handleSignIn}
+        style={{ marginTop: t.space.sm }}
+      />
+    </AuthScaffold>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: Colors.white,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  topBar: {
-    flex: 1,
-    width: "100%",
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 5,
-  },
-  header: {
-    fontSize: 30,
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-    paddingHorizontal: 30,
-    paddingTop: 30,
-  },
-  appFont: {
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-  },
-  middleBar: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-    gap: 20,
-  },
-
-  inputBox: {
-    backgroundColor: Colors.gray,
-    borderColor: Colors.gray,
-    borderWidth: 3,
-    padding: 15,
-    paddingHorizontal: 10,
-    borderRadius: 30,
-    fontFamily: "Poppins_700Bold",
-    textAlign: 'left',
-    width: 250,
-  },
-
-  bottomBar: {
-    flex: 1,
-    alignItems: "center",
-    marginTop: 70,
-  },
-
-  continueButton: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-    borderWidth: 10,
-    padding: 10,
-    paddingHorizontal: 100,
-    borderRadius: 30,
-    marginTop: 5,
-  },
-  otherSignInOptions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "60%",
-    marginTop: 20,
-  },
-  getStarted: {
-    flexDirection: 'row',
-    marginTop: 20,
-    gap: 5,
-  },
-});

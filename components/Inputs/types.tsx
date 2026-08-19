@@ -1,3 +1,0 @@
-interface ExtraInputProps{
-    isPassword? : Boolean;
-}

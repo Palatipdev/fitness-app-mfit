@@ -1,252 +1,197 @@
-import FloatingLabelInput from "@/components/floating-label-input";
-import { auth, db } from "@/firebase/config";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
+import { Pressable, View } from "react-native";
+
+import { AuthScaffold } from "@/components/AuthScaffold";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
+import { auth, db } from "@/firebase/config";
+import { useTheme } from "@/hooks/useTheme";
 import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "../constants/color";
+  authErrorField,
+  authErrorMessage,
+  isValidEmail,
+} from "@/utils/authErrors";
+
+type FieldErrors = {
+  username?: string;
+  email?: string;
+  password?: string;
+  confirm?: string;
+  form?: string;
+};
+
+const MIN_PASSWORD = 6;
 
 export default function SignUp() {
+  const t = useTheme();
   const router = useRouter();
-  const [userName, setUserName] = useState("");
+  const onboarding = useLocalSearchParams();
+
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [passWord, setPassWord] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
 
-  const onboardingData = useLocalSearchParams();
+  const clear = (field: keyof FieldErrors) =>
+    setErrors((e) => (e[field] ? { ...e, [field]: undefined } : e));
 
-  // handleSignUp function
+  const validate = (): FieldErrors => {
+    const next: FieldErrors = {};
+    if (!username.trim()) next.username = "Pick a name to show on your profile.";
+    if (!email.trim()) next.email = "Enter your email address.";
+    else if (!isValidEmail(email)) next.email = "That does not look like an email.";
+    if (!password) next.password = "Choose a password.";
+    else if (password.length < MIN_PASSWORD)
+      next.password = `Use at least ${MIN_PASSWORD} characters.`;
+    if (confirm !== password) next.confirm = "The two passwords do not match.";
+    return next;
+  };
+
   const handleSignUp = async () => {
-    if (!email) {
-      Alert.alert("Please enter your email");
-      return;
-    }
-    if (!passWord) {
-      Alert.alert("Please enter your password");
-      return;
-    }
-    if (!userName) {
-      Alert.alert("Please enter your userName");
-      return;
-    }
-    if (!email || !passWord || !userName) {
-      Alert.alert("Please enter all the field.");
-      return;
-    }
-    if (passWord !== confirmPassword) {
-      Alert.alert("Password do not match");
-      return;
-    }
-    if (passWord.length < 6) {
-      Alert.alert("Password must be at least 6 characters");
+    const found = validate();
+    if (Object.keys(found).length > 0) {
+      setErrors(found);
       return;
     }
 
     setLoading(true);
+    setErrors({});
     try {
-      //Create auth account
-      const userCredential = await createUserWithEmailAndPassword(
+      const credential = await createUserWithEmailAndPassword(
         auth,
-        email,
-        passWord
+        email.trim(),
+        password,
       );
-      const userId = userCredential.user.uid;
 
-      // store username in firestore , add onboarding data
-      await setDoc(doc(db, "users", userId), {
-        username: userName,
-        email: email,
+      await setDoc(doc(db, "users", credential.user.uid), {
+        username: username.trim(),
+        email: email.trim(),
         createdAt: new Date().toISOString(),
         onboarding: {
-          goal: onboardingData.goal,
-          height: parseInt(onboardingData.height as string),
-          weight: parseInt(onboardingData.weight as string),
-          gender: onboardingData.gender,
-          age: parseInt(onboardingData.age as string),
-          workoutDays: onboardingData.workoutDays,
-          sessionLength: onboardingData.sessionLength,
-          completedAt: new Date().toISOString()
+          goal: onboarding.goal,
+          gender: onboarding.gender,
+          age: Number(onboarding.age),
+          height: Number(onboarding.height),
+          weight: Number(onboarding.weight),
+          workoutDays: onboarding.workoutDays,
+          sessionLength: onboarding.sessionLength,
+          completedAt: new Date().toISOString(),
         },
       });
 
-      console.log("User created with username:", userName);
-
-      // Success sign up.
-      router.replace('/homepage')
-    } catch (error: any) {
-      console.error("Sign up error:", error);
-
-      if (error.code === "auth/email-already-in-use") {
-        Alert.alert("Error", "This email is already registered");
-      } else if (error.code === "auth/invalid-email") {
-        Alert.alert("Error", "Invalid email address");
-      } else {
-        Alert.alert("Error", "Sign up failed. Please try again.");
-      }
+      router.replace("/homepage");
+    } catch (error) {
+      setErrors({ [authErrorField(error)]: authErrorMessage(error) });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <AntDesign name="arrow-left" size={24} color={Colors.primary} />
-          <Text style={styles.appFont}>Back</Text>
-        </Pressable>
-        <Text style={styles.header}>Create an Account!</Text>
-      </View>
-
-      <View style={styles.middleBar}>
-        <FloatingLabelInput
-          label="Username"
-          onChangeText={setUserName}
-          value={userName}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-
-        <FloatingLabelInput
-          label="Email"
-          onChangeText={setEmail}
-          value={email}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <FloatingLabelInput
-          label="Password"
-          onChangeText={setPassWord}
-          value={passWord}
-          secureTextEntry={true}
-        />
-        <FloatingLabelInput
-          label="Confirm your password"
-          onChangeText={setConfirmPassword}
-          value={confirmPassword}
-          secureTextEntry={true}
-        />
-
-        <TouchableOpacity
-          style={styles.continueButton}
-          onPress={handleSignUp}
-          disabled={loading}
+    <AuthScaffold
+      title="Create your account"
+      subtitle="Your plan is ready. This is where it gets saved."
+      formError={errors.form ?? null}
+      footer={
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: t.space.xs,
+          }}
         >
-          <Text
-            style={[styles.appFont, { fontSize: 16 }, { color: Colors.white }]}
-          >
-            {loading ? "Creating Account..." : "Sign up"}
+          <Text variant="small" tone="muted">
+            Already registered?
           </Text>
-        </TouchableOpacity>
-      </View>
+          <Pressable
+            accessibilityRole="link"
+            hitSlop={10}
+            onPress={() => router.push("/sign-in")}
+          >
+            <Text variant="smallStrong" tone="primary">
+              Sign in
+            </Text>
+          </Pressable>
+        </View>
+      }
+    >
+      <Input
+        label="Display name"
+        value={username}
+        onChangeText={(text) => {
+          setUsername(text);
+          clear("username");
+        }}
+        error={errors.username}
+        autoCapitalize="words"
+        autoComplete="name"
+        placeholder="How should we greet you?"
+        maxLength={30}
+      />
 
-      <View style={styles.bottomBar}>
-        <Text>Or Sign Up with</Text>
-        <View style={styles.otherSignInOptions}>
-          <TouchableOpacity>
-            <Text>Google</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Facebook</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Apple</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.backToSignIn}>
-          <Text>Already have an account?</Text>
-          <TouchableOpacity onPress={() => router.push("/sign-in")}>
-            <Text style={{ color: Colors.primary }}>Sign In</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+      <Input
+        label="Email"
+        value={email}
+        onChangeText={(text) => {
+          setEmail(text);
+          clear("email");
+        }}
+        error={errors.email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="email"
+        textContentType="emailAddress"
+        placeholder="you@example.com"
+      />
+
+      <Input
+        label="Password"
+        value={password}
+        onChangeText={(text) => {
+          setPassword(text);
+          clear("password");
+        }}
+        error={errors.password}
+        hint={`At least ${MIN_PASSWORD} characters.`}
+        password
+        autoCapitalize="none"
+        autoComplete="new-password"
+        textContentType="newPassword"
+        placeholder="Choose a password"
+      />
+
+      <Input
+        label="Confirm password"
+        value={confirm}
+        onChangeText={(text) => {
+          setConfirm(text);
+          clear("confirm");
+        }}
+        error={errors.confirm}
+        password
+        autoCapitalize="none"
+        autoComplete="new-password"
+        textContentType="newPassword"
+        placeholder="Type it once more"
+        onSubmitEditing={handleSignUp}
+      />
+
+      <Button
+        label="Create account"
+        size="lg"
+        fullWidth
+        loading={loading}
+        onPress={handleSignUp}
+        style={{ marginTop: t.space.sm }}
+      />
+    </AuthScaffold>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  topBar: {
-    width: "100%",
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 5,
-  },
-  appFont: {
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-  },
-  header: {
-    fontSize: 24,
-    color: Colors.primary,
-    fontFamily: "Poppins_700Bold",
-    paddingHorizontal: 30,
-    paddingTop: 30,
-  },
-
-  middleBar: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-    gap: 20,
-  },
-  inputBox: {
-    backgroundColor: Colors.gray,
-    borderColor: Colors.gray,
-    borderWidth: 10,
-    padding: 20,
-    paddingHorizontal: 10,
-    borderRadius: 30,
-    fontFamily: "Poppins_700Bold",
-    textAlign: "left",
-    width: 300,
-  },
-
-  continueButton: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-    borderWidth: 10,
-    padding: 7,
-    paddingHorizontal: 80,
-    borderRadius: 30,
-    marginTop: 20,
-  },
-  bottomBar: {
-    flex: 1,
-    alignItems: "center",
-    marginTop: 300,
-  },
-
-  otherSignInOptions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "60%",
-    marginTop: 10,
-  },
-  backToSignIn: {
-    flexDirection: "row",
-    marginTop: 20,
-    gap: 5,
-  },
-});
