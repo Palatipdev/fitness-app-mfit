@@ -74,7 +74,7 @@ export function demoPlan(): StoredWorkout {
 
 export function demoProfile(): { username: string; onboarding: OnboardingData } {
   return {
-    username: "Alex Rivera",
+    username: "Palatip Boonmeerit",
     onboarding: {
       goal: "gain",
       gender: "male",
