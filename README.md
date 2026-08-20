@@ -22,6 +22,24 @@ a fitness app, that includes nutrition tracking, calorie logging, and personaliz
 - **Navigation:** Expo Router (stack + bottom tabs)
 - **Design system:** In-house tokens, dark and light, Barlow / Barlow Condensed
 
+## Live Demo
+
+**https://palatipdev.github.io/fitness-app-mfit/?demo=1**
+
+The `?demo=1` link opens the app in demo mode: a generated plan plus twelve
+weeks of sample history, so every screen has data without an account. Demo mode
+swaps the Firestore layer for local fixtures, so nothing is written, no
+credentials ship in the bundle, and one visitor cannot affect the next. A
+refresh resets it.
+
+The plan itself is produced by the real generator against the bundled exercise
+list, so what the demo shows is genuine output rather than a mockup.
+
+`docs/demo-embed.html` is a copy-paste embed that runs the demo inside a phone
+frame on wide screens and collapses to a full-screen link on narrow ones.
+
+Deploys from `.github/workflows/deploy-demo.yml` on every push to `main`.
+
 ## Design System
 
 Design decisions live in `design-system/mfit/MASTER.md`. Screens never

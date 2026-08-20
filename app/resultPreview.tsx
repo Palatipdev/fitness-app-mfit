@@ -12,7 +12,7 @@ import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { getSplit, toDayList } from "@/constants/splits";
 import { useTheme } from "@/hooks/useTheme";
-import { buildWeek } from "@/services/workoutGenerator/generator";
+import { buildWeek } from "@/services/workoutGenerator/planBuilder";
 import type {
   Exercise,
   SessionLengthAnswer,

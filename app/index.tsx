@@ -1,13 +1,14 @@
 import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Animated, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { useTheme } from "@/hooks/useTheme";
+import { enableDemo, isDemo } from "@/services/demo/demoMode";
 
 const HIGHLIGHTS = [
   { icon: "zap", text: "A split built around your schedule" },
@@ -21,6 +22,16 @@ export default function Welcome() {
 
   const fade = useRef(new Animated.Value(0)).current;
   const rise = useRef(new Animated.Value(24)).current;
+
+  const startDemo = useCallback(() => {
+    enableDemo();
+    router.replace("/homepage");
+  }, [router]);
+
+  // A ?demo=1 link arrives already in demo mode, so skip the welcome screen.
+  useEffect(() => {
+    if (isDemo()) router.replace("/homepage");
+  }, [router]);
 
   useEffect(() => {
     Animated.parallel([
@@ -116,6 +127,14 @@ export default function Welcome() {
             size="lg"
             onPress={() => router.push("/onboarding")}
             accessibilityHint="Starts a short questionnaire to build your plan"
+          />
+          <Button
+            label="Try the demo"
+            variant="secondary"
+            fullWidth
+            icon={<Feather name="play" size={15} color={t.colors.text} />}
+            onPress={startDemo}
+            accessibilityHint="Opens the app with sample data, no account needed"
           />
           <Button
             label="I already have an account"

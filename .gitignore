@@ -49,3 +49,6 @@ app-example
 
 # expo export output
 /dist
+
+# expo web export output
+/dist-web

@@ -12,6 +12,7 @@ import { Text } from "@/components/ui/Text";
 import { getSplit } from "@/constants/splits";
 import { auth } from "@/firebase/config";
 import { useAuth } from "@/hooks/useAuth";
+import { exitDemo, isDemo } from "@/services/demo/demoMode";
 import { useTheme, useThemePreference, type SchemePreference } from "@/hooks/useTheme";
 import { fetchLogCount } from "@/services/workoutAnalytic/fetchingServices";
 import { saveWorkout } from "@/services/workoutGenerator/workoutServices";
@@ -87,18 +88,30 @@ export default function ProfilePage() {
     );
   };
 
+  const demo = isDemo();
+
   const confirmSignOut = () => {
-    Alert.alert("Sign out?", "You will need your password to get back in.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Sign out",
-        style: "destructive",
-        onPress: async () => {
-          await signOut(auth);
-          router.replace("/");
+    Alert.alert(
+      demo ? "Leave the demo?" : "Sign out?",
+      demo
+        ? "Anything you logged during the demo is discarded."
+        : "You will need your password to get back in.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: demo ? "Leave demo" : "Sign out",
+          style: "destructive",
+          onPress: async () => {
+            if (demo) {
+              exitDemo();
+            } else {
+              await signOut(auth);
+            }
+            router.replace("/");
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   const initials = (profile?.username ?? "")
@@ -248,7 +261,7 @@ export default function ProfilePage() {
         <Card padded={false}>
           <SettingRow
             icon="log-out"
-            label="Sign out"
+            label={demo ? "Leave demo" : "Sign out"}
             tone="danger"
             onPress={confirmSignOut}
             last
