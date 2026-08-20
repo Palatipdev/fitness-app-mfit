@@ -35,8 +35,13 @@ refresh resets it.
 The plan itself is produced by the real generator against the bundled exercise
 list, so what the demo shows is genuine output rather than a mockup.
 
-`docs/demo-embed.html` is a copy-paste embed that runs the demo inside a phone
-frame on wide screens and collapses to a full-screen link on narrow ones.
+Two copy-paste embeds are provided:
+
+- `docs/demo-embed.html` runs the demo in a single phone frame, collapsing to a
+  full-screen link on narrow screens.
+- `docs/demo-showcase.html` puts a laptop and a phone side by side, each running
+  a different screen. Frames load only when scrolled into view, and the phone
+  renders at a true 390px viewport then scales down so nothing truncates.
 
 Deploys from `.github/workflows/deploy-demo.yml` on every push to `main`.
 

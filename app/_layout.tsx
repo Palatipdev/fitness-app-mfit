@@ -1,7 +1,7 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -10,6 +10,13 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { ThemeProvider, useTheme } from "@/hooks/useTheme";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+/**
+ * On a desktop browser the layout would otherwise stretch to the full window,
+ * leaving an exercise name on the far left and its rep count a thousand pixels
+ * away. This is a phone UI, so it is held to a phone-sized column.
+ */
+const WEB_MAX_WIDTH = 480;
 
 /** Route groups and routes that require a signed-in user. */
 const PROTECTED = new Set(["(tabs)", "workoutLogging", "editProfile"]);
@@ -46,8 +53,28 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
     return <View style={{ flex: 1, backgroundColor: t.colors.background }} />;
   }
 
+  const isWeb = Platform.OS === "web";
+
   return (
-    <View style={{ flex: 1, backgroundColor: t.colors.background }} onLayout={onLayout}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: t.colors.background,
+        alignItems: isWeb ? "center" : undefined,
+      }}
+      onLayout={onLayout}
+    >
+      <View
+        style={[
+          { flex: 1, width: "100%" },
+          isWeb && {
+            maxWidth: WEB_MAX_WIDTH,
+            borderLeftWidth: 1,
+            borderRightWidth: 1,
+            borderColor: t.colors.border,
+          },
+        ]}
+      >
       <Stack
         screenOptions={{
           headerShown: false,
@@ -65,6 +92,7 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
           options={{ animation: "slide_from_bottom", gestureEnabled: false }}
         />
       </Stack>
+      </View>
     </View>
   );
 }

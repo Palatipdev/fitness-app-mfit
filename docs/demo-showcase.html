@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mfit demo showcase</title>
+
+<!--
+  Side-by-side showcase: the app running in a laptop frame and a phone frame at
+  the same time, each on a different screen.
+
+  Copy the <style> block and the <section class="mfit-show"> markup into your
+  site. Only MFIT_BASE at the bottom needs changing if the URL differs.
+
+  Both frames load the same JS bundle, so the browser fetches it once and the
+  second frame reuses the cached copy. Neither frame loads until it scrolls
+  into view, so the page costs nothing above the fold.
+-->
+
+<style>
+  :root {
+    --m-bg: #0b0d10;
+    --m-surface: #171c25;
+    --m-border: #262e3a;
+    --m-text: #f7f9fb;
+    --m-muted: #9ba6b4;
+    --m-brand: #0cc0df;
+    --m-ink: #04222a;
+  }
+
+  .mfit-show {
+    font-family: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--m-text);
+    padding: 48px 24px;
+  }
+
+  .mfit-show__head {
+    max-width: 640px;
+    margin: 0 auto 44px;
+    text-align: center;
+  }
+
+  .mfit-show__head h2 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .mfit-show__head p {
+    margin: 0;
+    color: var(--m-muted);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Laptop and phone sit on one baseline. The phone overlaps inward slightly
+     so the pair reads as one composition rather than two separate images. */
+  .mfit-show__stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  /* ---------------- laptop ---------------- */
+
+  .m-laptop { width: min(820px, 68vw); flex: none; }
+
+  .m-laptop__lid {
+    background: linear-gradient(160deg, #2b3038, #12151b 65%);
+    border-radius: 16px 16px 4px 4px;
+    padding: 14px 14px 0;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.07),
+      0 34px 60px -28px rgba(0,0,0,0.8);
+  }
+
+  .m-laptop__screen {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--m-bg);
+  }
+
+  /* Browser chrome, so it reads as "the app in a browser" not "a website". */
+  .m-laptop__bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 30px;
+    padding: 0 12px;
+    background: #1b1f27;
+    border-bottom: 1px solid #000;
+  }
+
+  .m-laptop__dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  .m-laptop__url {
+    flex: 1;
+    margin-left: 6px;
+    height: 17px;
+    border-radius: 999px;
+    background: #0e1116;
+    color: #6f7a88;
+    font-size: 10px;
+    line-height: 17px;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .m-laptop__viewport { position: relative; height: calc(100% - 30px); }
+
+  /* Base of the laptop. */
+  .m-laptop__deck {
+    height: 13px;
+    border-radius: 0 0 12px 12px;
+    background: linear-gradient(180deg, #23272f, #14171c);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  .m-laptop__foot {
+    width: 62%;
+    height: 7px;
+    margin: 0 auto;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(180deg, #171a20, #0d0f13);
+  }
+
+  /* ---------------- phone ---------------- */
+
+  .m-phone {
+    width: min(270px, 23vw);
+    flex: none;
+    /* Pulls the phone over the laptop's corner. */
+    margin-left: -52px;
+    margin-bottom: -14px;
+    position: relative;
+    z-index: 2;
+    padding: 9px;
+    border-radius: 40px;
+    background: linear-gradient(160deg, #2f343d, #101319 60%);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.08),
+      0 30px 50px -18px rgba(0,0,0,0.85);
+  }
+
+  .m-phone__screen {
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    background: var(--m-bg);
+    aspect-ratio: 390 / 844;
+  }
+
+  /* The app is rendered at a true 390px phone viewport and then scaled down to
+     fit the mockup. Sizing the iframe to the mockup instead would render the UI
+     at ~250px, a width no real phone has, and the stat tiles would truncate. */
+  .m-phone__inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 390px;
+    height: 844px;
+    transform-origin: top left;
+  }
+
+  .m-phone__strip { height: 46px; background: var(--m-bg); }
+
+  .m-phone__island {
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 76px;
+    height: 20px;
+    border-radius: 999px;
+    background: #000;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* ---------------- shared frame bits ---------------- */
+
+  .mfit-show iframe {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: var(--m-bg);
+  }
+
+  .m-laptop__viewport iframe { height: 100%; }
+  .m-phone__inner iframe { width: 390px; height: 798px; }
+
+  .m-load {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: var(--m-bg);
+    color: var(--m-muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: opacity 300ms ease;
+    z-index: 1;
+  }
+
+  .is-ready .m-load { opacity: 0; pointer-events: none; }
+
+  .mfit-show__caption {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 36px;
+    color: var(--m-muted);
+    font-size: 13px;
+  }
+
+  .mfit-show__caption b { color: var(--m-text); font-weight: 600; }
+
+  .mfit-show__cta {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+
+  .m-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 26px;
+    border-radius: 999px;
+    background: var(--m-brand);
+    color: var(--m-ink);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: filter 150ms ease, transform 150ms ease;
+  }
+
+  .m-btn--ghost {
+    background: transparent;
+    color: var(--m-text);
+    border: 1px solid var(--m-border);
+  }
+
+  .m-btn:hover { filter: brightness(1.08); }
+  .m-btn:active { transform: scale(0.97); }
+  .m-btn:focus-visible { outline: 3px solid var(--m-brand); outline-offset: 3px; }
+
+  /* Below this the two frames stop fitting side by side. Drop the laptop,
+     which is the less representative of the two for a phone app, and let the
+     phone stand alone. */
+  @media (max-width: 1000px) {
+    .m-laptop { display: none; }
+    .m-phone { width: min(300px, 78vw); margin-left: 0; margin-bottom: 0; }
+  }
+
+  /* On an actual phone, a phone mockup is redundant. */
+  @media (max-width: 620px) {
+    .mfit-show__stage { display: none; }
+    .mfit-show__caption { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m-btn, .m-load { transition: none; }
+  }
+</style>
+</head>
+
+<body style="background:#0b0d10; margin:0;">
+
+<section class="mfit-show">
+  <div class="mfit-show__head">
+    <h2>One app, built mobile first</h2>
+    <p>
+      mfit generates a training split from your schedule and session length,
+      then tracks estimated 1RM per muscle group as you log. Both frames below
+      are the live app running with twelve weeks of sample data. Click into
+      either one.
+    </p>
+  </div>
+
+  <div class="mfit-show__stage">
+    <!-- Laptop: the app in a browser -->
+    <div class="m-laptop">
+      <div class="m-laptop__lid">
+        <div class="m-laptop__screen" id="m-laptop-screen">
+          <div class="m-laptop__bar">
+            <span class="m-laptop__dot" style="background:#ff5f57"></span>
+            <span class="m-laptop__dot" style="background:#febc2e"></span>
+            <span class="m-laptop__dot" style="background:#28c840"></span>
+            <span class="m-laptop__url" id="m-url"></span>
+          </div>
+          <div class="m-laptop__viewport">
+            <div class="m-load">Loading</div>
+            <iframe id="m-laptop-frame" title="mfit running in a desktop browser"
+                    loading="lazy" referrerpolicy="no-referrer"></iframe>
+          </div>
+        </div>
+      </div>
+      <div class="m-laptop__deck"></div>
+      <div class="m-laptop__foot"></div>
+    </div>
+
+    <!-- Phone: the same app, different screen -->
+    <div class="m-phone">
+      <div class="m-phone__screen" id="m-phone-screen">
+        <div class="m-phone__island"></div>
+        <div class="m-load">Loading</div>
+        <div class="m-phone__inner" id="m-phone-inner">
+          <div class="m-phone__strip"></div>
+          <iframe id="m-phone-frame" title="mfit progress screen on mobile"
+                  loading="lazy" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfit-show__caption">
+    <span><b>Left</b> &nbsp;Desktop browser &middot; training plan</span>
+    <span><b>Right</b> &nbsp;Mobile &middot; strength progress</span>
+  </div>
+
+  <div class="mfit-show__cta">
+    <a class="m-btn" id="m-open" href="#" target="_blank" rel="noopener">Open the demo</a>
+    <a class="m-btn m-btn--ghost" href="https://github.com/Palatipdev/fitness-app-mfit"
+       target="_blank" rel="noopener">Source on GitHub</a>
+  </div>
+</section>
+
+<script>
+  var MFIT_BASE = "https://palatipdev.github.io/fitness-app-mfit";
+
+  var LAPTOP_SRC = MFIT_BASE + "/?demo=1";
+  var PHONE_SRC  = MFIT_BASE + "/progressAnalytics?demo=1";
+
+  document.getElementById("m-open").href = LAPTOP_SRC;
+  document.getElementById("m-url").textContent =
+    MFIT_BASE.replace(/^https?:\/\//, "") + "/?demo=1";
+
+  // Each frame loads only once it scrolls into view, so the 2.9MB bundle is
+  // never fetched for a visitor who does not reach this section.
+  function lazyFrame(frameId, screenId, src) {
+    var frame = document.getElementById(frameId);
+    var screenEl = document.getElementById(screenId);
+    if (!frame || !screenEl) return;
+
+    if (getComputedStyle(frame).display === "none") return;
+
+    frame.addEventListener("load", function () {
+      screenEl.classList.add("is-ready");
+    });
+
+    var load = function () { if (!frame.src) frame.src = src; };
+
+    if (!("IntersectionObserver" in window)) { load(); return; }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { load(); io.disconnect(); }
+      });
+    }, { rootMargin: "200px" });
+
+    io.observe(screenEl);
+  }
+
+  // Scales the 390px render down to whatever width the mockup ended up.
+  function fitPhone() {
+    var screenEl = document.getElementById("m-phone-screen");
+    var inner = document.getElementById("m-phone-inner");
+    if (!screenEl || !inner) return;
+    var w = screenEl.clientWidth;
+    if (!w) return;
+    inner.style.transform = "scale(" + w / 390 + ")";
+  }
+
+  fitPhone();
+  window.addEventListener("resize", fitPhone);
+
+  lazyFrame("m-laptop-frame", "m-laptop-screen", LAPTOP_SRC);
+  lazyFrame("m-phone-frame", "m-phone-screen", PHONE_SRC);
+</script>
+
+</body>
+</html>
