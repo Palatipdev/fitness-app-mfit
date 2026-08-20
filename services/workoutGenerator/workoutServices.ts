@@ -1,6 +1,11 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import { auth, db } from "@/firebase/config";
+import {
+  demoProfileData,
+  demoWorkoutPlan,
+  isDemo,
+} from "@/services/demo/demoMode";
 import type { StoredWorkout, WeekPlan, WorkoutDaysAnswer } from "@/types/workout";
 import { generateBothWeeks } from "./generator";
 
@@ -15,6 +20,8 @@ const workoutDoc = (uid: string) =>
 
 /** Generates a fresh plan and overwrites the stored one. */
 export async function saveWorkout(): Promise<StoredWorkout> {
+  if (isDemo()) return demoWorkoutPlan();
+
   const uid = requireUid();
   const { weekA, weekB } = await generateBothWeeks();
 
@@ -41,6 +48,13 @@ export type CurrentWorkout = {
  * a missing document fell through to a crash on `.data()`.
  */
 export async function loadCurrentWorkout(): Promise<CurrentWorkout> {
+  if (isDemo()) {
+    return {
+      ...demoWorkoutPlan(),
+      workoutDays: demoProfileData().onboarding.workoutDays,
+    };
+  }
+
   const uid = requireUid();
 
   const [workoutSnap, userSnap] = await Promise.all([

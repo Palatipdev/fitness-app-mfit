@@ -727,5 +727,59 @@
    "type": "Bodyweight",
    "strengthHypertrophy": "Strength",
    "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Hip Thrust",
+   "primaryMuscle": "Glutes",
+   "secondaryMuscle": "Hamstrings",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Smith Machine Hip Thrust",
+   "primaryMuscle": "Glutes",
+   "secondaryMuscle": "Hamstrings",
+   "tertiaryMuscle": "",
+   "type": "Barbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Bulgarian Split Squat",
+   "primaryMuscle": "Glutes",
+   "secondaryMuscle": "Quads",
+   "tertiaryMuscle": "Hamstrings",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Compound"
+ },
+ {
+   "name": "Cable Glute Kickback",
+   "primaryMuscle": "Glutes",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Cable",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Machine Glute Kickback",
+   "primaryMuscle": "Glutes",
+   "secondaryMuscle": "",
+   "tertiaryMuscle": "",
+   "type": "Machine",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
+ },
+ {
+   "name": "Dumbbell Hip Thrust",
+   "primaryMuscle": "Glutes",
+   "secondaryMuscle": "Hamstrings",
+   "tertiaryMuscle": "",
+   "type": "Dumbbell",
+   "strengthHypertrophy": "Hypertrophy",
+   "compoundIsolation": "Isolation"
  }
 ]

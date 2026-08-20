@@ -17,6 +17,7 @@ import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { auth, db } from "@/firebase/config";
 import { useTheme } from "@/hooks/useTheme";
+import { isDemo, setDemoUsername } from "@/services/demo/demoMode";
 
 const MAX_NAME = 30;
 
@@ -44,10 +45,13 @@ export default function EditProfile() {
 
     setSaving(true);
     try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("You are no longer signed in.");
-
-      await updateDoc(doc(db, "users", user.uid), { username: trimmed });
+      if (isDemo()) {
+        setDemoUsername(trimmed);
+      } else {
+        const user = auth.currentUser;
+        if (!user) throw new Error("You are no longer signed in.");
+        await updateDoc(doc(db, "users", user.uid), { username: trimmed });
+      }
       router.back();
     } catch (saveError) {
       setSaving(false);

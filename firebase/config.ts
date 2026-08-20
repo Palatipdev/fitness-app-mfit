@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -28,13 +29,19 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 /**
- * `getAuth()` keeps the session in memory only, which signed the user out on
- * every cold start. `initializeAuth` with AsyncStorage persists it.
+ * On native, `getAuth()` keeps the session in memory only, which signed the
+ * user out on every cold start, so persistence is wired to AsyncStorage.
  *
- * `initializeAuth` throws if it runs twice on the same app instance, which
- * happens on Fast Refresh, so fall back to reading the existing instance.
+ * `getReactNativePersistence` ships only in the React Native build of the SDK.
+ * The browser build does not export it, so web takes `getAuth`, which already
+ * persists through indexedDB.
+ *
+ * `initializeAuth` also throws if it runs twice against the same app instance,
+ * which happens on Fast Refresh, hence the fallback.
  */
 function createAuth(): Auth {
+  if (Platform.OS === "web") return getAuth(app);
+
   try {
     return initializeAuth(app, {
       persistence: getReactNativePersistence(AsyncStorage),

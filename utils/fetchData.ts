@@ -1,6 +1,7 @@
 import { doc, getDoc } from "firebase/firestore";
 
 import { auth, db } from "@/firebase/config";
+import { demoProfileData, isDemo } from "@/services/demo/demoMode";
 import type { OnboardingData, WeekLabel } from "@/types/workout";
 
 const WEEK_MS = 604_800_000;
@@ -19,6 +20,8 @@ export async function getUserProfile(): Promise<{
   username: string;
   onboarding: OnboardingData;
 }> {
+  if (isDemo()) return demoProfileData();
+
   const uid = requireUid();
   const snapshot = await getDoc(doc(db, "users", uid));
 

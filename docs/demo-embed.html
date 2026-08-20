@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mfit demo embed</title>
+
+<!--
+  Reference embed for the mfit web demo.
+
+  Copy the <style> block and the .mfit-demo markup into your own page. The only
+  thing to change is MFIT_DEMO_URL below if the Pages URL differs.
+
+  Behaviour:
+    Wide screens  ->  the app runs inline inside a phone frame.
+    Narrow screens ->  the frame is pointless on a device that already is one,
+                       so it collapses to a button that opens the demo full screen.
+-->
+
+<style>
+  :root {
+    --mfit-bg: #0b0d10;
+    --mfit-surface: #171c25;
+    --mfit-border: #262e3a;
+    --mfit-text: #f7f9fb;
+    --mfit-muted: #9ba6b4;
+    --mfit-brand: #0cc0df;
+    --mfit-ink: #04222a;
+  }
+
+  .mfit-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    font-family: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--mfit-text);
+    padding: 32px 16px;
+  }
+
+  .mfit-demo__caption {
+    max-width: 46ch;
+    text-align: center;
+    color: var(--mfit-muted);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ---------- phone frame ---------- */
+
+  .mfit-phone {
+    position: relative;
+    width: 414px;
+    padding: 12px;
+    border-radius: 56px;
+    background: linear-gradient(160deg, #2a2f38, #101319 60%);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 30px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+
+  .mfit-phone__screen {
+    position: relative;
+    border-radius: 44px;
+    overflow: hidden;
+    background: var(--mfit-bg);
+    /* 390x844 is the iPhone 14/15 logical viewport. */
+    height: 844px;
+    /* Reserves the strip the island sits in, so it never covers app content. */
+    --island-strip: 46px;
+  }
+
+  .mfit-phone__statusbar {
+    height: var(--island-strip);
+    background: var(--mfit-bg);
+  }
+
+  .mfit-phone__screen iframe {
+    display: block;
+    width: 100%;
+    height: calc(100% - var(--island-strip));
+    border: 0;
+  }
+
+  /* Dynamic island. Sits above the iframe and ignores pointer events so it
+     never eats a tap meant for the app. */
+  .mfit-phone__island {
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 104px;
+    height: 28px;
+    border-radius: 999px;
+    background: #000;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Placeholder shown until the iframe paints. */
+  .mfit-phone__loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: var(--mfit-bg);
+    color: var(--mfit-muted);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: opacity 240ms ease;
+    z-index: 1;
+  }
+
+  .mfit-phone__screen.is-ready .mfit-phone__loading {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ---------- fallback for narrow screens ---------- */
+
+  .mfit-demo__mobile {
+    display: none;
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+    background: var(--mfit-surface);
+    border: 1px solid var(--mfit-border);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .mfit-demo__mobile h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+
+  .mfit-demo__mobile p {
+    margin: 0 0 20px;
+    color: var(--mfit-muted);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .mfit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 28px;
+    border-radius: 999px;
+    background: var(--mfit-brand);
+    color: var(--mfit-ink);
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: transform 150ms ease, filter 150ms ease;
+  }
+
+  .mfit-btn:hover { filter: brightness(1.08); }
+  .mfit-btn:active { transform: scale(0.97); }
+  .mfit-btn:focus-visible { outline: 3px solid var(--mfit-brand); outline-offset: 3px; }
+
+  .mfit-demo__links {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .mfit-demo__links a { color: var(--mfit-brand); }
+
+  /* The phone frame needs real vertical room. Below this, or on any coarse
+     pointer, send people to the full-screen demo instead. */
+  @media (max-width: 900px), (max-height: 900px) {
+    .mfit-phone { display: none; }
+    .mfit-demo__mobile { display: block; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mfit-btn, .mfit-phone__loading { transition: none; }
+  }
+</style>
+</head>
+
+<body style="background:#0b0d10; margin:0;">
+
+<section class="mfit-demo">
+  <p class="mfit-demo__caption">
+    <strong>mfit</strong> generates a training split from your schedule and
+    session length, then tracks estimated 1RM per muscle group as you log.
+    The demo below is loaded with twelve weeks of sample data.
+  </p>
+
+  <!-- Desktop: the app, inline, in a phone -->
+  <div class="mfit-phone">
+    <div class="mfit-phone__screen" id="mfit-screen">
+      <div class="mfit-phone__island"></div>
+      <div class="mfit-phone__statusbar"></div>
+      <div class="mfit-phone__loading">Loading demo</div>
+      <iframe
+        id="mfit-frame"
+        title="mfit fitness app interactive demo"
+        loading="lazy"
+        allow="clipboard-write"
+        referrerpolicy="no-referrer"></iframe>
+    </div>
+  </div>
+
+  <!-- Narrow screens: open it properly instead -->
+  <div class="mfit-demo__mobile">
+    <h3>Try mfit</h3>
+    <p>Opens the interactive demo full screen, preloaded with sample data. No account needed.</p>
+    <a class="mfit-btn" id="mfit-open" href="#" target="_blank" rel="noopener">Open the demo</a>
+  </div>
+
+  <nav class="mfit-demo__links">
+    <a id="mfit-fullscreen" href="#" target="_blank" rel="noopener">Open full screen</a>
+    <a href="https://github.com/Palatipdev/fitness-app-mfit" target="_blank" rel="noopener">Source on GitHub</a>
+  </nav>
+</section>
+
+<script>
+  // Change this if the Pages URL differs.
+  var MFIT_DEMO_URL = "https://palatipdev.github.io/fitness-app-mfit/?demo=1";
+
+  document.getElementById("mfit-open").href = MFIT_DEMO_URL;
+  document.getElementById("mfit-fullscreen").href = MFIT_DEMO_URL;
+
+  // The iframe src is set from script so the 2.9MB bundle is never fetched on
+  // narrow screens, where the frame is hidden anyway.
+  var frame = document.getElementById("mfit-frame");
+  var screenEl = document.getElementById("mfit-screen");
+
+  if (getComputedStyle(document.querySelector(".mfit-phone")).display !== "none") {
+    frame.addEventListener("load", function () {
+      screenEl.classList.add("is-ready");
+    });
+    frame.src = MFIT_DEMO_URL;
+  }
+</script>
+
+</body>
+</html>

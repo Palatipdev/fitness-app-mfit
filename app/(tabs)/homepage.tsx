@@ -1,14 +1,16 @@
+import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 
 import { WorkoutDayCard } from "@/components/WorkoutDayCard";
-import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui/Feedback";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
+import { Badge } from "@/components/ui/Badge";
 import { getSplit, toDayList } from "@/constants/splits";
+import { isDemo } from "@/services/demo/demoMode";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { fetchPastWorkouts } from "@/services/workoutAnalytic/fetchingServices";
@@ -139,6 +141,26 @@ export default function Homepage() {
           />
         }
       >
+        {isDemo() ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: t.space.sm,
+              backgroundColor: t.colors.primarySoft,
+              borderRadius: t.radius.md,
+              paddingHorizontal: t.space.md,
+              paddingVertical: t.space.sm,
+              marginTop: t.space.sm,
+            }}
+          >
+            <Feather name="info" size={14} color={t.colors.primary} />
+            <Text variant="caption" tone="primary" style={{ flex: 1 }}>
+              Demo mode. Sample data, nothing is saved.
+            </Text>
+          </View>
+        ) : null}
+
         <View style={{ paddingTop: t.space.sm, gap: t.space.xxs }}>
           <Text variant="caption" tone="faint">
             {greeting()}

@@ -8,6 +8,11 @@ import {
 } from "firebase/firestore";
 
 import { auth, db } from "@/firebase/config";
+import {
+  demoLogCount,
+  demoWorkoutLogs,
+  isDemo,
+} from "@/services/demo/demoMode";
 import type { LoggedExercise, WorkoutLog } from "@/types/workout";
 
 function requireUid(): string {
@@ -52,6 +57,8 @@ function normaliseLog(id: string, raw: Record<string, unknown>): WorkoutLog {
  * limit.
  */
 export async function fetchPastWorkouts(maxLogs = 200): Promise<WorkoutLog[]> {
+  if (isDemo()) return demoWorkoutLogs(maxLogs);
+
   const uid = requireUid();
 
   const logs = await getDocs(
@@ -69,6 +76,8 @@ export async function fetchPastWorkouts(maxLogs = 200): Promise<WorkoutLog[]> {
 
 /** Server-side count, so it stays cheap as the log collection grows. */
 export async function fetchLogCount(): Promise<number> {
+  if (isDemo()) return demoLogCount();
+
   const uid = requireUid();
   const snapshot = await getCountFromServer(
     collection(db, "users", uid, "logs"),

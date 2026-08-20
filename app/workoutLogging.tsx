@@ -27,6 +27,7 @@ import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { auth, db } from "@/firebase/config";
 import { useTheme } from "@/hooks/useTheme";
+import { appendDemoLog, isDemo } from "@/services/demo/demoMode";
 import { fetchPastWorkouts } from "@/services/workoutAnalytic/fetchingServices";
 import {
   estimate1RM,
@@ -236,16 +237,21 @@ export default function WorkoutLogging() {
 
     setSaving(true);
     try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("You are no longer signed in.");
-
       const date = new Date().toISOString();
-      await setDoc(doc(db, "users", user.uid, "logs", date), {
+      const entry = {
         workout: logged,
         duration: elapsedSeconds(startedAt),
         dayName,
         date,
-      });
+      };
+
+      if (isDemo()) {
+        appendDemoLog(entry);
+      } else {
+        const user = auth.currentUser;
+        if (!user) throw new Error("You are no longer signed in.");
+        await setDoc(doc(db, "users", user.uid, "logs", date), entry);
+      }
 
       router.replace("/homepage");
     } catch (error) {

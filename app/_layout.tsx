@@ -20,7 +20,10 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
   const segments = useSegments();
   const { user, ready: authReady } = useAuth();
 
-  const booted = fontsReady && authReady;
+  // Rendering waits on fonts only. Gating it on the auth handshake too meant a
+  // slow, blocked or offline Firebase left the app on a blank screen forever.
+  // Redirects still wait for `authReady`, which is all it is needed for.
+  const booted = fontsReady;
 
   const onLayout = useCallback(() => {
     if (booted) SplashScreen.hideAsync().catch(() => {});
@@ -29,7 +32,7 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
   // One guard for the whole app. Screens used to each run their own auth
   // listener and race each other to redirect.
   useEffect(() => {
-    if (!booted) return;
+    if (!booted || !authReady) return;
     const root = segments[0];
 
     if (!user && root && PROTECTED.has(root)) {
@@ -37,7 +40,7 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
     } else if (user && root === undefined) {
       router.replace("/homepage");
     }
-  }, [booted, user, segments, router]);
+  }, [booted, authReady, user, segments, router]);
 
   if (!booted) {
     return <View style={{ flex: 1, backgroundColor: t.colors.background }} />;
