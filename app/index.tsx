@@ -2,7 +2,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef } from "react";
-import { Animated, View } from "react-native";
+import { AccessibilityInfo, Animated, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
@@ -20,8 +20,12 @@ export default function Welcome() {
   const t = useTheme();
   const router = useRouter();
 
-  const fade = useRef(new Animated.Value(0)).current;
-  const rise = useRef(new Animated.Value(24)).current;
+  // Starts at its final opacity on purpose. Fading in from 0 meant the entire
+  // landing page was invisible until an animation finished, so any hitch that
+  // delayed or skipped it left a first-time visitor staring at a blank screen.
+  // Only the offset is animated now; if it never runs, the content sits ten
+  // pixels low, which nobody can see.
+  const rise = useRef(new Animated.Value(10)).current;
 
   const startDemo = useCallback(() => {
     enableDemo();
@@ -34,19 +38,27 @@ export default function Welcome() {
   }, [router]);
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fade, {
-        toValue: 1,
-        duration: t.motion.slow,
-        useNativeDriver: true,
-      }),
-      Animated.timing(rise, {
-        toValue: 0,
-        duration: t.motion.slow,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [fade, rise, t.motion.slow]);
+    let cancelled = false;
+
+    AccessibilityInfo.isReduceMotionEnabled()
+      .then((reduceMotion) => {
+        if (cancelled) return;
+        if (reduceMotion) {
+          rise.setValue(0);
+          return;
+        }
+        Animated.timing(rise, {
+          toValue: 0,
+          duration: t.motion.slow,
+          useNativeDriver: true,
+        }).start();
+      })
+      .catch(() => rise.setValue(0));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [rise, t.motion.slow]);
 
   return (
     <Screen edges={["top", "bottom"]}>
@@ -70,7 +82,6 @@ export default function Welcome() {
         style={{
           flex: 1,
           paddingHorizontal: t.space.xl,
-          opacity: fade,
           transform: [{ translateY: rise }],
         }}
       >
